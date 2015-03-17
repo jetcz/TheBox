@@ -44,7 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\eightanaloginputs;C:\Users\Jiří\Documents\Arduino\TheBox\RemoteUnit;C:\Users\Jiří\Documents\Arduino\libraries\DHT;C:\Users\Jiří\Documents\Arduino\libraries\DHT\utility;C:\Users\Jiří\Documents\Arduino\libraries\OneWire;C:\Users\Jiří\Documents\Arduino\libraries\OneWire\utility;C:\Users\Jiří\Documents\Arduino\libraries\DS18B20;C:\Users\Jiří\Documents\Arduino\libraries\DS18B20\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers;C:\Users\Jiří\Documents\Arduino\libraries;c:\program files (x86)\arduino\hardware\tools\avr\avr\include\;c:\program files (x86)\arduino\hardware\tools\avr\avr\include\avr\;c:\program files (x86)\arduino\hardware\tools\avr\avr\;c:\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\4.8.1\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\eightanaloginputs;C:\Users\Jiří\Documents\Arduino\TheBox\RemoteUnit;C:\Users\Jiří\Documents\Arduino\libraries\RunningMedian;C:\Users\Jiří\Documents\Arduino\libraries\RunningMedian\utility;C:\Users\Jiří\Documents\Arduino\libraries\DHT;C:\Users\Jiří\Documents\Arduino\libraries\DHT\utility;C:\Users\Jiří\Documents\Arduino\libraries\OneWire;C:\Users\Jiří\Documents\Arduino\libraries\OneWire\utility;C:\Users\Jiří\Documents\Arduino\libraries\DS18B20;C:\Users\Jiří\Documents\Arduino\libraries\DS18B20\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers;C:\Users\Jiří\Documents\Arduino\libraries;c:\program files (x86)\arduino\hardware\tools\avr\avr\include\;c:\program files (x86)\arduino\hardware\tools\avr\avr\include\avr\;c:\program files (x86)\arduino\hardware\tools\avr\avr\;c:\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\4.8.1\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>C:\Users\Jiří\Documents\Arduino\TheBox\RemoteUnit\Visual Micro\.RemoteUnit.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>__AVR_ATmega328p__;__AVR_ATmega328P__;ARDUINO=160;ARDUINO_MAIN;__AVR__;__avr__;F_CPU=16000000L;__cplusplus;GCC_VERSION=40801;ARDUINO_ARCH_AVR;ARDUINO_AVR_PRO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -68,6 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Led.ino" />
     <None Include="Misc.ino">
       <FileType>CppCode</FileType>
     </None>

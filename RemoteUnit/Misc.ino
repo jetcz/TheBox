@@ -20,12 +20,3 @@ long readVcc() {
 	result = 1122500L / result;
 	return result; // Vcc in millivolts
 }
-
-void powerSensors() {
-
-	digitalWrite(DHT22_PWR_PIN, HIGH);
-	digitalWrite(PHOTORESISTOR_PWR_PIN, HIGH);
-	digitalWrite(DS_PWR_PIN, HIGH);
-	digitalWrite(HUMIDITY_PWR_PIN, HIGH);
-	digitalWrite(RADIO_PWR_PIN, HIGH);
-}

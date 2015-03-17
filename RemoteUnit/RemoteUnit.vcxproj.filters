@@ -20,6 +20,7 @@
     <None Include="Sensors.ino" />
     <None Include="Timers.ino" />
     <None Include="SetupFunctions.ino" />
+    <None Include="Led.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.RemoteUnit.vsarduino.h">

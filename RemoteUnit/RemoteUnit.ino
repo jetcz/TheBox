@@ -1,6 +1,8 @@
+#include <RunningMedian.h>
 #include <DHT.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+
 
 /* pin mappings
 a0	14
@@ -10,17 +12,28 @@ a3	17
 a4	18
 a5	19
 */
-const int DHT22_DATA_PIN = 14;
+const int DHT22_DATA_PIN = 8;
 const int DHT22_PWR_PIN = 5;
-const int PHOTORESISTOR_DATA_PIN = 17;
+const int PHOTORESISTOR_DATA_PIN = 21;
 const int PHOTORESISTOR_PWR_PIN = 3;
-const int DS_DATA_PIN = 16;
-const int DS_PWR_PIN = 2;
-const int HUMIDITY_DATA_PIN = 15;
+const int DS_DATA_PIN = 19;
+const int DS_PWR_PIN = 18;
+const int HUMIDITY_DATA_PIN = 20;
 const int HUMIDITY_PWR_PIN = 4;
 const int RADIO_DATA_PIN = 6;
 const int RADIO_PWR_PIN = 7;
+//const int LED[3] = { 15, 16, 17 };
 const int LED[3] = { 11, 12, 13 };
+
+RunningMedian rmAirTemperature = RunningMedian(3);
+RunningMedian rmAirHumidity = RunningMedian(3);
+RunningMedian rmSoilTemperature = RunningMedian(3);
+RunningMedian rmSoilHumidity = RunningMedian(3);
+RunningMedian rmLight = RunningMedian(3);
+
+const byte lightIntensity[] = { 10, 10, 10 };
+const float airTempOffset = -2.5;
+const float soilTempOffset = -2;
 
 #define DHTTYPE DHT22
 OneWire oneWire(DS_DATA_PIN);
@@ -28,20 +41,21 @@ DallasTemperature ds(&oneWire);
 DHT dht(DHT22_DATA_PIN, DHTTYPE);
 
 void setup() {
+
 	Serial.begin(9600);
 	setupPins();
-	powerSensors();
+	powerSensors(true);
 	dht.begin();
 	ds.begin();
-
+	disco();
 }
 
 void loop() {
-	Serial.print(getAirTemperature());
-	Serial.println(" C");
-	Serial.print(getLight());
-	Serial.println(" Light V");
-	Serial.print(getSoilTemperature());
-	Serial.println(" C");
-	delay(3000);
+	powerSensors(true);
+	delay(500);
+	ledLightDigital('y');
+	printSensorData();
+	powerSensors(false);
+	ledLightDigital('k');
+	delay(4500);
 }
