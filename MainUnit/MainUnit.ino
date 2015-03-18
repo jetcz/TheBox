@@ -28,6 +28,8 @@ const int LED2[3] = { 5, 6, 7 };
 const int LED3[3] = { 11, 12, 13 };
 const int LCD_SWITCH[3] = { 32, 34, 36 };
 const int LCD_SWITCH_PWR_PIN = 30;
+const int RADIO_RX_PIN = 17;
+const int RADIO_CTRL_PIN = 0;
 
 
 /* ThingSpeak settings */
@@ -58,7 +60,7 @@ Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 DHT dht(DHT22_PIN, DHTTYPE);
 EthernetClient client;
 File myFile;
-RH_ASK radioDriver(2000, 2, 3);
+RH_ASK driver(2000, RADIO_RX_PIN, RADIO_CTRL_PIN);
 //WebServer webserver(PREFIX, 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
@@ -141,12 +143,14 @@ void setup()
 /* control everything by timer alarms */
 void loop()
 {
+	receiveData();
 	Alarm.delay(0); //run alarms without any delay so the loop isn't slowed down
 }
 
 //TO DO
+//fix radio not receiving anything
+//look for different runnig average library
 //use library to read ini settings
-//fix time bug, implement ntp
+//implement ntp
 //ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
 //make web interface
-//make external unit

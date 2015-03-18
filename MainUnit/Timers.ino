@@ -1,30 +1,14 @@
 void system() {
 	enableDisableAlarms();
 	lcdBacklight();
-	//sNow = getDateTimeString(now());
-	sNow = getDateTimeString(rtc.now());
+	sNow = getDateTimeString(now());
+	//sNow = getDateTimeString(rtc.now());
 	sUptime = getUptimeString(getUptime());
 }
 
 void printDebug(){
 
-	Serial.println(digitalRead(PIR_PIN));
-	/*
-	Serial.println();
-	Serial.println("Bytes free in TX buffer \t" + String(client.free()));
-	Serial.println("Bytes waiting in RX buffer \t" + String(client.available()));
-	Serial.println("W5100.readSnSR\t\t\t" + String(client.status()));
-	Serial.println();
-	Serial.println("Uptime " + floatToString(fSysDataSet[1]) + "s");
-	Serial.println(); Serial.println();
 
-	while (client.available())
-	{
-	char c = client.read();
-	Serial.print(c);
-	}
-	Serial.println();
-	*/
 }
 
 void prepareDataSetArrays() {

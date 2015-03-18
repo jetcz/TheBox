@@ -20,7 +20,7 @@ void setupPins() {
 
 
 	//setup data pins
-	//pinMode(DHT22_DATA_PIN, INPUT);
+	pinMode(DHT22_DATA_PIN, INPUT);
 	pinMode(PHOTORESISTOR_DATA_PIN, INPUT);
 	pinMode(DS_DATA_PIN, INPUT);
 	pinMode(HUMIDITY_DATA_PIN, INPUT);

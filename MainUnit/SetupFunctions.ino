@@ -21,6 +21,12 @@ void setupSD() {
 
 void setupPins(){
 
+	//pinMode(RADIO_RX_PIN, INPUT);			//radio rx pin
+	pinMode(RADIO_CTRL_PIN, OUTPUT);			//radio control sleep pin
+	digitalWrite(RADIO_CTRL_PIN, HIGH);
+
+	pinMode(PIR_PIN, INPUT);			//pir pin
+
 	pinMode(SD_SELECT_PIN, OUTPUT);       // SD chip select at pin 4
 	digitalWrite(SD_SELECT_PIN, HIGH);
 
@@ -98,7 +104,7 @@ void setupRTC(){
 
 	}
 	else {
-		rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //set RTC clock to compile date
+		//rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //set RTC clock to compile date MUST COMMENT OUT
 		Serial.println(F("RTC initialized and clock adjusted"));
 		setSyncProvider(syncProvider); //sync system clock from RTC module
 		setSyncInterval(600);
@@ -113,33 +119,33 @@ void setupEthernet() {
 	lcd.setCursor(0, 0);
 	lcd.print(F("Obtaining DHCP lease"));
 	resetEthShield(RESET_ETH_SHIELD_PIN);	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
-	
+
 	if (bDhcp)
 	{
-		if (Ethernet.begin(mac) == 0) {	
-		bConnectivityCheck = false;
-		Serial.println(F("Failed to initialize ethernet using DHCP"));
-		lcd.clear();
-		lcd.setCursor(0, 0);
-		lcd.print(F("Failed to initialize"));
-		lcd.setCursor(0, 1);
-		lcd.print(F("ethernet using DHCP!"));
-		ledLight(1, 'm');
+		if (Ethernet.begin(mac) == 0) {
+			bConnectivityCheck = false;
+			Serial.println(F("Failed to initialize ethernet using DHCP"));
+			lcd.clear();
+			lcd.setCursor(0, 0);
+			lcd.print(F("Failed to initialize"));
+			lcd.setCursor(0, 1);
+			lcd.print(F("ethernet using DHCP!"));
+			ledLight(1, 'm');
 		}
 		else {
-		bConnectivityCheck = true;
-		Serial.println(F("Ethernet DHCP initialized"));
-		ledLight(1, 'g');
-		lcd.clear();
-		Serial.print(F("IP: "));
-		Serial.println(Ethernet.localIP());
-		Serial.print(F("GW: "));
-		Serial.println(Ethernet.gatewayIP());
-		Serial.print(F("DNS: "));
-		Serial.println(Ethernet.dnsServerIP());
+			bConnectivityCheck = true;
+			Serial.println(F("Ethernet DHCP initialized"));
+			ledLight(1, 'g');
+			lcd.clear();
+			Serial.print(F("IP: "));
+			Serial.println(Ethernet.localIP());
+			Serial.print(F("GW: "));
+			Serial.println(Ethernet.gatewayIP());
+			Serial.print(F("DNS: "));
+			Serial.println(Ethernet.dnsServerIP());
 		}
 	}
-	else {	
+	else {
 		bConnectivityCheck = true;
 		Ethernet.begin(mac, ip, dns1, gateway, subnet);
 		Serial.println(F("Ethernet static initialized"));
@@ -152,7 +158,7 @@ void setupEthernet() {
 		Serial.print(F("DNS: "));
 		Serial.println(Ethernet.dnsServerIP());
 	}
-	
+
 }
 
 void setupLCD(){

@@ -80,8 +80,10 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portInputRegister(P)
 #define portModeRegister(P)
 #include <RemoteUnit.ino>
+#include <DataTypesConversion.ino>
 #include <Led.ino>
 #include <Misc.ino>
+#include <Radio.ino>
 #include <Sensors.ino>
 #include <SetupFunctions.ino>
 #include <Timers.ino>

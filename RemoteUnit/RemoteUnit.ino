@@ -1,4 +1,5 @@
-#include <RunningMedian.h>
+#include <SPI.h>
+#include <RH_ASK.h>
 #include <DHT.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -20,25 +21,22 @@ const int DS_DATA_PIN = 19;
 const int DS_PWR_PIN = 18;
 const int HUMIDITY_DATA_PIN = 20;
 const int HUMIDITY_PWR_PIN = 4;
-const int RADIO_DATA_PIN = 6;
-const int RADIO_PWR_PIN = 7;
-//const int LED[3] = { 15, 16, 17 };
+const int RADIO_DATA_PIN = 15;
+const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 11, 12, 13 };
 
-RunningMedian rmAirTemperature = RunningMedian(3);
-RunningMedian rmAirHumidity = RunningMedian(3);
-RunningMedian rmSoilTemperature = RunningMedian(3);
-RunningMedian rmSoilHumidity = RunningMedian(3);
-RunningMedian rmLight = RunningMedian(3);
 
-const byte lightIntensity[] = { 10, 10, 10 };
 const float airTempOffset = -2.5;
 const float soilTempOffset = -2;
 
+char charVal[24];							//temp array for intToString, floatToString, getUptimeString, getDateTimeString
 #define DHTTYPE DHT22
 OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
 DHT dht(DHT22_DATA_PIN, DHTTYPE);
+RH_ASK driver(2000, 14, RADIO_DATA_PIN);
+
+
 
 void setup() {
 
@@ -47,14 +45,21 @@ void setup() {
 	powerSensors(true);
 	dht.begin();
 	ds.begin();
-	disco();
+
+	if (!driver.init())
+	Serial.println("init failed");
+	ledLightDigital('g');
+
 }
 
 void loop() {
 	powerSensors(true);
+	digitalWrite(RADIO_PWR_PIN, HIGH);
 	delay(500);
 	ledLightDigital('y');
 	printSensorData();
+	ledLightDigital('b');
+	sendMessage();
 	powerSensors(false);
 	ledLightDigital('k');
 	delay(4500);
