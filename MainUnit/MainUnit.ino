@@ -6,6 +6,7 @@
 #include <DHT.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#include <utility/w5100.h>
 #include <SD.h>
 #include <Time.h>
 #include <TimeAlarms.h>
@@ -29,7 +30,7 @@ const int LED3[3] = { 11, 12, 13 };
 const int LCD_SWITCH[3] = { 32, 34, 36 };
 const int LCD_SWITCH_PWR_PIN = 30;
 const int RADIO_RX_PIN = 17;
-const int RADIO_CTRL_PIN = 0;
+const int RADIO_CTRL_PIN = 18;
 
 
 /* ThingSpeak settings */
@@ -60,7 +61,7 @@ Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 DHT dht(DHT22_PIN, DHTTYPE);
 EthernetClient client;
 File myFile;
-RH_ASK driver(2000, RADIO_RX_PIN, RADIO_CTRL_PIN);
+RH_ASK driver(2000, RADIO_RX_PIN, 0);
 //WebServer webserver(PREFIX, 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
@@ -129,26 +130,24 @@ void setup()
 	switchRelays();										//like this!!!!!
 	setupSerial();
 	setupLCD();
+	readSDSettings("/settings/ethernet.ini");
 	setupWire();
 	setupDHT();
 	setupBMP();
 	setupRTC();
-	readSDSettings("/settings/ethernet.ini");
+	setupRadio();
 	setupEthernet();
 	setupTimers();
-
 	Serial.println(F("Setup Done"));
 }
 
 /* control everything by timer alarms */
 void loop()
-{
-	receiveData();
+{	
 	Alarm.delay(0); //run alarms without any delay so the loop isn't slowed down
 }
 
 //TO DO
-//fix radio not receiving anything
 //look for different runnig average library
 //use library to read ini settings
 //implement ntp

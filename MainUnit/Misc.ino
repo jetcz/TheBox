@@ -24,6 +24,7 @@ boolean isRemoteDataSetValid() {
 	}
 }
 
+
 int freeRam() {
 	extern int __heap_start, *__brkval;
 	int v;
@@ -53,6 +54,7 @@ result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
 return result; // Vcc in millivolts
 }
 */
+
 
 String getDateTimeString(DateTime t)
 {

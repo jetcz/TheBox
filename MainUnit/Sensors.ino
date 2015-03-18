@@ -1,3 +1,4 @@
+
 float getSysTemperature(sensors_event_t event) {
 	float sysTemp;
 	bmp.getEvent(&event);
@@ -11,6 +12,7 @@ float getPressure(sensors_event_t event) {
 	rmPressure.add(event.pressure + iPressureOffset);
 	return rmPressure.getAverage();
 }
+
 
 float getMainTemperature() {
 	float t;

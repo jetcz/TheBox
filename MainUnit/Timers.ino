@@ -1,15 +1,12 @@
+
 void system() {
 	enableDisableAlarms();
 	lcdBacklight();
 	sNow = getDateTimeString(now());
-	//sNow = getDateTimeString(rtc.now());
 	sUptime = getUptimeString(getUptime());
+	receiveData();
 }
 
-void printDebug(){
-
-
-}
 
 void prepareDataSetArrays() {
 
@@ -28,7 +25,7 @@ void prepareDataSetArrays() {
 	fMainUnitDataSet[3] = getMainPir();						//mainPir
 	fMainUnitDataSet[4] = getPressure(event);				//pressure
 
-	/*
+	
 	fRemoteUnitDataSet[0] = 0;								//remoteTemperature
 	fRemoteUnitDataSet[1] = 0;								//remoteHumidity
 	fRemoteUnitDataSet[2] = 0;								//remoteHumidex
@@ -36,7 +33,7 @@ void prepareDataSetArrays() {
 	fRemoteUnitDataSet[4] = 0;								//remoteSoilHumidity
 	fRemoteUnitDataSet[5] = 0;								//remoteLight
 	fRemoteUnitDataSet[6] = 0;								//rain
-	*/
+	
 
 }
 
@@ -116,13 +113,13 @@ void thingSpeak(){
 
 	// Update ThingSpeak
 	if (!client.connected())
-	{ /* iterate through our array of pointers to our dataset arrays */
+	{ // iterate through our array of pointers to our dataset arrays 
 		if (iCurrentDataSet > 2) {
 			iCurrentDataSet = 0;
 		}
 		Serial.print(F("Update ThingSpeak with dataset "));
 		Serial.println(intToString(iCurrentDataSet));
-		/* make nice strings, parameters are pointer to array and size of the array pointing to */
+		// make nice strings, parameters are pointer to array and size of the array pointing to 
 		updateThingSpeak(prepareString(fDataSetPointer[iCurrentDataSet], arrSizes[iCurrentDataSet]), sAPIkeys[iCurrentDataSet]);
 		iCurrentDataSet++;
 	}
@@ -160,7 +157,8 @@ void thingSpeak(){
 	}
 }
 
-/* disable thingspeak updating if we do not have ip address*/
+
+// disable thingspeak updating if we do not have ip address
 void enableDisableAlarms() {
 
 	// enable or disable thingspeak depending on obtained dhcp lease (its no necesary but if we dont have connectioon on startup, its good to disable thingspeak)

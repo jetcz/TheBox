@@ -3,6 +3,7 @@ void setupSerial() {
 	Serial.println(F("Serial initialized"));
 }
 
+
 void setupSD() {
 	ledLight(1, 'y');
 	if (!SD.begin(SD_SELECT_PIN)) {
@@ -21,7 +22,7 @@ void setupSD() {
 
 void setupPins(){
 
-	//pinMode(RADIO_RX_PIN, INPUT);			//radio rx pin
+
 	pinMode(RADIO_CTRL_PIN, OUTPUT);			//radio control sleep pin
 	digitalWrite(RADIO_CTRL_PIN, HIGH);
 
@@ -60,6 +61,7 @@ void setupWire() {
 	Serial.println(F("Wire initialized"));
 	ledLight(1, 'g');
 }
+
 
 void setupDHT(){
 	dht.begin();
@@ -113,15 +115,23 @@ void setupRTC(){
 	sysStart = now();
 }
 
+void setupRadio(){
+	if (!driver.init()) {
+		Serial.println(F("Radio failed"));
+	}
+	else Serial.println(F("Radio initialized"));
+}
+
 void setupEthernet() {
 	ledLight(1, 'y');
-	lcd.clear();
-	lcd.setCursor(0, 0);
-	lcd.print(F("Obtaining DHCP lease"));
 	resetEthShield(RESET_ETH_SHIELD_PIN);	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
 
 	if (bDhcp)
 	{
+		lcd.clear();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Obtaining DHCP lease"));
+
 		if (Ethernet.begin(mac) == 0) {
 			bConnectivityCheck = false;
 			Serial.println(F("Failed to initialize ethernet using DHCP"));
@@ -158,8 +168,11 @@ void setupEthernet() {
 		Serial.print(F("DNS: "));
 		Serial.println(Ethernet.dnsServerIP());
 	}
-
+	//this gives client.connect() max timeout approx 3s
+	W5100.setRetransmissionTime(0x07D0);
+	W5100.setRetransmissionCount(3); 
 }
+
 
 void setupLCD(){
 	lcd.begin(20, 4);

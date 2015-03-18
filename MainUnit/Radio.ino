@@ -1,12 +1,3 @@
-/*  Arduino                         Receiver
-*   GND------------------------------GND
-*   D11------------------------------Data
-*	5V------------------------------ - VCC
-*                                    SHUT(not connected)
-*                                    WAKEB(not connected)
-*                                    GND |
-*	ANT | -connect to your antenna syetem
-*/
 
 void receiveData() {
 

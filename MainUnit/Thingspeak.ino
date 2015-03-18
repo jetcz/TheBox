@@ -63,22 +63,24 @@ void updateThingSpeak(String tsData, String APIkey){
 	}
 	else
 	{
+
 		if (iFailedCounter > iRestartEthernetThreshold) {
 			ledLight(3, 'r');
 		}
 		else
 			ledLight(3, 'y');
 		iFailedCounter++;
+
 		Alarm.disable(byAlarm[5]);
-		bAlarmEnabled[5] = false;
+		bAlarmEnabled[5] = false;		
 		lcd.clear();
-		lcdBacklight();
+		lcd.backlight();
 		lcd.setCursor(0, 0);
 		lcd.print(F("client.connect()"));
 		lcd.setCursor(0, 1);
 		lcd.print(F("failed "));
 		lcd.print(intToString(iFailedCounter));
-		lcd.print(F(" times"));
+		lcd.print(F(" times"));		
 		Serial.print(F("client.connect() failed "));
 		Serial.print(intToString(iFailedCounter));
 		Serial.println(F(" times"));

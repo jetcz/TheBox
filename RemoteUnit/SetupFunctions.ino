@@ -24,7 +24,7 @@ void setupPins() {
 	pinMode(PHOTORESISTOR_DATA_PIN, INPUT);
 	pinMode(DS_DATA_PIN, INPUT);
 	pinMode(HUMIDITY_DATA_PIN, INPUT);
-	digitalWrite(RADIO_DATA_PIN, LOW);
-	pinMode(RADIO_DATA_PIN, OUTPUT);
+	digitalWrite(RADIO_TX_PIN, LOW);
+	pinMode(RADIO_TX_PIN, OUTPUT);
 
 }

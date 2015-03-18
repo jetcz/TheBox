@@ -28,13 +28,7 @@ void readSDSettings(char* path){
 				settingValue = settingValue + character;
 				character = myFile.read();
 				if (character == '\n'){
-					/*
-					//Debuuging Printing
-					Serial.print("Name:");
-					Serial.println(settingName);
-					Serial.print("Value :");
-					Serial.println(settingValue);
-					*/
+					
 					// Apply the value to the parameter
 					if (path = "/settings/relays.ini")
 					{
@@ -87,7 +81,7 @@ void writeSDRelaySettings(char* file) {
 	//Serial.println("Writing done.");
 }
 
-/* Apply the value to the parameter by searching for the parameter name */
+// Apply the value to the parameter by searching for the parameter name 
 void applyRelaySetting(String settingName, String settingValue) {
 	if (settingName == "relay1") {
 		byRelay[0] = settingValue.toInt();

@@ -21,7 +21,7 @@ const int DS_DATA_PIN = 19;
 const int DS_PWR_PIN = 18;
 const int HUMIDITY_DATA_PIN = 20;
 const int HUMIDITY_PWR_PIN = 4;
-const int RADIO_DATA_PIN = 15;
+const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 11, 12, 13 };
 
@@ -34,7 +34,7 @@ char charVal[24];							//temp array for intToString, floatToString, getUptimeSt
 OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
 DHT dht(DHT22_DATA_PIN, DHTTYPE);
-RH_ASK driver(2000, 14, RADIO_DATA_PIN);
+RH_ASK driver(2000, 14, RADIO_TX_PIN);
 
 
 
