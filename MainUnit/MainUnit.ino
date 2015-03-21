@@ -85,7 +85,7 @@ float dP_dt;
 
 /* arrays for sensor variables */
 float fMainUnitDataSet[] = { 0, 0, 0, 0, 0 };
-float fRemoteUnitDataSet[] = { 0, 0, 0, 0, 0, 0, 0 };
+float fRemoteUnitDataSet[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 float fSysDataSet[] = { 0, 0, 0, 0, 0, 0 };
 /* array of pointers to iterate through when updating thingspeak channels */
 float* fDataSetPointer[] = { fMainUnitDataSet, fRemoteUnitDataSet, fSysDataSet };
@@ -143,7 +143,7 @@ void setup()
 
 /* control everything by timer alarms */
 void loop()
-{	
+{
 	Alarm.delay(0); //run alarms without any delay so the loop isn't slowed down
 }
 

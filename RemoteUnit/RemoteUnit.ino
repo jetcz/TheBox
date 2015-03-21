@@ -1,8 +1,10 @@
+#include <RunningAverage.h>
 #include <SPI.h>
 #include <RH_ASK.h>
 #include <DHT.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+
 
 
 /* pin mappings
@@ -35,32 +37,43 @@ OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
 DHT dht(DHT22_DATA_PIN, DHTTYPE);
 RH_ASK driver(2000, 14, RADIO_TX_PIN);
+RunningAverage Light(3);
+RunningAverage AirTemp(3);
+RunningAverage AirHum(3);
+RunningAverage Humidex(3);
+RunningAverage SoilTemp(3);
+RunningAverage SoilHum(3);
 
+float fRemoteUnitDataSet[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+int nRainTicks = 0;
+float *Vcc = &fRemoteUnitDataSet[7];
 
 
 void setup() {
 
 	Serial.begin(9600);
 	setupPins();
-	powerSensors(true);
+	digitalWrite(DS_PWR_PIN, HIGH);
+	ds.requestTemperatures();
 	dht.begin();
 	ds.begin();
-
-	if (!driver.init())
-	Serial.println("init failed");
+	while (!driver.init()) {
+		Serial.println("radio init failed");
+		ledLightDigital('r');
+	}
 	ledLightDigital('g');
 
 }
 
 void loop() {
 	powerSensors(true);
-	digitalWrite(RADIO_PWR_PIN, HIGH);
 	delay(500);
 	ledLightDigital('y');
+	prepareDataSetArrays();
+	powerSensors(false);
 	printSensorData();
 	ledLightDigital('b');
 	sendMessage();
-	powerSensors(false);
 	ledLightDigital('k');
 	delay(4500);
 }

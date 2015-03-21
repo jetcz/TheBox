@@ -3,14 +3,12 @@ void powerSensors(boolean state) {
 	{
 		digitalWrite(DHT22_PWR_PIN, HIGH);
 		digitalWrite(PHOTORESISTOR_PWR_PIN, HIGH);
-		digitalWrite(DS_PWR_PIN, HIGH);
 		digitalWrite(HUMIDITY_PWR_PIN, HIGH);
 	}
 	else
 	{
 		digitalWrite(DHT22_PWR_PIN, LOW);
 		digitalWrite(PHOTORESISTOR_PWR_PIN, LOW);
-		//digitalWrite(DS_PWR_PIN, LOW);  // we cant just turn off the sensor
 		digitalWrite(HUMIDITY_PWR_PIN, LOW);
 	}
 }
@@ -22,7 +20,8 @@ float getAirTemperature() {
 		return -255;
 	}
 	else {
-		return t;
+		AirTemp.addValue(t);
+		return AirTemp.getAverage();
 	}
 
 }
@@ -34,13 +33,20 @@ float getAirHumidity(){
 		return -255;
 	}
 	else{
-		return h;
+		AirHum.addValue(h);
+		return AirHum.getAverage();
 	};
 }
 
-float getLight() {
-	float l = analogRead(PHOTORESISTOR_DATA_PIN)*readVcc() / 1024;
-	return l;
+float getAirHumidex() {
+	return (dht.computeHeatIndex(AirTemp.getAverage()*1.8 + 32, AirHum.getAverage()) - 32)*0.556;
+}
+
+byte getLight() {
+	float l = analogRead(PHOTORESISTOR_DATA_PIN)*(*Vcc) / 1023;
+	byte light = ((l / *Vcc) * 100);
+	Light.addValue(light);
+	return Light.getAverage();
 }
 
 float getSoilTemperature() {
@@ -48,7 +54,10 @@ float getSoilTemperature() {
 	return ds.getTempCByIndex(0);
 }
 
-float getSoilHumidity() {
-	float h = analogRead(HUMIDITY_DATA_PIN)*readVcc() / 1024;
-	return h;
+//returns soil humidity percentage 0 = air, 100 = salt water
+byte getSoilHumidity() {
+	float h = analogRead(HUMIDITY_DATA_PIN)*(*Vcc) / 1023;
+	byte hum = ((h / *Vcc - 1)*-115);
+	SoilHum.addValue(hum);
+	return SoilHum.getAverage();
 }

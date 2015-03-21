@@ -1,5 +1,8 @@
+	
 void sendMessage() {
-	const char *msg = "hello";
-	driver.send((uint8_t *)msg, strlen(msg));
+	digitalWrite(RADIO_PWR_PIN, HIGH);
+	driver.send((uint8_t*)&fRemoteUnitDataSet, sizeof(fRemoteUnitDataSet));
 	driver.waitPacketSent();
+	digitalWrite(RADIO_PWR_PIN, LOW);
+	
 }

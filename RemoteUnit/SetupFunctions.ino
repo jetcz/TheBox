@@ -18,6 +18,9 @@ void setupPins() {
 	pinMode(HUMIDITY_PWR_PIN, OUTPUT);
 	pinMode(RADIO_PWR_PIN, OUTPUT);
 
+	pinMode(17, OUTPUT);
+	digitalWrite(17, LOW);
+
 
 	//setup data pins
 	pinMode(DHT22_DATA_PIN, INPUT);

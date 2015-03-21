@@ -25,30 +25,62 @@ void prepareDataSetArrays() {
 	fMainUnitDataSet[3] = getMainPir();						//mainPir
 	fMainUnitDataSet[4] = getPressure(event);				//pressure
 
-	
-	fRemoteUnitDataSet[0] = 0;								//remoteTemperature
-	fRemoteUnitDataSet[1] = 0;								//remoteHumidity
-	fRemoteUnitDataSet[2] = 0;								//remoteHumidex
-	fRemoteUnitDataSet[3] = 0;								//remoteSoilTemperature
-	fRemoteUnitDataSet[4] = 0;								//remoteSoilHumidity
-	fRemoteUnitDataSet[5] = 0;								//remoteLight
-	fRemoteUnitDataSet[6] = 0;								//rain
-	
-
 }
 
 void printSensorDataSerial(){
 	Serial.println();
-	Serial.println("MainTemperature " + floatToString(fMainUnitDataSet[0]) + "C");
-	Serial.println("MainHumidity " + floatToString(fMainUnitDataSet[1]) + "%RH");
-	Serial.println("MainHumidex " + floatToString(fMainUnitDataSet[2]) + "C");
-	Serial.print("Weather forecast: ");
+	Serial.println(F("Main Unit"));
+	Serial.print(F("Temperature "));
+	Serial.print(fMainUnitDataSet[0], 1);
+	Serial.println(F("C"));
+	Serial.print(F("Humidity "));
+	Serial.print(fMainUnitDataSet[1], 0);
+	Serial.println(F("%RH"));
+	Serial.print(F("Humidex "));
+	Serial.print(fMainUnitDataSet[2], 1);
+	Serial.println(F("C"));
+	Serial.print(F("Weather forecast: "));
 	Serial.println(weather[forecast]);
-	Serial.println("SysTemperature " + floatToString(fSysDataSet[0]) + "C");
-	Serial.println("Pressure " + floatToString(fMainUnitDataSet[4]) + "hPa");
+	Serial.print(F("SysTemperature "));
+	Serial.print(fSysDataSet[0], 1);
+	Serial.println(F("C"));
+	Serial.print(F("Pressure "));
+	Serial.print(fMainUnitDataSet[4], 1);
+	Serial.println(F("hPa"));
 	Serial.println(sNow);
-	Serial.println("Uptime " + sUptime);
-	Serial.println("Free ram " + intToString(freeRam()) + "b (" + floatToString(float(freeRam()) / 8192 * 100) + "%)");
+	Serial.print(F("Uptime "));
+	Serial.println(sUptime);
+	Serial.print(F("Free ram "));
+	Serial.println(intToString(freeRam()) + "b (" + floatToString(float(freeRam()) / 8192 * 100) + "%)");
+	Serial.println();
+
+	Serial.println(F("Remote Unit"));
+	Serial.print(F("Temperature "));
+	Serial.print(fRemoteUnitDataSet[0], 1);
+	Serial.println(F("C"));
+	Serial.print(F("Humidity "));
+	Serial.print(fRemoteUnitDataSet[1], 0);
+	Serial.println(F("%RH"));
+	Serial.print(F("Humidex "));
+	Serial.print(fRemoteUnitDataSet[2], 1);
+	Serial.println(F("C"));
+	Serial.print(F("SoilTemperature "));
+	Serial.print(fRemoteUnitDataSet[3], 1);
+	Serial.println(F("C"));
+	Serial.print(F("SoilHumidity "));
+	Serial.print(fRemoteUnitDataSet[4], 0);
+	Serial.println(F("%RH"));
+	Serial.print(F("Light "));
+	Serial.print(fRemoteUnitDataSet[5], 0);
+	Serial.println(F("%"));
+	Serial.print(F("RainTicks "));
+	Serial.println(fRemoteUnitDataSet[6], 0);
+	Serial.print(F("Voltage "));
+	Serial.print(fRemoteUnitDataSet[7], 0);
+	Serial.println(F("mV"));
+	Serial.print(F("Uptime "));
+	Serial.print(fRemoteUnitDataSet[8], 0);
+	Serial.println(F("s"));
 }
 
 void printLcd() {
@@ -108,7 +140,7 @@ void thingSpeak(){
 	}
 	else
 		Serial.println();
-		Serial.println(F("Connection closed"));
+	Serial.println(F("Connection closed"));
 	Serial.println();
 
 	// Update ThingSpeak
@@ -162,14 +194,14 @@ void thingSpeak(){
 void enableDisableAlarms() {
 
 	// enable or disable thingspeak depending on obtained dhcp lease (its no necesary but if we dont have connectioon on startup, its good to disable thingspeak)
-	if (bConnectivityCheck && !bAlarmEnabled[3])
+	if (bConnectivityCheck && !bAlarmEnabled[3] && bDhcp)
 	{
 		Serial.println(F("Enabling ThingSpeak functionality"));
 		Alarm.enable(byAlarm[3]);
 		bAlarmEnabled[3] = true;
 	}
 	else
-		if (!bConnectivityCheck && bAlarmEnabled[3])
+		if (!bConnectivityCheck && bAlarmEnabled[3] && bDhcp)
 		{
 			Serial.print(F("Disabling ThingSpeak functionality"));
 			Alarm.disable(byAlarm[3]);
