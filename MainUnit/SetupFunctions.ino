@@ -193,5 +193,6 @@ void setupTimers() {
 		byAlarm[6] = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 
 	}	Serial.println(F("Timers initialized"));
+//	byAlarm[7] = Alarm.timerRepeat(5, printDebug);
 }
 

@@ -1,10 +1,21 @@
 
+/*void printDebug() {
+	for (int i = 0; i < 3; i++)
+	{
+	String a = prepareString(*DataSetPointer[i]);
+	Serial.println(a);
+
+	}
+	Serial.println();
+	}*/
+
 void system() {
+	sNow = getDateTimeString(now());
 	enableDisableAlarms();
 	lcdBacklight();
-	sNow = getDateTimeString(now());
 	sUptime = getUptimeString(getUptime());
 	receiveData();
+	RemoteDS.Valid = isRemoteDataSetValid();
 }
 
 
@@ -12,75 +23,83 @@ void prepareDataSetArrays() {
 
 	sensors_event_t event;	//event for bmp180
 
-	fSysDataSet[0] = getSysTemperature(event);				//sysTemperature
-	fSysDataSet[1] = getUptime().totalseconds();			//uptime
-	fSysDataSet[2] = getRelayState(0);						//relay1
-	fSysDataSet[3] = getRelayState(1);						//relay2
-	fSysDataSet[4] = getRelayState(2);						//relay3
-	fSysDataSet[5] = getRelayState(3);						//relay4
+	SystemDS.Data[0] = getSysTemperature(event);		
+	SystemDS.Data[1] = getUptime().totalseconds();	
 
-	fMainUnitDataSet[0] = getMainTemperature();				//mainTemperature
-	fMainUnitDataSet[1] = getMainHumidity();				//mainHumidity
-	fMainUnitDataSet[2] = getMainHumidex();					//mainHumidex
-	fMainUnitDataSet[3] = getMainPir();						//mainPir
-	fMainUnitDataSet[4] = getPressure(event);				//pressure
+	for (int i = 0; i < 4; i++)
+	{
+		SystemDS.Data[i + 2] = getRelayState(i);
+	}
+
+	MainDS.Data[0] = getMainTemperature();
+	MainDS.Data[1] = getMainHumidity();
+	MainDS.Data[2] = getMainHumidex();
+	MainDS.Data[3] = getMainPir();
+	MainDS.Data[4] = getPressure(event);
 
 }
 
 void printSensorDataSerial(){
-	Serial.println();
-	Serial.println(F("Main Unit"));
-	Serial.print(F("Temperature "));
-	Serial.print(fMainUnitDataSet[0], 1);
-	Serial.println(F("C"));
-	Serial.print(F("Humidity "));
-	Serial.print(fMainUnitDataSet[1], 0);
-	Serial.println(F("%RH"));
-	Serial.print(F("Humidex "));
-	Serial.print(fMainUnitDataSet[2], 1);
-	Serial.println(F("C"));
-	Serial.print(F("Weather forecast: "));
-	Serial.println(weather[forecast]);
-	Serial.print(F("SysTemperature "));
-	Serial.print(fSysDataSet[0], 1);
-	Serial.println(F("C"));
-	Serial.print(F("Pressure "));
-	Serial.print(fMainUnitDataSet[4], 1);
-	Serial.println(F("hPa"));
-	Serial.println(sNow);
-	Serial.print(F("Uptime "));
-	Serial.println(sUptime);
-	Serial.print(F("Free ram "));
-	Serial.println(intToString(freeRam()) + "b (" + floatToString(float(freeRam()) / 8192 * 100) + "%)");
-	Serial.println();
+	if (MainDS.Valid == true)
+	{
+		Serial.println();
+		Serial.println(F("Main Unit"));
+		Serial.print(F("Temperature "));
+		Serial.print(MainDS.Data[0], 1);
+		Serial.println(F("C"));
+		Serial.print(F("Humidity "));
+		Serial.print(MainDS.Data[1], 0);
+		Serial.println(F("%RH"));
+		Serial.print(F("Humidex "));
+		Serial.print(MainDS.Data[2], 1);
+		Serial.println(F("C"));
+		Serial.print(F("Weather forecast: "));
+		Serial.println(weather[forecast]);
+		Serial.print(F("SysTemperature "));
+		Serial.print(SystemDS.Data[0], 1);
+		Serial.println(F("C"));
+		Serial.print(F("Pressure "));
+		Serial.print(MainDS.Data[4], 1);
+		Serial.println(F("hPa"));
+		Serial.println(sNow);
+		Serial.print(F("Uptime "));
+		Serial.println(sUptime);
+		Serial.print(F("Free ram "));
+		Serial.println(intToString(freeRam()) + "b (" + floatToString(float(freeRam()) / 8192 * 100) + "%)");
+		Serial.println();
+	}
+	else Serial.println(F("Main Unit DataSet invalid!"));
 
-	Serial.println(F("Remote Unit"));
-	Serial.print(F("Temperature "));
-	Serial.print(fRemoteUnitDataSet[0], 1);
-	Serial.println(F("C"));
-	Serial.print(F("Humidity "));
-	Serial.print(fRemoteUnitDataSet[1], 0);
-	Serial.println(F("%RH"));
-	Serial.print(F("Humidex "));
-	Serial.print(fRemoteUnitDataSet[2], 1);
-	Serial.println(F("C"));
-	Serial.print(F("SoilTemperature "));
-	Serial.print(fRemoteUnitDataSet[3], 1);
-	Serial.println(F("C"));
-	Serial.print(F("SoilHumidity "));
-	Serial.print(fRemoteUnitDataSet[4], 0);
-	Serial.println(F("%RH"));
-	Serial.print(F("Light "));
-	Serial.print(fRemoteUnitDataSet[5], 0);
-	Serial.println(F("%"));
-	Serial.print(F("RainTicks "));
-	Serial.println(fRemoteUnitDataSet[6], 0);
-	Serial.print(F("Voltage "));
-	Serial.print(fRemoteUnitDataSet[7], 0);
-	Serial.println(F("mV"));
-	Serial.print(F("Uptime "));
-	Serial.print(fRemoteUnitDataSet[8], 0);
-	Serial.println(F("s"));
+	if (RemoteDS.Valid == true)
+	{
+		Serial.println(F("Remote Unit"));
+		Serial.print(F("Temperature "));
+		Serial.print(RemoteDS.Data[0], 1);
+		Serial.println(F("C"));
+		Serial.print(F("Humidity "));
+		Serial.print(RemoteDS.Data[1], 0);
+		Serial.println(F("%RH"));
+		Serial.print(F("Humidex "));
+		Serial.print(RemoteDS.Data[2], 1);
+		Serial.println(F("C"));
+		Serial.print(F("SoilTemperature "));
+		Serial.print(RemoteDS.Data[3], 1);
+		Serial.println(F("C"));
+		Serial.print(F("SoilHumidity "));
+		Serial.print(RemoteDS.Data[4], 0);
+		Serial.println(F("%RH"));
+		Serial.print(F("Light "));
+		Serial.print(RemoteDS.Data[5], 0);
+		Serial.println(F("%"));
+		Serial.print(F("RainTicks "));
+		Serial.println(RemoteDS.Data[6], 0);
+		Serial.print(F("Voltage "));
+		Serial.print(SystemDS.Data[6], 0);
+		Serial.println(F("mV"));
+		Serial.print(F("Uptime "));
+		Serial.println(getUptimeString(TimeSpan(SystemDS.Data[7])));
+	}
+	else Serial.println(F("Remote Unit DataSet invalid!"));
 }
 
 void printLcd() {
@@ -113,15 +132,18 @@ void printLcd() {
 
 
 void thingSpeak(){
-	//before we update thingspeak, check if we are supposed to sent RemoteDataSet and if it is still valid, if not, return from this funct.
-	if (iCurrentDataSet == 1) {
-		if (!isRemoteDataSetValid())
-		{
-			Serial.println();
-			Serial.println(F("Remote DataSet timeout, aborting upload!"));
-			iCurrentDataSet++;
-			return; //cancel thingspeak update
+	//before we update thingspeak, check if we are supposed to send RemoteDataSet and if it is still valid, if not, return from this funct.
+	if (!DataSetPointer[iCurrentDataSet]->Valid)
+	{
+		if (iCurrentDataSet == 1){	//we have remote voltage and remote uptime in system dataset, so if the remote data set is not valid, we must omit those values
+			SystemDS.Size = 6;
 		}
+		else SystemDS.Size = 8;
+
+		Serial.println();
+		Serial.println(F("DataSet not valid, aborting upload!"));
+		iCurrentDataSet++;
+		return; //cancel thingspeak update
 	}
 
 	//close previous connnection
@@ -151,8 +173,7 @@ void thingSpeak(){
 		}
 		Serial.print(F("Update ThingSpeak with dataset "));
 		Serial.println(intToString(iCurrentDataSet));
-		// make nice strings, parameters are pointer to array and size of the array pointing to 
-		updateThingSpeak(prepareString(fDataSetPointer[iCurrentDataSet], arrSizes[iCurrentDataSet]), sAPIkeys[iCurrentDataSet]);
+		updateThingSpeak(*DataSetPointer[iCurrentDataSet]);
 		iCurrentDataSet++;
 	}
 	// Check if Ethernet needs to be restarted

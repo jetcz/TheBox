@@ -114,6 +114,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataStructures.h" />
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>

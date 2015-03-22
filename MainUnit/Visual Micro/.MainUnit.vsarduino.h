@@ -79,6 +79,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portInputRegister(P)
 #define portModeRegister(P)
 #include <MainUnit.ino>
+#include <DataStructures.h>
 #include <DataTypesConversion.ino>
 #include <Lcd.ino>
 #include <Led.ino>

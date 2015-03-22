@@ -14,6 +14,7 @@
 #include <WebServer.h>
 #include <RH_ASK.h>
 #include <LiquidCrystal_I2C.h>
+#include "DataStructures.h"
 
 //////////////////////USER CONFIGURABLE///////////////////////////////////
 
@@ -36,9 +37,8 @@ const int RADIO_CTRL_PIN = 18;
 /* ThingSpeak settings */
 const char cThingSpeakAddress[] = "api.thingspeak.com";
 //const char cThingSpeakAddress[] = "184.106.153.149";
-const char* sAPIkeys[] = { "FNHSHUE6A3XKP71C", "OL1GVYUB2HFK7E2M", "GNQST00GBW05EYGC" };
 const byte iUpdateThingSpeakInterval = 10;
-const byte iRemoteDataSetTimeout = 180;		//for how long is dataset valid and send to thingspeak (sec)
+const byte iRemoteDataSetTimeout = 120;		//for how long is dataset valid and send to thingspeak (sec)
 const byte iRestartEthernetThreshold = 10;	//if thingspeak update fails x times -> ethernet shield reset
 const byte iRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
 
@@ -65,6 +65,11 @@ RH_ASK driver(2000, RADIO_RX_PIN, 0);
 //WebServer webserver(PREFIX, 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
+DataSet MainDS;
+DataSet RemoteDS;
+DataSet SystemDS;
+DataSet RelayDS;
+
 /* variables */
 byte iFailedCounter = 0;					 //failed thingspeak uploads
 DateTime sysStart;							//time of system start for uptime 
@@ -83,20 +88,13 @@ boolean firstRound = true;
 float pressureAvg[7];
 float dP_dt;
 
-/* arrays for sensor variables */
-float fMainUnitDataSet[] = { 0, 0, 0, 0, 0 };
-float fRemoteUnitDataSet[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-float fSysDataSet[] = { 0, 0, 0, 0, 0, 0 };
 /* array of pointers to iterate through when updating thingspeak channels */
-float* fDataSetPointer[] = { fMainUnitDataSet, fRemoteUnitDataSet, fSysDataSet };
-/* sizes of our arrays */
-byte arrSizes[] = { sizeof(fMainUnitDataSet) / sizeof(float*) / 2, sizeof(fRemoteUnitDataSet) / sizeof(float*) / 2, sizeof(fSysDataSet) / sizeof(float*) / 2 };
+DataSet *DataSetPointer[] = { (DataSet*)&MainDS, (DataSet*)&RemoteDS, (DataSet*)&SystemDS };
 
 /* relay states/modes*/
 byte byRelay[] = { 0, 0, 0, 0 };
 
 /* sensor variables */
-unsigned long lRemoteDataSetTimeStamp = 0;	//timestamp when was received last dataset from remote unit
 /* bmp180 */
 RunningMedian rmSysTemp = RunningMedian(6);
 const float fSysTempOffset = -0.2;
@@ -124,6 +122,18 @@ void(*resetFunc) (void) = 0;
 
 void setup()
 {
+	MainDS.APIkey = "FNHSHUE6A3XKP71C";
+	MainDS.Size = 5;
+	MainDS.Valid = true;
+
+	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
+	RemoteDS.Size = 7;
+	RemoteDS.Valid = false;
+
+	SystemDS.APIkey = "GNQST00GBW05EYGC";
+	SystemDS.Size = 8;
+	SystemDS.Valid = true;
+
 	setupPins();
 	setupSD();											//order of these
 	readSDSettings("/settings/relays.ini");				//function calls must be
