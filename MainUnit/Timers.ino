@@ -1,13 +1,16 @@
 
-/*void printDebug() {
-	for (int i = 0; i < 3; i++)
+void printDebug() {
+	/*
+	char chararr[] = "192 168 0 1";
+	byte bytearr[4] = {0,0,0,0};
+	chArrToByteArr(chararr, bytearr);
+	for (int i = 0; i < 4; i++)
 	{
-	String a = prepareString(*DataSetPointer[i]);
-	Serial.println(a);
+	Serial.println(bytearr[i]);
+	}
+	*/
 
 	}
-	Serial.println();
-	}*/
 
 void system() {
 	sNow = getDateTimeString(now());

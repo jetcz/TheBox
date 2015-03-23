@@ -157,7 +157,7 @@ void setupEthernet() {
 	}
 	else {
 		bConnectivityCheck = true;
-		Ethernet.begin(mac, ip, dns1, gateway, subnet);
+		Ethernet.begin(mac, ip, dns1, gw, subnet);
 		Serial.println(F("Ethernet static initialized"));
 		ledLight(1, 'g');
 		lcd.clear();

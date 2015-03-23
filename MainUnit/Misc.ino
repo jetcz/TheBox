@@ -58,8 +58,8 @@ return result; // Vcc in millivolts
 
 String getDateTimeString(DateTime t)
 {
-	sprintf(charVal, "%04d-%02d-%02d  %02d:%02d:%02d", t.year(), t.month(), t.day(), t.hour(), t.minute(), t.second());
-	return charVal;
+	sprintf(buffer, "%04d-%02d-%02d  %02d:%02d:%02d", t.year(), t.month(), t.day(), t.hour(), t.minute(), t.second());
+	return buffer;
 }
 
 TimeSpan getUptime(){
@@ -67,8 +67,8 @@ TimeSpan getUptime(){
 }
 
 String getUptimeString(TimeSpan ts) {
-	sprintf(charVal, "%dd %02d:%02d:%02d", ts.days(), ts.hours(), ts.minutes(), ts.seconds());
-	return charVal;
+	sprintf(buffer, "%dd %02d:%02d:%02d", ts.days(), ts.hours(), ts.minutes(), ts.seconds());
+	return buffer;
 }
 
 time_t syncProvider()     //this does the same thing as RTC_DS1307::get()

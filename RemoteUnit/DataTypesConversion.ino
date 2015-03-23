@@ -1,21 +1,9 @@
 String floatToString(float val) {
-
-	dtostrf(val, 3, 2, charVal);  //3 is mininum width, 2 is precision; float value is copied onto buff
-
-	/*
-	//convert chararray to string
-	String stringVal = "";     //data on buff is copied to this string
-	for (int i = 0; i < sizeof(charVal); i++)
-	{
-	//Serial.println(charVal[i]);
-	stringVal += charVal[i];
-	}
-	return stringVal;
-	*/
-	return charVal;
+	dtostrf(val, 3, 2, buffer);  //3 is mininum width, 2 is precision; float value is copied onto buff
+	return buffer;
 }
 
-//doesnt work
+//doesnt work on mini pro???
 String intToString(register int i) {
 	register unsigned char L = 1;
 	register char c;
@@ -23,7 +11,7 @@ String intToString(register int i) {
 	register char b;  // lower-byte of i
 	// negative
 	if (i < 0) {
-		charVal[0] = '-';
+		buffer[0] = '-';
 		i = -i;
 	}
 	else L = 0;
@@ -32,7 +20,7 @@ String intToString(register int i) {
 		c = i < 20000 ? 1
 			: i < 30000 ? 2
 			: 3;
-		charVal[L++] = c + 48;
+		buffer[L++] = c + 48;
 		i -= c * 10000;
 		m = true;
 	}
@@ -49,11 +37,11 @@ String intToString(register int i) {
 			: i < 7000 ? 6 : 7
 			)
 			: i < 9000 ? 8 : 9;
-		charVal[L++] = c + 48;
+		buffer[L++] = c + 48;
 		i -= c * 1000;
 		m = true;
 	}
-	else if (m) charVal[L++] = '0';
+	else if (m) buffer[L++] = '0';
 	// hundreds
 	if (i > 99) {
 		c = i < 500
@@ -67,11 +55,11 @@ String intToString(register int i) {
 			: i < 700 ? 6 : 7
 			)
 			: i < 900 ? 8 : 9;
-		charVal[L++] = c + 48;
+		buffer[L++] = c + 48;
 		i -= c * 100;
 		m = true;
 	}
-	else if (m) charVal[L++] = '0';
+	else if (m) buffer[L++] = '0';
 	// decades (check on lower byte to optimize code)
 	b = char(i);
 	if (b > 9) {
@@ -86,15 +74,15 @@ String intToString(register int i) {
 			: i < 70 ? 6 : 7
 			)
 			: i < 90 ? 8 : 9;
-		charVal[L++] = c + 48;
+		buffer[L++] = c + 48;
 		b -= c * 10;
 		m = true;
 	}
-	else if (m) charVal[L++] = '0';
+	else if (m) buffer[L++] = '0';
 	// last digit
-	charVal[L++] = b + 48;
+	buffer[L++] = b + 48;
 	// null terminator
-	charVal[L] = 0;
-	return charVal;
+	buffer[L] = 0;
+	return buffer;
 }
 

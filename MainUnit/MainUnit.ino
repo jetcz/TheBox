@@ -14,6 +14,7 @@
 #include <WebServer.h>
 #include <RH_ASK.h>
 #include <LiquidCrystal_I2C.h>
+#include <IniFile.h>
 #include "DataStructures.h"
 
 //////////////////////USER CONFIGURABLE///////////////////////////////////
@@ -51,6 +52,13 @@ const byte lightIntensity[] = { 6, 1, 2 }; //0-255, these led are very bright so
 /* sensor polling settings */
 const byte iUpdateSensorsInterval = 10;
 
+/* ini files settings
+relay config must be int following format:
+modes = 0, 1, 1, 2 where 0 is off, 1 is on and 2 is auto */
+
+const char *ethernet = "/settings/ethernet.ini";
+const char *relays = "/settings/relays.ini";
+
 //////////////////////////////////////////////////////////////////////////
 
 #define DHTTYPE DHT22
@@ -70,11 +78,14 @@ DataSet RemoteDS;
 DataSet SystemDS;
 DataSet RelayDS;
 
+/* general buffer for various usages (datatypes conversion, reading ini settings)*/
+const size_t bufferLen = 30;
+char buffer[bufferLen];
+
 /* variables */
-byte iFailedCounter = 0;					 //failed thingspeak uploads
+byte iFailedCounter = 0;					//failed thingspeak uploads
 DateTime sysStart;							//time of system start for uptime 
 byte iCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
-char charVal[24];							//temp array for intToString, floatToString, getUptimeString, getDateTimeString
 String sNow = "";							//current datetime string
 String sUptime = "";						//uptime string
 byte byLcdMsgTimeoutCnt = 0;
@@ -108,7 +119,7 @@ const float fMainTempOffset = -1.2;
 /* network settings */
 byte mac[] = { 0xB0, 0x0B, 0x5B, 0x00, 0xB5, 0x00 };
 byte ip[4];
-byte gateway[4];
+byte gw[4];
 byte subnet[4];
 byte dns1[4];
 boolean bDhcp;
@@ -122,6 +133,25 @@ void(*resetFunc) (void) = 0;
 
 void setup()
 {
+	setupSerial();
+	setupPins();
+	setupSD();
+	readSettings(relays);
+	switchRelays();
+	if (!readSettings(ethernet)) //reading ethernet settings must for some reason take place much earlier that ethernet.begin
+	{
+		bDhcp = true;
+	}
+	else bDhcp = false;
+	setupLCD();
+	setupWire();
+	setupDHT();
+	setupBMP();
+	setupRTC();
+	setupRadio();
+	setupEthernet();
+	setupTimers();
+
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
 	MainDS.Size = 5;
 	MainDS.Valid = true;
@@ -134,20 +164,6 @@ void setup()
 	SystemDS.Size = 8;
 	SystemDS.Valid = true;
 
-	setupPins();
-	setupSD();											//order of these
-	readSDSettings("/settings/relays.ini");				//function calls must be
-	switchRelays();										//like this!!!!!
-	setupSerial();
-	setupLCD();
-	readSDSettings("/settings/ethernet.ini");
-	setupWire();
-	setupDHT();
-	setupBMP();
-	setupRTC();
-	setupRadio();
-	setupEthernet();
-	setupTimers();
 	Serial.println(F("Setup Done"));
 }
 
@@ -158,8 +174,7 @@ void loop()
 }
 
 //TO DO
-//look for different runnig average library
-//use library to read ini settings
+
 //implement ntp
 //ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
 //make web interface

@@ -31,7 +31,7 @@ const int LED[3] = { 13, 12, 11 };
 const float airTempOffset = -2.5;
 const float soilTempOffset = -2;
 
-char charVal[24];
+char buffer[24];
 #define DHTTYPE DHT22
 OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
