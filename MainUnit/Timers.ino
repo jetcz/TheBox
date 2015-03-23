@@ -23,8 +23,8 @@ void prepareDataSetArrays() {
 
 	sensors_event_t event;	//event for bmp180
 
-	SystemDS.Data[0] = getSysTemperature(event);		
-	SystemDS.Data[1] = getUptime().totalseconds();	
+	SystemDS.Data[0] = getSysTemperature(event);
+	SystemDS.Data[1] = getUptime().totalseconds();
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -138,13 +138,12 @@ void thingSpeak(){
 		if (iCurrentDataSet == 1){	//we have remote voltage and remote uptime in system dataset, so if the remote data set is not valid, we must omit those values
 			SystemDS.Size = 6;
 		}
-		else SystemDS.Size = 8;
-
 		Serial.println();
 		Serial.println(F("DataSet not valid, aborting upload!"));
 		iCurrentDataSet++;
 		return; //cancel thingspeak update
 	}
+	else SystemDS.Size = 8;
 
 	//close previous connnection
 	client.flush();

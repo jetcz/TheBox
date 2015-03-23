@@ -20,6 +20,8 @@ void setupPins() {
 
 	pinMode(17, OUTPUT);
 	digitalWrite(17, LOW);
+	pinMode(16, OUTPUT);
+	digitalWrite(16, LOW);
 
 
 	//setup data pins

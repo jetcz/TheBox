@@ -10,7 +10,7 @@
 #include <SD.h>
 #include <Time.h>
 #include <TimeAlarms.h>
-#include <RunningMedian.h>
+#include <RunningAverage.h>
 #include <WebServer.h>
 #include <RH_ASK.h>
 #include <LiquidCrystal_I2C.h>
@@ -37,7 +37,7 @@ const int RADIO_CTRL_PIN = 18;
 /* ThingSpeak settings */
 const char cThingSpeakAddress[] = "api.thingspeak.com";
 //const char cThingSpeakAddress[] = "184.106.153.149";
-const byte iUpdateThingSpeakInterval = 10;
+const byte iUpdateThingSpeakInterval = 20;
 const byte iRemoteDataSetTimeout = 120;		//for how long is dataset valid and send to thingspeak (sec)
 const byte iRestartEthernetThreshold = 10;	//if thingspeak update fails x times -> ethernet shield reset
 const byte iRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
@@ -49,7 +49,7 @@ const byte byLcdMsgTimeout = 4;
 const byte lightIntensity[] = { 6, 1, 2 }; //0-255, these led are very bright so we need low values
 
 /* sensor polling settings */
-const byte iUpdateSensorsInterval = 20;
+const byte iUpdateSensorsInterval = 10;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +62,7 @@ DHT dht(DHT22_PIN, DHTTYPE);
 EthernetClient client;
 File myFile;
 RH_ASK driver(2000, RADIO_RX_PIN, 0);
-//WebServer webserver(PREFIX, 80);
+WebServer webserver(PREFIX, 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
 DataSet MainDS;
@@ -96,13 +96,13 @@ byte byRelay[] = { 0, 0, 0, 0 };
 
 /* sensor variables */
 /* bmp180 */
-RunningMedian rmSysTemp = RunningMedian(6);
+RunningAverage rmSysTemp(6);
 const float fSysTempOffset = -0.2;
-RunningMedian rmPressure = RunningMedian(6);
+RunningAverage rmPressure(6);
 const byte iPressureOffset = 24;
 /* main dht22 */
-RunningMedian rmMainTemp = RunningMedian(3);
-RunningMedian rmMainHumidity = RunningMedian(6);
+RunningAverage rmMainTemp(6);
+RunningAverage rmMainHumidity(6);
 const float fMainTempOffset = -1.2;
 
 /* network settings */

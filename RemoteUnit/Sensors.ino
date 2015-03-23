@@ -20,7 +20,7 @@ float getAirTemperature() {
 		return -255;
 	}
 	else {
-		AirTemp.addValue(t);
+		AirTemp.addValue(t + fAirTemperatureOffset);
 		return AirTemp.getAverage();
 	}
 
@@ -51,7 +51,8 @@ byte getLight() {
 
 float getSoilTemperature() {
 	ds.requestTemperatures();
-	return ds.getTempCByIndex(0);
+	SoilTemp.addValue(ds.getTempCByIndex(0) + fSoilTemperatureOffset);
+	return SoilTemp.getAverage();
 }
 
 //returns soil humidity percentage 0 = air, 100 = salt water

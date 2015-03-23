@@ -25,13 +25,13 @@ const int HUMIDITY_DATA_PIN = 20;
 const int HUMIDITY_PWR_PIN = 4;
 const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
-const int LED[3] = { 11, 12, 13 };
+const int LED[3] = { 13, 12, 11 };
 
 
 const float airTempOffset = -2.5;
 const float soilTempOffset = -2;
 
-char charVal[24];							//temp array for intToString, floatToString, getUptimeString, getDateTimeString
+char charVal[24];
 #define DHTTYPE DHT22
 OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
@@ -47,6 +47,9 @@ RunningAverage SoilHum(3);
 float fRemoteUnitDataSet[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 int nRainTicks = 0;
 float *Vcc = &fRemoteUnitDataSet[7];
+
+float fAirTemperatureOffset = -0.5;
+float fSoilTemperatureOffset = 0.1;
 
 
 void setup() {
