@@ -43,6 +43,8 @@ void printSensorData() {
 }
 
 void prepareDataSetArrays() {
+	
+	int nUptime = 4294967*millisRollover()+round(millis() / 1000)
 
 	fRemoteUnitDataSet[7] = readVcc();							//Vcc
 
@@ -54,5 +56,5 @@ void prepareDataSetArrays() {
 	fRemoteUnitDataSet[5] = getLight();							//remoteLight
 	fRemoteUnitDataSet[6] = nRainTicks;							//rain
 
-	fRemoteUnitDataSet[8] = round(millis() / 1000);				//uptime
+	fRemoteUnitDataSet[8] = nUptime;				//uptime
 }
