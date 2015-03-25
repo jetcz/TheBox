@@ -45,7 +45,7 @@ RunningAverage SoilTemp(3);
 RunningAverage SoilHum(3);
 
 float fRemoteUnitDataSet[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-int nRainTicks = 0;
+volatile int nRainTicks = 0;
 float *Vcc = &fRemoteUnitDataSet[7];
 
 float fAirTemperatureOffset = -0.5;
@@ -53,7 +53,7 @@ float fSoilTemperatureOffset = 0.1;
 
 
 void setup() {
-
+	attachInterrupt(0, getTipCnt, FALLING);
 	Serial.begin(9600);
 	setupPins();
 	digitalWrite(DS_PWR_PIN, HIGH);
