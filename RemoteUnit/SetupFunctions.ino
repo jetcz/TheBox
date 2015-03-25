@@ -22,7 +22,11 @@ void setupPins() {
 	digitalWrite(17, LOW);
 	pinMode(16, OUTPUT);
 	digitalWrite(16, LOW);
-
+	
+	//tipping bucket
+	pinMode(2, INPUT_PULLUP);
+	pinMode(7, OUTPUT);
+	digitalWrite(7, LOW);
 
 	//setup data pins
 	pinMode(DHT22_DATA_PIN, INPUT);
