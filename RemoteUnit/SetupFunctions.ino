@@ -36,4 +36,6 @@ void setupPins() {
 	digitalWrite(RADIO_TX_PIN, LOW);
 	pinMode(RADIO_TX_PIN, OUTPUT);
 
+	digitalWrite(DS_PWR_PIN, HIGH);
+
 }

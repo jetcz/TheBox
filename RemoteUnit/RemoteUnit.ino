@@ -5,8 +5,6 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-
-
 /* pin mappings
 a0	14
 a1	15
@@ -28,9 +26,6 @@ const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
 
-const float airTempOffset = -2.5;
-const float soilTempOffset = -2;
-
 char buffer[24];
 #define DHTTYPE DHT22
 OneWire oneWire(DS_DATA_PIN);
@@ -45,18 +40,21 @@ RunningAverage SoilTemp(3);
 RunningAverage SoilHum(3);
 
 float fRemoteUnitDataSet[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-volatile int nRainTicks = 0;
+volatile int nRainTips = 0;
 float *Vcc = &fRemoteUnitDataSet[7];
 
-float fAirTemperatureOffset = -0.5;
-float fSoilTemperatureOffset = 0.1;
+const float fAirTemperatureOffset = -0.5;
+const float fSoilTemperatureOffset = 0.1;
+
+unsigned int previousSec = 0; // last time update
+unsigned int interval = 3600; // interval at which to do something (rain mm/h)
 
 
 void setup() {
-	attachInterrupt(0, ISRTipCnt, FALLING);
+
+	noInterrupts();
 	Serial.begin(9600);
 	setupPins();
-	digitalWrite(DS_PWR_PIN, HIGH);
 	ds.requestTemperatures();
 	dht.begin();
 	ds.begin();
@@ -65,18 +63,23 @@ void setup() {
 		ledLightDigital('r');
 	}
 	ledLightDigital('g');
-
+	attachInterrupt(0, ISRTipCnt, FALLING);
+	nRainTips = 0;
+	interrupts();
 }
 
 void loop() {
 	powerSensors(true);
 	delay(500);
-	ledLightDigital('y');
+	ledLightDigital('g');
+	delayMicroseconds(1);
+	ledLightDigital('k');
 	prepareDataSetArrays();
 	powerSensors(false);
 	printSensorData();
 	ledLightDigital('b');
-	sendMessage();
+	delayMicroseconds(100);
 	ledLightDigital('k');
+	sendMessage();
 	delay(4500);
 }

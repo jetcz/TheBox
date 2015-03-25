@@ -24,8 +24,9 @@ void printSensorData() {
 	Serial.print(fRemoteUnitDataSet[5],0);
 	Serial.println(F("%"));
 
-	Serial.print(F("RainTicks: "));
-	Serial.println(fRemoteUnitDataSet[6],0);
+	Serial.print(F("Rain: "));
+	Serial.print(fRemoteUnitDataSet[6],1);
+	Serial.println(F("mm/h"));
 
 	Serial.print(F("Vcc: "));
 	Serial.print(fRemoteUnitDataSet[7],0);
@@ -42,9 +43,7 @@ void printSensorData() {
 	Serial.println();
 }
 
-void prepareDataSetArrays() {
-	
-	int nUptime = 4294967*millisRollover()+round(millis() / 1000)
+void prepareDataSetArrays() {	
 
 	fRemoteUnitDataSet[7] = readVcc();							//Vcc
 
@@ -54,7 +53,7 @@ void prepareDataSetArrays() {
 	fRemoteUnitDataSet[3] = getSoilTemperature();				//remoteSoilTemperature
 	fRemoteUnitDataSet[4] = getSoilHumidity();					//remoteSoilHumidity
 	fRemoteUnitDataSet[5] = getLight();							//remoteLight
-	fRemoteUnitDataSet[6] = nRainTicks;							//rain
+	fRemoteUnitDataSet[6] = getRainPerHour();					//rain
 
-	fRemoteUnitDataSet[8] = nUptime;				//uptime
+	fRemoteUnitDataSet[8] = getUptime();						//uptime
 }

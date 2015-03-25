@@ -56,3 +56,9 @@ int millisRollover() {
   return numRollovers;
 }
 
+//get uptime in seconds
+int getUptime() {
+	static int nUptime;
+	nUptime = 4294967 * millisRollover() + round(millis() / 1000);
+	return nUptime;
+}

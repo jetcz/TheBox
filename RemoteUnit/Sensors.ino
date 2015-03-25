@@ -63,6 +63,21 @@ byte getSoilHumidity() {
 	return SoilHum.getAverage();
 }
 
+float getRainPerHour() {
+	
+	if (getUptime() - previousSec > interval) {
+		previousSec = getUptime();
+		noInterrupts();
+		nRainTips = 0;
+		interrupts();
+	}
+	noInterrupts();
+	float fRainPerHour = float(nRainTips) * 0.3;
+	interrupts();
+
+	return fRainPerHour;
+}
+
 void ISRTipCnt() {
-	nRainTicks++;
+	nRainTips++;
 }
