@@ -53,7 +53,7 @@ float fSoilTemperatureOffset = 0.1;
 
 
 void setup() {
-	attachInterrupt(0, getTipCnt, FALLING);
+	attachInterrupt(0, ISRTipCnt, FALLING);
 	Serial.begin(9600);
 	setupPins();
 	digitalWrite(DS_PWR_PIN, HIGH);
