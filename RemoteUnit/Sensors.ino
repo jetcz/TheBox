@@ -62,3 +62,7 @@ byte getSoilHumidity() {
 	SoilHum.addValue(hum);
 	return SoilHum.getAverage();
 }
+
+void ISRTipCnt() {
+	nRainTicks++;
+}
