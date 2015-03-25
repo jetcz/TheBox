@@ -19,7 +19,6 @@
     <None Include="Misc.ino" />
     <None Include="Sensors.ino" />
     <None Include="Thingspeak.ino" />
-    <None Include="Timers.ino" />
     <None Include="Relays.ino" />
     <None Include="SetupFunctions.ino" />
     <None Include="DataTypesConversion.ino" />
@@ -28,6 +27,7 @@
     <None Include="Lcd.ino" />
     <None Include="Led.ino" />
     <None Include="SDsettings.ino" />
+    <None Include="Alarms.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">

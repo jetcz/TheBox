@@ -14,7 +14,6 @@ void updateThingSpeak(DataSet ds){
 	ledLight(3, 'b');
 	if (client.connect(cThingSpeakAddress, 80)) //string, int
 	{
-		ledLight(3, 'g');
 		Serial.println(F("connected"));
 		//POST update to thingspeak, print line by line
 		client.print(F("POST /update HTTP/1.1\n"));
@@ -42,8 +41,7 @@ void updateThingSpeak(DataSet ds){
 			else
 				ledLight(3, 'y');
 			iFailedCounter++;
-			Alarm.disable(byAlarm[5]);
-			bAlarmEnabled[5] = false;
+			Alarm.disable(printLcdAlarm);
 			lcd.clear();
 			lcdBacklight();
 			lcd.setCursor(0, 0);
@@ -68,8 +66,7 @@ void updateThingSpeak(DataSet ds){
 			ledLight(3, 'y');
 		iFailedCounter++;
 
-		Alarm.disable(byAlarm[5]);
-		bAlarmEnabled[5] = false;
+		Alarm.disable(printLcdAlarm);
 		lcd.clear();
 		lcd.backlight();
 		lcd.setCursor(0, 0);

@@ -180,19 +180,19 @@ void setupLCD(){
 	Serial.println(F("LCD initialized"));
 }
 
-void setupTimers() {
+void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
-	byAlarm[0] = Alarm.timerRepeat(1, system);
-	byAlarm[1] = Alarm.timerRepeat(iUpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
-	byAlarm[2] = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
-	byAlarm[3] = Alarm.timerRepeat(iUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
-	byAlarm[4] = Alarm.timerRepeat(60, weatherForecastTimer); //update weather forecast every minute - this MUST be interval 60s
-	byAlarm[5] = Alarm.timerRepeat(1, printLcd); //refresh sensor data to lcd every second
+	systemAlarm = Alarm.timerRepeat(1, system);
+	prepareDatasetAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
+	printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+	updateTSAlarm = Alarm.timerRepeat(iUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
+	weatherAlarm = Alarm.timerRepeat(60, weatherForecastTimer); //update weather forecast every minute - this MUST be interval 60s
+	printLcdAlarm = Alarm.timerRepeat(1, printLcd); //refresh sensor data to lcd every second
 	if (bDhcp)
 	{
-		byAlarm[6] = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
+		dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 
 	}	Serial.println(F("Timers initialized"));
-//	byAlarm[7] = Alarm.timerRepeat(5, printDebug);
+	printDebugAlarm = Alarm.timerRepeat(3, printDebug);
 }
 

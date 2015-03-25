@@ -87,17 +87,14 @@ byte iFailedCounter = 0;					//failed thingspeak uploads
 DateTime sysStart;							//time of system start for uptime 
 byte iCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
 String sNow = "";							//current datetime string
-String sUptime = "";						//uptime string
+String sMainUptime = "";					//uptime string
+String sRemoteUptime = "";					//uptime string
 byte byLcdMsgTimeoutCnt = 0;
 boolean bConnectivityCheck = true;
 
 /* weather */
-const char* weather[] = { "stable", "sunny", "cloudy", "unstable", "thunderstorm", "unknown" };
+const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
 byte forecast = 5;
-int minuteCount = 0;
-boolean firstRound = true;
-float pressureAvg[7];
-float dP_dt;
 
 /* array of pointers to iterate through when updating thingspeak channels */
 DataSet *DataSetPointer[] = { (DataSet*)&MainDS, (DataSet*)&RemoteDS, (DataSet*)&SystemDS };
@@ -124,9 +121,15 @@ byte subnet[4];
 byte dns1[4];
 boolean bDhcp;
 
-/* timers */
-byte byAlarm[7];
-boolean bAlarmEnabled[] = { true, true, true, true, true, true, true };
+/* alarms */
+int systemAlarm;
+int prepareDatasetAlarm;
+int printSerialAlarm;
+int updateTSAlarm;
+int weatherAlarm;
+int printLcdAlarm;
+int dhcpAlarm;
+int printDebugAlarm;
 
 /* reset arduino function (must be here)*/
 void(*resetFunc) (void) = 0;
@@ -150,7 +153,7 @@ void setup()
 	setupRTC();
 	setupRadio();
 	setupEthernet();
-	setupTimers();
+	setupAlarms();
 
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
 	MainDS.Size = 5;

@@ -1,17 +1,6 @@
 String floatToString(float val) {
 
-	dtostrf(val, 3, 2, buffer);  //3 is mininum width, 2 is precision; float value is copied onto buff
-
-	/*
-	//convert chararray to string
-	String stringVal = "";     //data on buff is copied to this string
-	for (int i = 0; i < sizeof(charVal); i++)
-	{
-	//Serial.println(charVal[i]);
-	stringVal += charVal[i];
-	}
-	return stringVal;
-	*/
+	dtostrf(val, 1, 1, buffer);  //1 is mininum width, 1 is precision; float value is copied onto buff
 	return buffer;
 }
 

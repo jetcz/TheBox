@@ -17,5 +17,6 @@ void receiveData() {
 		SystemDS.Data[6] = temp[7];
 		SystemDS.Data[7] = temp[8];
 		RemoteDS.Timestamp = now();
+		sRemoteUptime = getUptimeString(TimeSpan(SystemDS.Data[7]));
 	}
 }

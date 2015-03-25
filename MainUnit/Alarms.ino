@@ -1,22 +1,15 @@
 
 void printDebug() {
-	/*
-	char chararr[] = "192 168 0 1";
-	byte bytearr[4] = {0,0,0,0};
-	chArrToByteArr(chararr, bytearr);
-	for (int i = 0; i < 4; i++)
-	{
-	Serial.println(bytearr[i]);
-	}
-	*/
+	//Serial.println(Alarm.active(byAlarm[4]));
 
 	}
+
 
 void system() {
 	sNow = getDateTimeString(now());
 	enableDisableAlarms();
 	lcdBacklight();
-	sUptime = getUptimeString(getUptime());
+	sMainUptime = getUptimeString(getUptime());
 	receiveData();
 	RemoteDS.Valid = isRemoteDataSetValid();
 }
@@ -66,7 +59,7 @@ void printSensorDataSerial(){
 		Serial.println(F("hPa"));
 		Serial.println(sNow);
 		Serial.print(F("Uptime "));
-		Serial.println(sUptime);
+		Serial.println(sMainUptime);
 		Serial.print(F("Free ram "));
 		Serial.println(intToString(freeRam()) + "b (" + floatToString(float(freeRam()) / 8192 * 100) + "%)");
 		Serial.println();
@@ -183,8 +176,7 @@ void thingSpeak(){
 		ledLight(3, 'r');
 		Serial.println(F("Ethernet Shield needs to be restarted!"));
 		Serial.println();
-		Alarm.disable(byAlarm[5]);
-		bAlarmEnabled[5] = false;
+		Alarm.disable(printLcdAlarm);
 		lcd.clear();
 		lcdBacklight();
 		lcd.setCursor(0, 0);
@@ -199,8 +191,7 @@ void thingSpeak(){
 		ledLight(3, 'r');
 		Serial.println(F("Arduino needs to be restarted!"));
 		Serial.println();
-		Alarm.disable(byAlarm[5]);
-		bAlarmEnabled[5] = false;
+		Alarm.disable(printLcdAlarm);
 		lcd.clear();
 		lcdBacklight();
 		lcd.setCursor(0, 0);
@@ -217,30 +208,27 @@ void thingSpeak(){
 void enableDisableAlarms() {
 
 	// enable or disable thingspeak depending on obtained dhcp lease (its no necesary but if we dont have connectioon on startup, its good to disable thingspeak)
-	if (bConnectivityCheck && !bAlarmEnabled[3] && bDhcp)
+	if (bConnectivityCheck && !Alarm.active(updateTSAlarm) && bDhcp)
 	{
 		Serial.println(F("Enabling ThingSpeak functionality"));
-		Alarm.enable(byAlarm[3]);
-		bAlarmEnabled[3] = true;
+		Alarm.enable(updateTSAlarm);
 	}
 	else
-		if (!bConnectivityCheck && bAlarmEnabled[3] && bDhcp)
+		if (!bConnectivityCheck && Alarm.active(updateTSAlarm) && bDhcp)
 		{
 			Serial.print(F("Disabling ThingSpeak functionality"));
-			Alarm.disable(byAlarm[3]);
-			bAlarmEnabled[3] = false;
+			Alarm.disable(updateTSAlarm);
 		}
 
 
 	//enable lcd refreshing after some msg shows up for x sec
-	if (!bAlarmEnabled[5] && byLcdMsgTimeoutCnt > byLcdMsgTimeout)
+	if (!Alarm.active(printLcdAlarm) && byLcdMsgTimeoutCnt > byLcdMsgTimeout)
 	{
 		lcd.clear();
-		Alarm.enable(byAlarm[5]);
-		bAlarmEnabled[5] = true;
+		Alarm.enable(printLcdAlarm);
 		byLcdMsgTimeoutCnt = 0;
 	}
-	else if (!bAlarmEnabled[5] && byLcdMsgTimeoutCnt <= byLcdMsgTimeout)
+	else if (!Alarm.active(printLcdAlarm) && byLcdMsgTimeoutCnt <= byLcdMsgTimeout)
 	{
 		byLcdMsgTimeoutCnt++;
 	}
@@ -253,8 +241,7 @@ void weatherForecastTimer() {
 void dhcp() {
 	if (Ethernet.maintain() % 2 == 1) {  //renew dhcp lease, if failed, set flag
 		bConnectivityCheck = false;
-		Alarm.disable(byAlarm[5]);
-		bAlarmEnabled[5] = false;
+		Alarm.disable(printLcdAlarm);
 		Serial.println();
 		Serial.println(F("Failed to obtain DHCP lease!"));
 		lcd.clear();

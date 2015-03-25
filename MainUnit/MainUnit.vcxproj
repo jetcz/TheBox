@@ -106,7 +106,7 @@
     <None Include="Thingspeak.ino">
       <FileType>CppCode</FileType>
     </None>
-    <None Include="Timers.ino">
+    <None Include="Alarms.ino">
       <FileType>CppCode</FileType>
     </None>
     <None Include="Weather.ino">

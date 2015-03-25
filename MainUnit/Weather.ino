@@ -1,4 +1,8 @@
 int weatherForecast() {
+	static int minuteCount = 0;
+	static boolean firstRound = true;
+	static float pressureAvg[7];
+	static float dP_dt;
 	// Algorithm found here
 	// http://www.freescale.com/files/sensors/doc/app_note/AN3914.pdf
 	//code ripped from here http://forum.micasaverde.com/index.php?topic=23394.0 and modified to use runnig median library to save ram
