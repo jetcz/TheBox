@@ -10,8 +10,8 @@ void system() {
 	enableDisableAlarms();
 	lcdBacklight();
 	sMainUptime = getUptimeString(getUptime());
-	receiveData();
 	RemoteDS.Valid = isRemoteDataSetValid();
+	receiveData();
 }
 
 

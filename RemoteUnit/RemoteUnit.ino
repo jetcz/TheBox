@@ -7,7 +7,7 @@
 #include <JeeLib.h>
 #include <Ports.h>
 
-const boolean debug = false;
+#define debug false
 /* pin mappings
 a0	14
 a1	15
@@ -27,7 +27,6 @@ const int HUMIDITY_PWR_PIN = 4;
 const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
-
 
 char buffer[24];
 #define DHTTYPE DHT22
@@ -57,40 +56,61 @@ ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 void setup() {
 
 	noInterrupts();
+
 #if debug
 	Serial.begin(9600);
 #endif
-
+	attachInterrupt(0, ISRTipCnt, FALLING);
 	setupPins();
-	ds.requestTemperatures();
 	dht.begin();
 	ds.begin();
+	ds.requestTemperatures();
 	while (!driver.init()) {
 		Serial.println("radio init failed");
 		ledLightDigital('r');
 	}
+
 	ledLightDigital('g');
-	attachInterrupt(0, ISRTipCnt, FALLING);
+	delay(200);
+	ledLightDigital('m');
+	delay(200);
+	ledLightDigital('g');
+	delay(200);
 	nRainTips = 0;
 	interrupts();
 }
 
 void loop() {
 	//get sensor data after 20s
-	sensorLoop();
-	Sleepy::loseSomeTime(18365);
+	ledLightDigital('g');
+	ledLightDigital('k');
+	prepareDataSetArrays();
+#if debug
+	printSensorData();
+#endif
+	Sleepy::loseSomeTime(18532);
 
 	//get sensor data after 40s
-	sensorLoop();
-	Sleepy::loseSomeTime(18365);
+	ledLightDigital('g');
+	ledLightDigital('k');
+	prepareDataSetArrays();
+#if debug
+	printSensorData();
+#endif
+	Sleepy::loseSomeTime(18532);
 
 	//get sensor data after 60s
-	sensorLoop();
+	ledLightDigital('g');
+	ledLightDigital('k');
+	prepareDataSetArrays();
+#if debug
+	printSensorData();
+#endif
 	//send sensor data
 	ledLightDigital('b');
 	delayMicroseconds(200);
 	ledLightDigital('k');
 	sendMessage();
-	Sleepy::loseSomeTime(18365);
-	
+	Sleepy::loseSomeTime(18532);
+
 }

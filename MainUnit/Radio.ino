@@ -6,6 +6,7 @@ void receiveData() {
 
 	if (driver.recv(buf, &buflen)) // Non-blocking
 	{
+		ledLight(2, 'b');
 		float temp[9];
 		memcpy(&temp, buf, buflen);
 

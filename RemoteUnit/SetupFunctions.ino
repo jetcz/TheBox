@@ -36,6 +36,8 @@ void setupPins() {
 	digitalWrite(RADIO_TX_PIN, LOW);
 	pinMode(RADIO_TX_PIN, OUTPUT);
 
+	//these stupid sensor must be on all the time otherwise they produce shitty readings
 	digitalWrite(DS_PWR_PIN, HIGH);
+	digitalWrite(DHT22_PWR_PIN, HIGH);
 
 }

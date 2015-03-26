@@ -1,28 +1,21 @@
-void sensorLoop() {
-	powerSensors(true);
-	Sleepy::loseSomeTime(500);
-	ledLightDigital('g');
-	ledLightDigital('k');
-	prepareDataSetArrays();
-	powerSensors(false);
-#if debug
-	printSensorData();
-#endif
-}
-
 void prepareDataSetArrays() {
 
-	fRemoteUnitDataSet[7] = readVcc();							//Vcc
 
 	fRemoteUnitDataSet[0] = getAirTemperature();				//remoteTemperature
 	fRemoteUnitDataSet[1] = getAirHumidity();					//remoteHumidity
 	fRemoteUnitDataSet[2] = getAirHumidex();					//remoteHumidex
+
+	powerSensors(true);
+	fRemoteUnitDataSet[7] = readVcc();
 	fRemoteUnitDataSet[3] = getSoilTemperature();				//remoteSoilTemperature
+
 	fRemoteUnitDataSet[4] = getSoilHumidity();					//remoteSoilHumidity
 	fRemoteUnitDataSet[5] = getLight();							//remoteLight
-	fRemoteUnitDataSet[6] = getRainPerHour();					//rain
+	powerSensors(false);
 
+	fRemoteUnitDataSet[6] = getRainPerHour();					//rain
 	fRemoteUnitDataSet[8] = getUptime();						//uptime
+
 }
 
 void printSensorData() {
@@ -72,13 +65,11 @@ void printSensorData() {
 void powerSensors(boolean state) {
 	if (state)
 	{
-		digitalWrite(DHT22_PWR_PIN, HIGH);
 		digitalWrite(PHOTORESISTOR_PWR_PIN, HIGH);
 		digitalWrite(HUMIDITY_PWR_PIN, HIGH);
 	}
 	else
 	{
-		digitalWrite(DHT22_PWR_PIN, LOW);
 		digitalWrite(PHOTORESISTOR_PWR_PIN, LOW);
 		digitalWrite(HUMIDITY_PWR_PIN, LOW);
 	}
