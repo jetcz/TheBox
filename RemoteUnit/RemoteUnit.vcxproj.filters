@@ -18,10 +18,8 @@
     <None Include="RemoteUnit.ino" />
     <None Include="Misc.ino" />
     <None Include="Sensors.ino" />
-    <None Include="Timers.ino" />
     <None Include="SetupFunctions.ino" />
     <None Include="Led.ino" />
-    <None Include="DataTypesConversion.ino" />
     <None Include="Radio.ino" />
   </ItemGroup>
   <ItemGroup>

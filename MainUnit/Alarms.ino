@@ -87,8 +87,9 @@ void printSensorDataSerial(){
 		Serial.print(F("Light "));
 		Serial.print(RemoteDS.Data[5], 0);
 		Serial.println(F("%"));
-		Serial.print(F("RainTicks "));
-		Serial.println(RemoteDS.Data[6], 0);
+		Serial.print(F("Rain "));
+		Serial.print(RemoteDS.Data[6]);
+		Serial.println(F("mm/h"));
 		Serial.print(F("Voltage "));
 		Serial.print(SystemDS.Data[6], 0);
 		Serial.println(F("mV"));

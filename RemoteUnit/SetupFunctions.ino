@@ -4,7 +4,7 @@ void setupPins() {
 	{
 		pinMode(LED[i], OUTPUT);
 	}
-	//ledLightDigital('k');
+
 
 	//setup power pins	
 	digitalWrite(DHT22_PWR_PIN, LOW);

@@ -4,7 +4,10 @@
 #include <DHT.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <JeeLib.h>
+#include <Ports.h>
 
+const boolean debug = false;
 /* pin mappings
 a0	14
 a1	15
@@ -49,11 +52,15 @@ const float fSoilTemperatureOffset = 0.1;
 unsigned int previousSec = 0; // last time update
 unsigned int interval = 3600; // interval at which to do something (rain mm/h)
 
+ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
 void setup() {
 
 	noInterrupts();
+#if debug
 	Serial.begin(9600);
+#endif
+
 	setupPins();
 	ds.requestTemperatures();
 	dht.begin();
@@ -69,17 +76,21 @@ void setup() {
 }
 
 void loop() {
-	powerSensors(true);
-	delay(500);
-	ledLightDigital('g');
-	delayMicroseconds(1);
-	ledLightDigital('k');
-	prepareDataSetArrays();
-	powerSensors(false);
-	printSensorData();
+	//get sensor data after 20s
+	sensorLoop();
+	Sleepy::loseSomeTime(18365);
+
+	//get sensor data after 40s
+	sensorLoop();
+	Sleepy::loseSomeTime(18365);
+
+	//get sensor data after 60s
+	sensorLoop();
+	//send sensor data
 	ledLightDigital('b');
-	delayMicroseconds(100);
+	delayMicroseconds(200);
 	ledLightDigital('k');
 	sendMessage();
-	delay(4500);
+	Sleepy::loseSomeTime(18365);
+	
 }

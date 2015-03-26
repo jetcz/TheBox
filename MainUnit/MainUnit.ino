@@ -177,7 +177,8 @@ void loop()
 }
 
 //TO DO
-
+//bug thingspeak led is always green
+//handle connectivity check better without dhcp
 //implement ntp
 //ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
 //make web interface

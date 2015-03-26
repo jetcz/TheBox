@@ -86,5 +86,4 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <Radio.ino>
 #include <Sensors.ino>
 #include <SetupFunctions.ino>
-#include <Timers.ino>
 #endif
