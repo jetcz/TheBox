@@ -3,6 +3,7 @@ float getSysTemperature(sensors_event_t event) {
 	float sysTemp;
 	bmp.getEvent(&event);
 	bmp.getTemperature(&sysTemp);
+	if (sysTemp == 85) return -255;
 	rmSysTemp.addValue(sysTemp += fSysTempOffset);
 	return rmSysTemp.getAverage();
 }
@@ -20,6 +21,8 @@ float getMainTemperature() {
 	if (!isnan(t)) {
 		rmMainTemp.addValue(t + fMainTempOffset);
 	}
+	else
+		return -255;
 	return rmMainTemp.getAverage();
 }
 
@@ -29,6 +32,8 @@ float getMainHumidity() {
 	if (!isnan(h)) {
 		rmMainHumidity.addValue(h);
 	}
+	else
+		return -255;
 	return rmMainHumidity.getAverage();
 }
 

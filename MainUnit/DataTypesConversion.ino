@@ -1,6 +1,15 @@
 String floatToString(float val) {
 
-	dtostrf(val, 1, 1, buffer);  //1 is mininum width, 1 is precision; float value is copied onto buff
+	if (int(val * 10) % 10 == 0) // if we have value like 22.0 dont put that zero in the string, lets have just 22
+	{
+		dtostrf(val, 1, 0, buffer);
+	}
+	else
+	{
+		dtostrf(val, 1, 1, buffer);  //1 is mininum width, 1 is precision; float value is copied onto buff
+	}
+
+
 	return buffer;
 }
 

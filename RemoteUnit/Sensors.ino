@@ -126,7 +126,9 @@ byte getLight() {
 
 float getSoilTemperature() {
 	ds.requestTemperatures();
-	SoilTemp.addValue(ds.getTempCByIndex(0) + fSoilTemperatureOffset);
+	float t = ds.getTempCByIndex(0);
+	if (t == 85) return -255;
+	SoilTemp.addValue(t + fSoilTemperatureOffset);
 	return SoilTemp.getAverage();
 }
 

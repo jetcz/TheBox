@@ -4,7 +4,10 @@ void updateThingSpeak(DataSet ds){
 	String s;
 	for (int i = 0; i < ds.Size; i++)
 	{
-		s += intToString(i + 1) + "=" + floatToString(ds.Data[i]);
+		if (ds.Data[i] > -100) //in case we get some broken values which are usualy -255 or something like that
+		{
+			s += intToString(i + 1) + "=" + floatToString(ds.Data[i]);
+		}
 		if (i < ds.Size - 1) {
 			s += "&";
 		}
@@ -14,6 +17,7 @@ void updateThingSpeak(DataSet ds){
 	ledLight(3, 'b');
 	if (client.connect(cThingSpeakAddress, 80)) //string, int
 	{
+		ledLight(3, 'g');
 		Serial.println(F("connected"));
 		//POST update to thingspeak, print line by line
 		client.print(F("POST /update HTTP/1.1\n"));
@@ -28,7 +32,6 @@ void updateThingSpeak(DataSet ds){
 
 		if (client.connected())
 		{
-			ledLight(3, 'g');
 			Serial.println(F("Sending data... "));
 			Serial.println(s);
 			iFailedCounter = 0;
@@ -43,7 +46,6 @@ void updateThingSpeak(DataSet ds){
 			iFailedCounter++;
 			Alarm.disable(printLcdAlarm);
 			lcd.clear();
-			lcdBacklight();
 			lcd.setCursor(0, 0);
 			lcd.print(F("client.connected()"));
 			lcd.setCursor(0, 1);
@@ -68,7 +70,6 @@ void updateThingSpeak(DataSet ds){
 
 		Alarm.disable(printLcdAlarm);
 		lcd.clear();
-		lcd.backlight();
 		lcd.setCursor(0, 0);
 		lcd.print(F("client.connect()"));
 		lcd.setCursor(0, 1);

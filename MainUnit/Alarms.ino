@@ -2,7 +2,7 @@
 void printDebug() {
 	//Serial.println(Alarm.active(byAlarm[4]));
 
-	}
+}
 
 
 void system() {
@@ -88,7 +88,7 @@ void printSensorDataSerial(){
 		Serial.print(RemoteDS.Data[5], 0);
 		Serial.println(F("%"));
 		Serial.print(F("Rain "));
-		Serial.print(RemoteDS.Data[6]);
+		Serial.print(RemoteDS.Data[6], 1);
 		Serial.println(F("mm/h"));
 		Serial.print(F("Voltage "));
 		Serial.print(SystemDS.Data[6], 0);
