@@ -182,17 +182,18 @@ void setupLCD(){
 
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
+	Alarm.timerOnce(5, syncRTCwithNTP);
 	systemAlarm = Alarm.timerRepeat(1, system);
 	prepareDatasetAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
 	printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	updateTSAlarm = Alarm.timerRepeat(iUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
 	weatherAlarm = Alarm.timerRepeat(60, weatherForecastTimer); //update weather forecast every minute - this MUST be interval 60s
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd); //refresh sensor data to lcd every second
+	syncRTCAlarm = Alarm.timerRepeat(0, 0, 0, syncRTCwithNTP); //sync RTC module with NTP every midnight
 	if (bDhcp)
 	{
 		dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 
 	}	Serial.println(F("Timers initialized"));
-	printDebugAlarm = Alarm.timerRepeat(3, printDebug);
 }
 

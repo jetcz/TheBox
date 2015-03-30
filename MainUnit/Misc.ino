@@ -9,20 +9,33 @@ void resetEthShield(int pin) {
 }
 
 boolean isRemoteDataSetValid() {
-	if (now() - RemoteDS.Timestamp.unixtime() > iRemoteDataSetTimeout)
+	boolean v;
+
+	if (now() - RemoteDS.Timestamp.unixtime() > iRemoteDataSetTimeout / 2)
 	{
-		if ((now() - RemoteDS.Timestamp.unixtime()) > (2 * iRemoteDataSetTimeout))
+		if (now() - RemoteDS.Timestamp.unixtime() > iRemoteDataSetTimeout)
 		{
-			ledLight(2, 'r');
-			return false;
+			if ((now() - RemoteDS.Timestamp.unixtime()) > (2 * iRemoteDataSetTimeout))
+			{
+				ledLight(2, 'r');
+				v = false;
+			}
+			ledLight(2, 'c');
+			v = false;
 		}
 		ledLight(2, 'y');
-		return false;
+		v = true;
 	}
 	else {
 		ledLight(2, 'g');
-		return true;
+		v = true;
 	}
+
+	if (SystemDS.Data[6] == 0 || SystemDS.Data[7] == 0)
+	{
+		v = false;
+	}
+	return v;
 }
 
 

@@ -28,6 +28,7 @@ const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
+const int nSleepTime = 18532; //18532;
 char buffer[24];
 #define DHTTYPE DHT22
 OneWire oneWire(DS_DATA_PIN);
@@ -46,7 +47,7 @@ volatile int nRainTips = 0;
 float *Vcc = &fRemoteUnitDataSet[7];
 
 const float fAirTemperatureOffset = -0.5;
-const float fSoilTemperatureOffset = 0.1;
+const float fSoilTemperatureOffset = 0.4;
 
 unsigned int previousSec = 0; // last time update
 unsigned int interval = 3600; // interval at which to do something (rain mm/h)
@@ -56,7 +57,6 @@ ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 void setup() {
 
 	noInterrupts();
-
 #if debug
 	Serial.begin(9600);
 #endif
@@ -81,6 +81,8 @@ void setup() {
 }
 
 void loop() {
+	//Serial.println(millis());
+	//delay(1000);
 	//get sensor data after 20s
 	ledLightDigital('g');
 	ledLightDigital('k');
@@ -88,7 +90,7 @@ void loop() {
 #if debug
 	printSensorData();
 #endif
-	Sleepy::loseSomeTime(18532);
+	Sleepy::loseSomeTime(nSleepTime);
 
 	//get sensor data after 40s
 	ledLightDigital('g');
@@ -97,7 +99,7 @@ void loop() {
 #if debug
 	printSensorData();
 #endif
-	Sleepy::loseSomeTime(18532);
+	Sleepy::loseSomeTime(nSleepTime);
 
 	//get sensor data after 60s
 	ledLightDigital('g');
@@ -111,6 +113,6 @@ void loop() {
 	delayMicroseconds(200);
 	ledLightDigital('k');
 	sendMessage();
-	Sleepy::loseSomeTime(18532);
+	Sleepy::loseSomeTime(nSleepTime);
 
 }

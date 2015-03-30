@@ -28,6 +28,7 @@
     <None Include="Led.ino" />
     <None Include="SDsettings.ino" />
     <None Include="Alarms.ino" />
+    <None Include="Ntp.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">

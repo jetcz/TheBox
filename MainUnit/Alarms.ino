@@ -1,12 +1,18 @@
 
 void printDebug() {
-	//Serial.println(Alarm.active(byAlarm[4]));
+	time_t ntp = time_t(ntpUnixTime(udp));
+	if (ntp != 0)
+	{
+		rtc.adjust(DateTime(ntp));
+	}
 
+	time_t local = myTZ.toLocal(now());
+	Serial.println("LOCAL" + getDateTimeString(local));
 }
 
 
 void system() {
-	sNow = getDateTimeString(now());
+	sNow = getDateTimeString(myTZ.toLocal(now()));
 	enableDisableAlarms();
 	lcdBacklight();
 	sMainUptime = getUptimeString(getUptime());
@@ -31,7 +37,12 @@ void prepareDataSetArrays() {
 	MainDS.Data[1] = getMainHumidity();
 	MainDS.Data[2] = getMainHumidex();
 	MainDS.Data[3] = getMainPir();
-	MainDS.Data[4] = getPressure(event);
+	if (SystemDS.Data[0] == -255)
+	{
+		MainDS.Data[4] = -255;
+	}
+	else MainDS.Data[4] = getPressure(event);
+
 
 }
 
@@ -179,7 +190,6 @@ void thingSpeak(){
 		Serial.println();
 		Alarm.disable(printLcdAlarm);
 		lcd.clear();
-		lcdBacklight();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Ethernet Shield"));
 		lcd.setCursor(0, 1);
@@ -237,6 +247,25 @@ void enableDisableAlarms() {
 
 void weatherForecastTimer() {
 	forecast = weatherForecast();
+}
+
+void syncRTCwithNTP() {
+	Alarm.disable(printLcdAlarm);
+	lcd.clear();
+	lcd.setCursor(0, 0);
+
+	unsigned long ntp = ntpUnixTime(udp);
+	if (ntp != 0)
+	{
+		rtc.adjust(DateTime(ntp));
+		lcd.print(F("NTP timesync success"));
+		Serial.println(F("NTP time sync success"));
+	}
+	else
+	{
+		lcd.print(F("NTP timesync failed!"));
+		Serial.println(F("NTP time sync failed!"));
+	}
 }
 
 void dhcp() {

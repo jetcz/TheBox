@@ -85,6 +85,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <Lcd.ino>
 #include <Led.ino>
 #include <Misc.ino>
+#include <Ntp.ino>
 #include <Radio.ino>
 #include <Relays.ino>
 #include <SDsettings.ino>

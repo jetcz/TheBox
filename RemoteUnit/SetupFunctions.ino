@@ -22,6 +22,8 @@ void setupPins() {
 	digitalWrite(17, LOW);
 	pinMode(16, OUTPUT);
 	digitalWrite(16, LOW);
+	pinMode(9, OUTPUT);
+	digitalWrite(9, LOW);
 	
 	//tipping bucket
 	pinMode(2, INPUT_PULLUP);

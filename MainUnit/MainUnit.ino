@@ -6,10 +6,12 @@
 #include <DHT.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#include <EthernetUdp.h>
 #include <utility/w5100.h>
 #include <SD.h>
 #include <Time.h>
 #include <TimeAlarms.h>
+#include <Timezone.h>
 #include <RunningAverage.h>
 #include <WebServer.h>
 #include <RH_ASK.h>
@@ -22,7 +24,7 @@
 /* pins */
 const int RESET_ETH_SHIELD_PIN = 14;
 const int DHT22_PIN = 9;
-const int PIR_PIN = 8;
+const int PIR_PIN = 19;
 const int ETH_SELECT_PIN = 10;
 const int SD_SELECT_PIN = 4;
 const int RELAY_PIN[4] = { 22, 24, 26, 28 };
@@ -34,7 +36,6 @@ const int LCD_SWITCH_PWR_PIN = 30;
 const int RADIO_RX_PIN = 17;
 const int RADIO_CTRL_PIN = 18;
 
-
 /* ThingSpeak settings */
 const char cThingSpeakAddress[] = "api.thingspeak.com";
 //const char cThingSpeakAddress[] = "184.106.153.149";
@@ -42,6 +43,15 @@ const byte iUpdateThingSpeakInterval = 20;
 const byte iRemoteDataSetTimeout = 120;		//for how long is dataset valid and send to thingspeak (sec)
 const byte iRestartEthernetThreshold = 10;	//if thingspeak update fails x times -> ethernet shield reset
 const byte iRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
+
+/* ntp server */
+const char timeServer[] = "pool.ntp.org";
+
+/* timezone settings */
+TimeChangeRule CEST = { "CEST", Last, Sun, Mar, 2, 120 };    //Daylight time = UTC + 2 hours
+TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };     //Standard time = UTC + 1 hours
+Timezone myTZ(CET, CEST);
+TimeChangeRule *tcr;
 
 /* lcd settings */
 const byte byLcdMsgTimeout = 4;
@@ -68,6 +78,7 @@ RTC_DS1307 rtc;
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 DHT dht(DHT22_PIN, DHTTYPE);
 EthernetClient client;
+EthernetUDP udp;
 File myFile;
 RH_ASK driver(2000, RADIO_RX_PIN, 0);
 WebServer webserver(PREFIX, 80);
@@ -76,7 +87,6 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 DataSet MainDS;
 DataSet RemoteDS;
 DataSet SystemDS;
-DataSet RelayDS;
 
 /* general buffer for various usages (datatypes conversion, reading ini settings)*/
 const size_t bufferLen = 30;
@@ -111,7 +121,7 @@ const byte iPressureOffset = 24;
 /* main dht22 */
 RunningAverage rmMainTemp(6);
 RunningAverage rmMainHumidity(6);
-const float fMainTempOffset = -1.2;
+const float fMainTempOffset = -0.9;
 
 /* network settings */
 byte mac[] = { 0xB0, 0x0B, 0x5B, 0x00, 0xB5, 0x00 };
@@ -129,10 +139,11 @@ int updateTSAlarm;
 int weatherAlarm;
 int printLcdAlarm;
 int dhcpAlarm;
-int printDebugAlarm;
+int syncRTCAlarm;
 
 /* reset arduino function (must be here)*/
 void(*resetFunc) (void) = 0;
+
 
 void setup()
 {
