@@ -17,7 +17,7 @@ long readVcc() {
 	uint8_t high = ADCH; // unlocks both
 	long result = (high << 8) | low;
 	//result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
-	result = 1122500L / result;
+	result = 1101000L / result;
 	return result; // Vcc in millivolts
 }
 
@@ -43,22 +43,22 @@ int millisRollover() {
   unsigned long halfwayMillis = 2147483647; // this is halfway to the max millis value (17179868 for earlier versions of Arduino)
 
   if (now > halfwayMillis) { // as long as the value is greater than halfway to the max
-    readyToRoll = true; // you are ready to roll over
+	readyToRoll = true; // you are ready to roll over
   }
 
   if (readyToRoll == true && now < halfwayMillis) {
-    // if we've previously made it to halfway
-    // and the current millis() value is now _less_ than the halfway mark
-    // then we have rolled over
-    numRollovers++; // add one to the count the number of rollovers
-    readyToRoll = false; // we're no longer past halfway
+	// if we've previously made it to halfway
+	// and the current millis() value is now _less_ than the halfway mark
+	// then we have rolled over
+	numRollovers++; // add one to the count the number of rollovers
+	readyToRoll = false; // we're no longer past halfway
   } 
   return numRollovers;
 }
 
 //get uptime in seconds
-int getUptime() {
-	static int nUptime;
+float getUptime() {
+	static float nUptime;
 	nUptime = 4294967 * millisRollover() + round(millis() / 1000);
 	return nUptime;
 }

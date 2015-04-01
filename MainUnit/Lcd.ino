@@ -56,19 +56,28 @@ void printLcdScreen2() {
 }
 
 void printLcdScreen3() {
-	//line 3
-	lcd.setCursor(0, 2);
+	//line 1
+	lcd.setCursor(0, 0);
 	lcd.print(SystemDS.Data[0], 1);
 	lcd.print(F("C"));
-	lcd.setCursor(20 - sMainUptime.length(), 2);
+	lcd.setCursor(20 - sMainUptime.length(), 0);
 	lcd.print(sMainUptime);
 
-	//line 4
-	lcd.setCursor(0, 3);
+	//line 2
+	lcd.setCursor(0, 1);
 	lcd.print(SystemDS.Data[6], 0);
 	lcd.print(F("mV"));
-	lcd.setCursor(20 - sRemoteUptime.length(), 3);
+	lcd.setCursor(20 - sRemoteUptime.length(), 1);
 	lcd.print(sRemoteUptime);
+
+	//3
+	String s = intToString(now() - RemoteDS.Timestamp.unixtime());
+	lcd.setCursor(0, 2);
+	lcd.print(F("RemoteDS age"));
+	lcd.setCursor(13, 2);
+	lcd.print(F("       "));
+	lcd.setCursor(20 - s.length(), 2);
+	lcd.print(s);
 
 }
 

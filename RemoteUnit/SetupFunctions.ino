@@ -40,6 +40,8 @@ void setupPins() {
 
 	//these stupid sensor must be on all the time otherwise they produce shitty readings
 	digitalWrite(DS_PWR_PIN, HIGH);
-	digitalWrite(DHT22_PWR_PIN, HIGH);
+	
+	pinMode(10, OUTPUT);
+	digitalWrite(10, HIGH);
 
 }

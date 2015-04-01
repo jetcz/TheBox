@@ -40,18 +40,17 @@ const int RADIO_CTRL_PIN = 18;
 const char cThingSpeakAddress[] = "api.thingspeak.com";
 //const char cThingSpeakAddress[] = "184.106.153.149";
 const byte iUpdateThingSpeakInterval = 20;
-const byte iRemoteDataSetTimeout = 120;		//for how long is dataset valid and send to thingspeak (sec)
+const byte iRemoteDataSetTimeout = 180;		//for how long is dataset valid and send to thingspeak (sec)
 const byte iRestartEthernetThreshold = 10;	//if thingspeak update fails x times -> ethernet shield reset
 const byte iRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
 
 /* ntp server */
-const char timeServer[] = "pool.ntp.org";
+const char timeServer[] = "tik.cesnet.cz";
 
 /* timezone settings */
-TimeChangeRule CEST = { "CEST", Last, Sun, Mar, 2, 120 };    //Daylight time = UTC + 2 hours
-TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };     //Standard time = UTC + 1 hours
-Timezone myTZ(CET, CEST);
-TimeChangeRule *tcr;
+TimeChangeRule CEST = { "CEST", Last, Sun, Mar, 2, 120 };    //summer time = UTC + 2 hours
+TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };     //winter time = UTC + 1 hours
+Timezone myTZ(CEST, CET);
 
 /* lcd settings */
 const byte byLcdMsgTimeout = 4;
@@ -80,7 +79,7 @@ DHT dht(DHT22_PIN, DHTTYPE);
 EthernetClient client;
 EthernetUDP udp;
 File myFile;
-RH_ASK driver(2000, RADIO_RX_PIN, 0);
+RH_ASK driver(1000, RADIO_RX_PIN, 0);
 WebServer webserver(PREFIX, 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 

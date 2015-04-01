@@ -28,13 +28,19 @@ const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
-const int nSleepTime = 18532; //18532;
+
+const int nSleepTime2 = 1000;
+#if debug
+const int nSleepTime = 18548 - nSleepTime2 - 1000; 
+#else
+const int nSleepTime = 18548 - nSleepTime2;
+#endif
 char buffer[24];
 #define DHTTYPE DHT22
 OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
 DHT dht(DHT22_DATA_PIN, DHTTYPE);
-RH_ASK driver(2000, 14, RADIO_TX_PIN);
+RH_ASK driver(1000, 14, RADIO_TX_PIN);
 RunningAverage Light(3);
 RunningAverage AirTemp(3);
 RunningAverage AirHum(3);
@@ -81,36 +87,47 @@ void setup() {
 }
 
 void loop() {
-	//Serial.println(millis());
-	//delay(1000);
+
 	//get sensor data after 20s
+	digitalWrite(DHT22_PWR_PIN, HIGH);
+	Sleepy::loseSomeTime(nSleepTime2);
 	ledLightDigital('g');
 	ledLightDigital('k');
 	prepareDataSetArrays();
+	digitalWrite(DHT22_PWR_PIN, LOW);
 #if debug
 	printSensorData();
+	delay(1000);
 #endif
 	Sleepy::loseSomeTime(nSleepTime);
 
 	//get sensor data after 40s
+	digitalWrite(DHT22_PWR_PIN, HIGH);
+	Sleepy::loseSomeTime(nSleepTime2);
 	ledLightDigital('g');
 	ledLightDigital('k');
 	prepareDataSetArrays();
+	digitalWrite(DHT22_PWR_PIN, LOW);
 #if debug
 	printSensorData();
+	delay(1000);
 #endif
 	Sleepy::loseSomeTime(nSleepTime);
 
 	//get sensor data after 60s
+	digitalWrite(DHT22_PWR_PIN, HIGH);
+	Sleepy::loseSomeTime(nSleepTime2);
 	ledLightDigital('g');
 	ledLightDigital('k');
 	prepareDataSetArrays();
+	digitalWrite(DHT22_PWR_PIN, LOW);
 #if debug
 	printSensorData();
+	delay(1000);
 #endif
 	//send sensor data
 	ledLightDigital('b');
-	delayMicroseconds(200);
+	delayMicroseconds(150);
 	ledLightDigital('k');
 	sendMessage();
 	Sleepy::loseSomeTime(nSleepTime);

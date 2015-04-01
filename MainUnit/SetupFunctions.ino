@@ -182,7 +182,7 @@ void setupLCD(){
 
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
-	Alarm.timerOnce(5, syncRTCwithNTP);
+//	Alarm.timerOnce(5, syncRTCwithNTP);
 	systemAlarm = Alarm.timerRepeat(1, system);
 	prepareDatasetAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
 	printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
