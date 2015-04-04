@@ -140,17 +140,18 @@ void printLcd() {
 
 
 void thingSpeak(){
-	//before we update thingspeak, check if we are supposed to send RemoteDataSet and if it is still valid, if not, return from this funct.
+	//before we update thingspeak, check if the dataset is valid 
 	if (!DataSetPointer[iCurrentDataSet]->Valid)
 	{
-		if (iCurrentDataSet == 1){	//we have remote voltage and remote uptime in system dataset, so if the remote data set is not valid, we must omit those values
-			SystemDS.Size = 6;
-		}
+
 		Serial.println();
 		Serial.println(F("DataSet not valid, aborting upload!"));
 		iCurrentDataSet++;
 		return; //cancel thingspeak update
 	}
+
+	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
+	if (RemoteDS.Valid == false) SystemDS.Size = 6;
 	else SystemDS.Size = 8;
 
 	//close previous connnection

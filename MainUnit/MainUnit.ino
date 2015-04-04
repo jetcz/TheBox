@@ -17,6 +17,7 @@
 #include <RH_ASK.h>
 #include <LiquidCrystal_I2C.h>
 #include <IniFile.h>
+#include "avr/pgmspace.h"
 #include "DataStructures.h"
 
 //////////////////////USER CONFIGURABLE///////////////////////////////////
@@ -143,6 +144,137 @@ int syncRTCAlarm;
 /* reset arduino function (must be here)*/
 void(*resetFunc) (void) = 0;
 
+/* commands for webserver */
+void sensorsCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	if (type == WebServer::POST)
+	{
+		bool repeat;
+		char name[16], value[16];
+		do
+		{
+			/* readPOSTparam returns false when there are no more parameters
+			* to read from the input.  We pass in buffers for it to store
+			* the name and value strings along with the length of those
+			* buffers. */
+			repeat = server.readPOSTparam(name, 16, value, 16);
+
+			//look for parameters
+			if (strcmp(name, "r1") == 0)
+			{
+				byRelay[0] = strtoul(value, NULL, 10);
+			}
+			if (strcmp(name, "r2") == 0)
+			{
+				byRelay[1] = strtoul(value, NULL, 10);
+			}
+			if (strcmp(name, "r3") == 0)
+			{
+				byRelay[2] = strtoul(value, NULL, 10);
+			}
+			if (strcmp(name, "r4") == 0)
+			{
+				byRelay[3] = strtoul(value, NULL, 10);
+			}
+		} while (repeat);
+
+		// after procesing the POST data, tell the web browser to reload
+		// the page using a GET method. 
+		server.httpSeeOther(PREFIX);
+		return;
+	}
+
+	/* for a GET or HEAD, send the standard "it's all OK headers" */
+	server.httpSuccess("text/html", "Connection: keep-alive"CRLF);
+
+	/* we don't output the body for a HEAD request */
+	if (type == WebServer::GET)
+	{
+		myFile = SD.open("/www/index.htm");        // open web page file
+		if (myFile)   {
+			int16_t c;
+			while ((c = myFile.read()) >= 0) {
+				server.print((char)c);
+			}
+			myFile.close();
+		}
+		else server.print(F("SD failed"));
+	}
+
+}
+void XMLresponseCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	if (type == WebServer::POST)
+	{
+		server.httpFail();
+		return;
+	}
+	server.httpSuccess("text/xml", "Connection: keep-alive"CRLF);
+
+	if (type == WebServer::GET)
+	{
+
+		P(tag_start_sensor) = "<sensor>";
+		P(tag_end_sensor) = "</sensor>";
+
+		server.print(F("<?xml version = \"1.0\" ?>"));
+		server.print(F("<inputs>"));
+		server.print(F("<sensors>"));
+
+		server.printP(tag_start_sensor);
+		server.print(MainDS.Data[0], 1); //maintemp
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(RemoteDS.Data[0], 1); //remoteairtemp
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(RemoteDS.Data[3], 1); //remotesoiltemp
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(MainDS.Data[1], 0); //mainhum
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(RemoteDS.Data[1], 0); //remoteairhum
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(RemoteDS.Data[4], 0); //remotesoilhum
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(MainDS.Data[4], 1); //pressure
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(weather[forecast]); //weather
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(RemoteDS.Data[5], 0); //light
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(RemoteDS.Data[6], 1); //rain
+		server.printP(tag_end_sensor);
+
+		server.print(F("</sensors>"));
+
+
+		server.print(F("<relays>"));
+		for (int i = 0; i < 4; i++)
+		{
+			server.print(F("<relay>"));
+			server.print(String(byRelay[i]));
+			server.print(F("</relay>"));
+		}
+		server.print(F("</relays>"));
+		server.print(F("</inputs>"));
+	}
+}
 
 void setup()
 {
@@ -165,6 +297,10 @@ void setup()
 	setupEthernet();
 	setupAlarms();
 
+	webserver.setDefaultCommand(&sensorsCmd);
+	webserver.addCommand("sensors_relays", XMLresponseCmd);
+	webserver.begin();
+
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
 	MainDS.Size = 5;
 	MainDS.Valid = true;
@@ -172,6 +308,7 @@ void setup()
 	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
 	RemoteDS.Size = 7;
 	RemoteDS.Valid = false;
+	RemoteDS.Timestamp = sysStart.unixtime() - iRemoteDataSetTimeout;
 
 	SystemDS.APIkey = "GNQST00GBW05EYGC";
 	SystemDS.Size = 8;
@@ -184,11 +321,13 @@ void setup()
 void loop()
 {
 	Alarm.delay(0); //run alarms without any delay so the loop isn't slowed down
+	webserver.processConnection();
 }
 
 //TO DO
-//bug thingspeak led is always green
+//clean and organize project - commands for webduino shouldnt need to be in main sketch
+//refactor command functions and get rid of unecessary buffers
+//www - set status colors - not currently working
 //handle connectivity check better without dhcp
-//implement ntp
 //ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
-//make web interface
+

@@ -170,7 +170,7 @@ void setupEthernet() {
 	}
 	//this gives client.connect() max timeout approx 3s
 	W5100.setRetransmissionTime(0x07D0);
-	W5100.setRetransmissionCount(3); 
+	W5100.setRetransmissionCount(3);
 }
 
 
@@ -182,10 +182,11 @@ void setupLCD(){
 
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
-//	Alarm.timerOnce(5, syncRTCwithNTP);
+	Alarm.timerOnce(100, setupEthernet);
+	//	Alarm.timerOnce(180, syncRTCwithNTP);
 	systemAlarm = Alarm.timerRepeat(1, system);
 	prepareDatasetAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
-	printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+//	printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	updateTSAlarm = Alarm.timerRepeat(iUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
 	weatherAlarm = Alarm.timerRepeat(60, weatherForecastTimer); //update weather forecast every minute - this MUST be interval 60s
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd); //refresh sensor data to lcd every second
