@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The Box - Sensors </title>
+    <script>
+        r1 = "";
+        r2 = "";
+        r3 = "";
+        r4 = "";
+        function getSensorsRelays() {
+            nocache = "&nocache=" + Math.random() * 1000000;
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        if (this.responseXML != null) {
+                            // XML file received - contains analog values, switch values and LED states
+                            var count;
+                            // get analog inputs
+                            var num_an = this.responseXML.getElementsByTagName('sensor').length;
+                            for (count = 0; count < num_an; count++) {
+                                document.getElementsByClassName("sensor")[count].innerHTML =
+                                    this.responseXML.getElementsByTagName('sensor')[count].childNodes[0].nodeValue.replace(/\s+/, "");
+
+                            }
+                            var num_an = this.responseXML.getElementsByTagName('relay').length;
+
+                            var statuses = document.getElementsByClassName("status");
+                            for (count = 0; count < num_an; count++) {
+                                var state = this.responseXML.getElementsByTagName('relay')[count].childNodes[0].nodeValue;
+                                var name = "r" + +String(count + 1);
+                                var mode = document.getElementsByName(name);
+                                switch (parseInt(state)) {
+                                    case 1:
+                                        mode[0].checked = true;
+                                        statuses[count].childNodes[0].className = "on";
+                                        break;
+                                    case 0:
+                                        mode[1].checked = true;
+                                        statuses[count].childNodes[0].className = "off";
+                                        break;
+                                    case 2:
+                                        mode[2].checked = true;
+                                        statuses[count].childNodes[0].className = "auto";
+                                        break;
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // send HTTP GET request with LEDs to switch on/off if any
+            // request.open("GET", "sensors_relays" + r1 + r2 + r3 + r4 + nocache, true);
+            request.open("GET", "sensors_relays", true);
+            request.send(null);
+            setTimeout('getSensorsRelays()', 10000);
+            r1 = "";
+            r2 = "";
+            r3 = "";
+            r4 = "";
+        }
+        function GetButton1() {
+            if (LED3_state === 1) {
+                LED3_state = 0;
+                strLED3 = "&LED3=0";
+            }
+            else {
+                LED3_state = 1;
+                strLED3 = "&LED3=1";
+            }
+        }
+    </script>
+    <style media="screen" type="text/css">
+        .datagrid table {
+            border-collapse: collapse;
+            text-align: left;
+            width: 100%;
+        }
+
+        .datagrid {
+            font: normal 12px/150% Arial, Helvetica, sans-serif;
+            background: #fff;
+            overflow: hidden;
+            border: 5px solid #006699;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            width: 700px;
+        }
+
+            .datagrid table td, .datagrid table th {
+                padding: 9px 10px;
+            }
+
+            .datagrid table thead th {
+                background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );
+                background: -moz-linear-gradient( center top, #006699 5%, #00557F 100% );
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#006699', endColorstr='#00557F');
+                background-color: #006699;
+                color: #FFFFFF;
+                font-size: 15px;
+                font-weight: bold;
+                border-left: 1px solid #0070A8;
+                text-align: center;
+            }
+
+        .soil {
+            background: #eac986;
+        }
+
+        .air {
+            background: #E1EEF4;
+        }
+
+        .light {
+            background: #ffffe0;
+        }
+
+        .rain {
+            background: #bfe7f7;
+        }
+
+        .nan {
+            background: #d0d0d0;
+        }
+
+        .datagrid table thead th:first-child {
+            border: none;
+        }
+
+        .datagrid table tbody td {
+            border-left: 1px solid #E1EEF4;
+            font-weight: bold;
+            text-align:center;
+        }
+
+            .datagrid table tbody td:first-child {
+                border-left: none;
+            }
+
+        .datagrid table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .datagrid table tbody .leftHeader {
+            background: #00557F;
+            font-size: 15px;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-align: right;
+        }
+
+        .datagrid table tbody .off {
+            background: #c80000;
+            color: #FFFFFF;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+       .datagrid table tbody .on {
+            background: #109800;
+            color: #FFFFFF;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .auto {
+            background: #00557F;
+        }
+
+    </style>
+</head>
+<body onload="getSensorsRelays()">
+    <div class="datagrid">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2">
+                        <h1>The Box</h1>
+                    </th>
+                    <th>Main Unit</th>
+                    <th colspan="2">Remote Unit</th>
+                </tr>
+                <tr>
+                    <th>Air</th>
+                    <th>Air</th>
+                    <th>Soil</th>
+                </tr>
+            </thead>
+            <tr>
+                <td class="leftHeader">Temperature</td>
+                <td class="air"><span class="sensor"></span>°C</td>
+                <td class="air"><span class="sensor"></span>°C</td>
+                <td class="soil"><span class="sensor"></span>°C</td>
+            </tr>
+            <tr>
+                <td class="leftHeader">Humidity</td>
+                <td class="air"><span class="sensor"></span>%RH</td>
+                <td class="air"><span class="sensor"></span>%RH</td>
+                <td class="soil"><span class="sensor"></span>%RH</td>
+            </tr>
+            <tr>
+                <td class="leftHeader">Pressure / Weather</td>
+                <td colspan="3"><span class="sensor"></span>hPa&nbsp;/&nbsp;<span class="sensor"></span></td>
+            </tr>
+            <tr>
+                <td class="leftHeader">Light</td>
+                <td class="nan"></td>
+                <td colspan="2" class="light"><span class="sensor"></span>%</td>
+            </tr>
+            <tr>
+                <td class="leftHeader">Rain</td>
+                <td class="nan">&nbsp;</td>
+                <td colspan="2" class="rain"><span class="sensor"></span>mm/h</td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div class="datagrid">
+        <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>
+                        <h2>Relays</h2>
+                    </th>
+                    <th>Relay 1<br />
+                        (Left socket)
+                    </th>
+                    <th>Relay 2<br>
+                        (Bottom terminal)
+                    </th>
+                    <th>Relay 3<br>
+                        (Top terminal)
+                    </th>
+                    <th>Relay 4<br>
+                        (Right socket)
+                    </th>
+                </tr>
+            </thead>
+            <tr>
+                <td class="leftHeader">Status</td>
+                <td class="status">
+                    <p class="auto">&nbsp;</p>
+                </td>
+                <td class="status">
+                    <p class="auto">&nbsp;</p>
+                </td>
+                <td class="status">
+                    <p class="auto">&nbsp;</p>
+                </td>
+                <td class="status">
+                    <p class="auto">&nbsp;</p>
+                </td>
+            </tr>
+            <tr>
+                <td class="on">ON</td>
+                <td>
+                    <input type="radio" name="r1" value="1">
+                </td>
+                <td>
+                    <input type="radio" name="r2" value="1">
+                </td>
+                <td>
+                    <input type="radio" name="r3" value="1">
+                </td>
+                <td>
+                    <input type="radio" name="r4" value="1">
+                </td>
+            </tr>
+            <tr>
+                <td class="off">OFF</td>
+                <td>
+                    <input type="radio" name="r1" value="0">
+                </td>
+                <td>
+                    <input type="radio" name="r2" value="0">
+                </td>
+                <td>
+                    <input type="radio" name="r3" value="0">
+                </td>
+                <td>
+                    <input type="radio" name="r4" value="0">
+                </td>
+            </tr>
+            <tr>
+                <td class="leftHeader">AUTO</td>
+                <td>
+                    <input type="radio" name="r1" value="2">
+                </td>
+                <td>
+                    <input type="radio" name="r2" value="2">
+                </td>
+                <td>
+                    <input type="radio" name="r3" value="2">
+                </td>
+                <td>
+                    <input type="radio" name="r4" value="2">
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
