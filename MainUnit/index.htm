@@ -1,14 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>The Box - Sensors </title>
+    <title>The Box - Home</title>
     <script>
-        r1 = "";
-        r2 = "";
-        r3 = "";
-        r4 = "";
-        function getSensorsRelays() {
-            nocache = "&nocache=" + Math.random() * 1000000;
+
+        function onLoad() {
+
+            getSensors();
+            //setTimeout('getSensors()', 10000);
+            setInterval(getSensors, 10000);
+
+            var rb = document.getElementsByName('r1');
+            for (i = 0; i < rb.length; i++) {
+                rb[i].onclick = function () {
+                    var request = new XMLHttpRequest();
+                    request.open("POST", "relayCmd", false);
+                    request.send("1" + "=" + this.value);
+                    getSensors();
+                    //setTimeout(getSensors, 1000);
+                };
+            }
+
+            var rb = document.getElementsByName('r2');
+            for (i = 0; i < rb.length; i++) {
+                rb[i].onclick = function () {
+                    var request = new XMLHttpRequest();
+                    request.open("POST", "relayCmd", false);
+                    request.send("2" + "=" + this.value);
+                    getSensors();
+                    //setTimeout(getSensors, 1000);
+                };
+            }
+
+            var rb = document.getElementsByName('r3');
+            for (i = 0; i < rb.length; i++) {
+                rb[i].onclick = function () {
+                    var request = new XMLHttpRequest();
+                    request.open("POST", "relayCmd", false);
+                    request.send("3" + "=" + this.value);
+                    getSensors();
+                    //setTimeout(getSensors, 1000);
+                };
+            }
+
+            var rb = document.getElementsByName('r4');
+            for (i = 0; i < rb.length; i++) {
+                rb[i].onclick = function () {
+                    var request = new XMLHttpRequest();
+                    request.open("POST", "relayCmd", false);
+                    request.send("4" + "=" + this.value);
+                    getSensors();
+                    //setTimeout(getSensors, 1000);
+                };
+            }
+
+        }
+
+        function getSensors() {
             var request = new XMLHttpRequest();
             request.onreadystatechange = function () {
                 if (this.readyState == 4) {
@@ -16,60 +64,60 @@
                         if (this.responseXML != null) {
                             // XML file received - contains analog values, switch values and LED states
                             var count;
-                            // get analog inputs
+                            // get sensor vals
                             var num_an = this.responseXML.getElementsByTagName('sensor').length;
                             for (count = 0; count < num_an; count++) {
                                 document.getElementsByClassName("sensor")[count].innerHTML =
                                     this.responseXML.getElementsByTagName('sensor')[count].childNodes[0].nodeValue.replace(/\s+/, "");
 
                             }
+                            //preset radio butons
                             var num_an = this.responseXML.getElementsByTagName('relay').length;
-
-                            var statuses = document.getElementsByClassName("status");
                             for (count = 0; count < num_an; count++) {
-                                var state = this.responseXML.getElementsByTagName('relay')[count].childNodes[0].nodeValue;
-                                var name = "r" + +String(count + 1);
-                                var mode = document.getElementsByName(name);
-                                switch (parseInt(state)) {
+                                var mode = this.responseXML.getElementsByTagName('relay')[count].childNodes[0].nodeValue;
+                                var name = "r" + String(count + 1);
+                                var elements = document.getElementsByName(name);
+                                switch (parseInt(mode)) {
                                     case 1:
-                                        mode[0].checked = true;
-                                        statuses[count].childNodes[0].className = "on";
+                                        elements[0].checked = true;
                                         break;
                                     case 0:
-                                        mode[1].checked = true;
-                                        statuses[count].childNodes[0].className = "off";
+                                        elements[1].checked = true;
                                         break;
                                     case 2:
-                                        mode[2].checked = true;
-                                        statuses[count].childNodes[0].className = "auto";
+                                        elements[2].checked = true;
+                                        break;
+                                    default:
                                         break;
 
+                                }
+                            }
+
+                            //preset relay state labels
+                            var num_an = this.responseXML.getElementsByTagName('state').length;
+                            for (count = 0; count < num_an; count++) {
+                                var state = this.responseXML.getElementsByTagName('state')[count].childNodes[0].nodeValue;
+                                var id = "s" + String(count + 1);
+                                var element = document.getElementById(id);
+                                switch (parseInt(state)) {
+                                    case 1:
+                                        element.className = "on";
+                                        break;
+                                    case 0:
+                                        element.className = "off";
+                                        break;
+                                    default:
+                                        break;
                                 }
                             }
                         }
                     }
                 }
             }
-            // send HTTP GET request with LEDs to switch on/off if any
-            // request.open("GET", "sensors_relays" + r1 + r2 + r3 + r4 + nocache, true);
-            request.open("GET", "sensors_relays", true);
+            request.open("GET", "XMLresponseCmd", true);
             request.send(null);
-            setTimeout('getSensorsRelays()', 10000);
-            r1 = "";
-            r2 = "";
-            r3 = "";
-            r4 = "";
         }
-        function GetButton1() {
-            if (LED3_state === 1) {
-                LED3_state = 0;
-                strLED3 = "&LED3=0";
-            }
-            else {
-                LED3_state = 1;
-                strLED3 = "&LED3=1";
-            }
-        }
+
     </script>
     <style media="screen" type="text/css">
         .datagrid table {
@@ -132,7 +180,7 @@
         .datagrid table tbody td {
             border-left: 1px solid #E1EEF4;
             font-weight: bold;
-            text-align:center;
+            text-align: center;
         }
 
             .datagrid table tbody td:first-child {
@@ -159,7 +207,7 @@
             text-align: right;
         }
 
-       .datagrid table tbody .on {
+        .datagrid table tbody .on {
             background: #109800;
             color: #FFFFFF;
             font-size: 15px;
@@ -170,10 +218,9 @@
         .auto {
             background: #00557F;
         }
-
     </style>
 </head>
-<body onload="getSensorsRelays()">
+<body onload="onLoad()">
     <div class="datagrid">
         <table>
             <thead>
@@ -242,17 +289,13 @@
             </thead>
             <tr>
                 <td class="leftHeader">Status</td>
-                <td class="status">
-                    <p class="auto">&nbsp;</p>
+                <td id="s1">&nbsp;
                 </td>
-                <td class="status">
-                    <p class="auto">&nbsp;</p>
+                <td id="s2">&nbsp;
                 </td>
-                <td class="status">
-                    <p class="auto">&nbsp;</p>
+                <td id="s3">&nbsp;
                 </td>
-                <td class="status">
-                    <p class="auto">&nbsp;</p>
+                <td id="s4">&nbsp;
                 </td>
             </tr>
             <tr>

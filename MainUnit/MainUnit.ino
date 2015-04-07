@@ -66,8 +66,8 @@ const byte iUpdateSensorsInterval = 10;
 relay config must be int following format:
 modes = 0, 1, 1, 2 where 0 is off, 1 is on and 2 is auto */
 
-const char *ethernet = "/settings/ethernet.ini";
-const char *relays = "/settings/relays.ini";
+char *ethernet = "/settings/ethernet.ini";
+char *relays = "/settings/relays.ini";
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -101,6 +101,7 @@ String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
 byte byLcdMsgTimeoutCnt = 0;
 boolean bConnectivityCheck = true;
+boolean bRelaySettingsChanged = false;
 
 /* weather */
 const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -140,6 +141,7 @@ int weatherAlarm;
 int printLcdAlarm;
 int dhcpAlarm;
 int syncRTCAlarm;
+int writeSDAlarm;
 
 /* reset arduino function (must be here)*/
 void(*resetFunc) (void) = 0;
@@ -147,47 +149,7 @@ void(*resetFunc) (void) = 0;
 /* commands for webserver */
 void sensorsCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
-	if (type == WebServer::POST)
-	{
-		bool repeat;
-		char name[16], value[16];
-		do
-		{
-			/* readPOSTparam returns false when there are no more parameters
-			* to read from the input.  We pass in buffers for it to store
-			* the name and value strings along with the length of those
-			* buffers. */
-			repeat = server.readPOSTparam(name, 16, value, 16);
-
-			//look for parameters
-			if (strcmp(name, "r1") == 0)
-			{
-				byRelay[0] = strtoul(value, NULL, 10);
-			}
-			if (strcmp(name, "r2") == 0)
-			{
-				byRelay[1] = strtoul(value, NULL, 10);
-			}
-			if (strcmp(name, "r3") == 0)
-			{
-				byRelay[2] = strtoul(value, NULL, 10);
-			}
-			if (strcmp(name, "r4") == 0)
-			{
-				byRelay[3] = strtoul(value, NULL, 10);
-			}
-		} while (repeat);
-
-		// after procesing the POST data, tell the web browser to reload
-		// the page using a GET method. 
-		server.httpSeeOther(PREFIX);
-		return;
-	}
-
-	/* for a GET or HEAD, send the standard "it's all OK headers" */
 	server.httpSuccess("text/html", "Connection: keep-alive"CRLF);
-
-	/* we don't output the body for a HEAD request */
 	if (type == WebServer::GET)
 	{
 		myFile = SD.open("/www/index.htm");        // open web page file
@@ -200,7 +162,6 @@ void sensorsCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 		}
 		else server.print(F("SD failed"));
 	}
-
 }
 void XMLresponseCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
@@ -265,14 +226,40 @@ void XMLresponseCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 
 
 		server.print(F("<relays>"));
+		server.print(F("<modes>"));
 		for (int i = 0; i < 4; i++)
 		{
 			server.print(F("<relay>"));
-			server.print(String(byRelay[i]));
+			server.print(byRelay[i]);
 			server.print(F("</relay>"));
 		}
+		server.print(F("</modes>"));
+		server.print(F("<states>"));
+
+		for (int i = 0; i < 4; i++)
+		{
+			server.print(F("<state>"));
+			server.print(getRelayState(i));
+			server.print(F("</state>"));
+		}
+		server.print(F("</states>"));
 		server.print(F("</relays>"));
 		server.print(F("</inputs>"));
+	}
+}
+void relayCmd(WebServer &server, WebServer::ConnectionType type, char *url_param, bool param_complete) {
+	server.httpSuccess();
+	char name[3];
+	char value[3];
+	if (type == WebServer::POST)
+	{
+		while (server.readPOSTparam(name, 3, value, 3))
+		{
+			byRelay[atoi(name) - 1] = atoi(value);
+		}
+		switchRelays();
+		Alarm.disable(writeSDAlarm);
+		writeSDAlarm = Alarm.timerOnce(5, writeSD);
 	}
 }
 
@@ -298,7 +285,8 @@ void setup()
 	setupAlarms();
 
 	webserver.setDefaultCommand(&sensorsCmd);
-	webserver.addCommand("sensors_relays", XMLresponseCmd);
+	webserver.addCommand("XMLresponseCmd", XMLresponseCmd);
+	webserver.addCommand("relayCmd", relayCmd);
 	webserver.begin();
 
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
@@ -327,7 +315,6 @@ void loop()
 //TO DO
 //clean and organize project - commands for webduino shouldnt need to be in main sketch
 //refactor command functions and get rid of unecessary buffers
-//www - set status colors - not currently working
 //handle connectivity check better without dhcp
 //ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
 

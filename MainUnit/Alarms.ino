@@ -296,3 +296,6 @@ void dhcp() {
 	}
 }
 
+void writeSD() {
+		writeSDRelaySettings(relays);
+}

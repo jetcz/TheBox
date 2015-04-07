@@ -37,7 +37,7 @@ void printErrorMessage(uint8_t e, bool eol = true)
 }
 
 
-boolean readSettings(const char *path) {
+boolean readSettings(char *path) {
 
 	IniFile ini(path);
 	if (!ini.open()) {
@@ -98,21 +98,26 @@ boolean readSettings(const char *path) {
 }
 
 // Writes A Configuration file
-void writeSDRelaySettings(char *path) {
-
+boolean writeSDRelaySettings(char *path) {
 	SD.remove(path);
-
 	myFile = SD.open(path, FILE_WRITE);
+	if (!myFile)
+	{
+		Serial.println(F("Relay settings saving failed!"));
+		return false;
+	}
+	else {
+		myFile.print(F("modes="));
+		myFile.print(byRelay[0]);
+		myFile.print(",");
+		myFile.print(byRelay[1]);
+		myFile.print(",");
+		myFile.print(byRelay[2]);
+		myFile.print(",");
+		myFile.print(byRelay[3]);
+		myFile.close();
 
-	myFile.print(F("modes="));
-	myFile.print(byRelay[0]);
-	myFile.print(",");
-	myFile.print(byRelay[1]);
-	myFile.print(",");
-	myFile.print(byRelay[2]);
-	myFile.print(",");
-	myFile.print(byRelay[3]);
-
-	myFile.close();
-	//Serial.println("Writing done.");
+		Serial.println(F("Relay settings saved to SD"));
+		return true;
+	}
 }

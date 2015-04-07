@@ -173,7 +173,6 @@ void setupEthernet() {
 	W5100.setRetransmissionCount(3);
 }
 
-
 void setupLCD(){
 	lcd.begin(20, 4);
 	lcd.clear();
@@ -182,11 +181,10 @@ void setupLCD(){
 
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
-	Alarm.timerOnce(100, setupEthernet);
 	//	Alarm.timerOnce(180, syncRTCwithNTP);
 	systemAlarm = Alarm.timerRepeat(1, system);
 	prepareDatasetAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
-//	printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+	//	printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	updateTSAlarm = Alarm.timerRepeat(iUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
 	weatherAlarm = Alarm.timerRepeat(60, weatherForecastTimer); //update weather forecast every minute - this MUST be interval 60s
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd); //refresh sensor data to lcd every second
@@ -194,7 +192,7 @@ void setupAlarms() {
 	if (bDhcp)
 	{
 		dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
-
-	}	Serial.println(F("Timers initialized"));
+	}
+	Serial.println(F("Timers initialized"));
 }
 
