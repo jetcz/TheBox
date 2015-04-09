@@ -85,7 +85,7 @@ boolean readSettings(char *path) {
 			return true;
 		}
 		if (path == relays) {
-			if (ini.getValue(NULL, "modes", buffer, bufferLen)) {
+			if (ini.getValue(NULL, "modes", buffer, bufferLen)) { //modes=0,1,1,0
 				chArrToByteArr(buffer, byRelay);
 			}
 			else {

@@ -71,17 +71,15 @@ char *relays = "/settings/relays.ini";
 
 //////////////////////////////////////////////////////////////////////////
 
-#define DHTTYPE DHT22
-#define PREFIX ""
 /* reference variables */
 RTC_DS1307 rtc;
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
-DHT dht(DHT22_PIN, DHTTYPE);
+DHT dht(DHT22_PIN, DHT22);
 EthernetClient client;
 EthernetUDP udp;
 File myFile;
 RH_ASK driver(1000, RADIO_RX_PIN, 0);
-WebServer webserver(PREFIX, 80);
+WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
 DataSet MainDS;
