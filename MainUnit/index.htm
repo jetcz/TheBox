@@ -7,7 +7,6 @@
         function onLoad() {
 
             getSensors();
-            //setTimeout('getSensors()', 10000);
             setInterval(getSensors, 10000);
 
             var rb = document.getElementsByName('r1');
@@ -17,7 +16,6 @@
                     request.open("POST", "relayCmd", false);
                     request.send("1" + "=" + this.value);
                     getSensors();
-                    //setTimeout(getSensors, 1000);
                 };
             }
 
@@ -28,7 +26,6 @@
                     request.open("POST", "relayCmd", false);
                     request.send("2" + "=" + this.value);
                     getSensors();
-                    //setTimeout(getSensors, 1000);
                 };
             }
 
@@ -39,7 +36,6 @@
                     request.open("POST", "relayCmd", false);
                     request.send("3" + "=" + this.value);
                     getSensors();
-                    //setTimeout(getSensors, 1000);
                 };
             }
 
@@ -50,7 +46,6 @@
                     request.open("POST", "relayCmd", false);
                     request.send("4" + "=" + this.value);
                     getSensors();
-                    //setTimeout(getSensors, 1000);
                 };
             }
 
@@ -109,6 +104,14 @@
                                     default:
                                         break;
                                 }
+                            }
+
+                            //grey out invalid remote values
+                            var elements = document.getElementsByClassName('remote');
+                            var valid = this.responseXML.getElementsByTagName('valid')[0].childNodes[0].nodeValue;
+                            for (count = 0; count < elements.length; count++) {
+                                if (parseInt(valid) == 0) elements[count].style.color = "#888";
+                                else elements[count].removeAttribute("style");
                             }
                         }
                     }
@@ -180,10 +183,6 @@
                 padding: 8px;
                 font-size: 0.75em;
             }
-
-        tr:hover td {
-            font-weight: bold;
-        }
 
 
         /*MENU ==================================================*/
@@ -271,14 +270,14 @@
             <tr>
                 <td class="leftHeader">Temperature</td>
                 <td><span class="sensor"></span>°C</td>
-                <td><span class="sensor"></span>°C</td>
-                <td><span class="sensor"></span>°C</td>
+                <td class="remote"><span class="sensor"></span>°C</td>
+                <td class="remote"><span class="sensor"></span>°C</td>
             </tr>
             <tr>
                 <td class="leftHeader">Humidity</td>
                 <td><span class="sensor"></span>%RH</td>
-                <td><span class="sensor"></span>%RH</td>
-                <td><span class="sensor"></span>%RH</td>
+                <td class="remote"><span class="sensor"></span>%RH</td>
+                <td class="remote"><span class="sensor"></span>%RH</td>
             </tr>
             <tr>
                 <td class="leftHeader">Pressure / Weather</td>
@@ -287,12 +286,12 @@
             <tr>
                 <td class="leftHeader">Light</td>
                 <td></td>
-                <td colspan="2"><span class="sensor"></span>%</td>
+                <td colspan="2" class="remote"><span class="sensor"></span>%</td>
             </tr>
             <tr>
                 <td class="leftHeader">Rain</td>
                 <td>&nbsp;</td>
-                <td colspan="2"><span class="sensor"></span>mm/h</td>
+                <td colspan="2" class="remote"><span class="sensor"></span>mm/h</td>
             </tr>
         </table>
     </div>

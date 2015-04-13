@@ -7,9 +7,10 @@ void updateThingSpeak(DataSet ds){
 		if (ds.Data[i] > -100) //in case we get some broken values which are usualy -255 or something like that
 		{
 			s += intToString(i + 1) + "=" + floatToString(ds.Data[i]);
-		}
-		if (i < ds.Size - 1) {
-			s += "&";
+
+			if (i < ds.Size - 1) {
+				s += "&";
+			}
 		}
 	}
 	//update thingspeak

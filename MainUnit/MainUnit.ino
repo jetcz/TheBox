@@ -145,7 +145,7 @@ int writeSDAlarm;
 void(*resetFunc) (void) = 0;
 
 /* commands for webserver */
-void sensorsCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void homeCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	server.httpSuccess("text/html", "Connection: keep-alive"CRLF);
 	if (type == WebServer::GET)
@@ -178,10 +178,13 @@ void XMLresponseCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 
 		server.print(F("<?xml version = \"1.0\" ?>"));
 		server.print(F("<inputs>"));
+		server.print(F("<valid>"));
+		server.print(RemoteDS.Valid); //remote data set valid?
+		server.print(F("</valid>"));
 		server.print(F("<sensors>"));
 
 		server.printP(tag_start_sensor);
-		server.print(MainDS.Data[0], 1); //maintemp
+		server.print(MainDS.Data[0], 1); //mainairtemp
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
@@ -221,7 +224,6 @@ void XMLresponseCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.printP(tag_end_sensor);
 
 		server.print(F("</sensors>"));
-
 
 		server.print(F("<relays>"));
 		server.print(F("<modes>"));
@@ -282,7 +284,7 @@ void setup()
 	setupEthernet();
 	setupAlarms();
 
-	webserver.setDefaultCommand(&sensorsCmd);
+	webserver.setDefaultCommand(&homeCmd);
 	webserver.addCommand("XMLresponseCmd", XMLresponseCmd);
 	webserver.addCommand("relayCmd", relayCmd);
 	webserver.begin();

@@ -39,7 +39,7 @@ void prepareDataSetArrays() {
 	MainDS.Data[3] = getMainPir();
 	if (SystemDS.Data[0] == -255)
 	{
-		MainDS.Data[4] = -255;
+		MainDS.Data[4] = -255; //pressure
 	}
 	else MainDS.Data[4] = getPressure(event);
 
