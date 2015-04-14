@@ -262,6 +262,39 @@ void relayCmd(WebServer &server, WebServer::ConnectionType type, char *url_param
 		writeSDAlarm = Alarm.timerOnce(5, writeSD);
 	}
 }
+void graphs1Cmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	server.httpSuccess("text/html"CRLF);
+	if (type == WebServer::GET)
+	{
+		myFile = SD.open("/www/graphs1.htm");        // open web page file
+		if (myFile)   {
+			int16_t c;
+			while ((c = myFile.read()) >= 0) {
+				server.print((char)c);
+			}
+			myFile.close();
+		}
+		else server.print(F("SD failed"));
+	}
+}
+void graphs2Cmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	server.httpSuccess("text/html"CRLF);
+	if (type == WebServer::GET)
+	{
+		myFile = SD.open("/www/graphs2.htm");        // open web page file
+		if (myFile)   {
+			int16_t c;
+			while ((c = myFile.read()) >= 0) {
+				server.print((char)c);
+			}
+			myFile.close();
+		}
+		else server.print(F("SD failed"));
+	}
+}
+
 
 void setup()
 {
@@ -285,8 +318,11 @@ void setup()
 	setupAlarms();
 
 	webserver.setDefaultCommand(&homeCmd);
+	webserver.addCommand("index.htm", homeCmd);
 	webserver.addCommand("XMLresponseCmd", XMLresponseCmd);
 	webserver.addCommand("relayCmd", relayCmd);
+	webserver.addCommand("graphs1.htm", graphs1Cmd);
+	webserver.addCommand("graphs2.htm", graphs2Cmd);
 	webserver.begin();
 
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";

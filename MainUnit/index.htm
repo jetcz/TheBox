@@ -63,7 +63,7 @@
                             var num_an = this.responseXML.getElementsByTagName('sensor').length;
                             for (count = 0; count < num_an; count++) {
                                 document.getElementsByClassName("sensor")[count].innerHTML =
-                                    this.responseXML.getElementsByTagName('sensor')[count].childNodes[0].nodeValue.replace(/\s+/, "");
+									this.responseXML.getElementsByTagName('sensor')[count].childNodes[0].nodeValue.replace(/\s+/, "");
 
                             }
                             //preset radio butons
@@ -235,6 +235,16 @@
                 margin-right: -4px;
             }
         }
+        /*===================================================*/
+        input[type=radio] {
+            margin: 0;
+            vertical-align: middle;
+            width: 100%;
+            height: 2em;
+        }
+
+            input[type=radio]:checked {
+            }
     </style>
 
 </head>
@@ -243,11 +253,11 @@
     <header>
         <div class="nav">
             <ul>
-                <li><a class="active" href="#">Home</a></li>
-                <li><a href="#">Graphs 1</a></li>
-                <li><a href="#">Graphs 2</a></li>
-                <li><a href="#">Scheduler</a></li>
-                <li><a href="#">System</a></li>
+                <li><a class="active" href="index.htm">Home</a></li>
+                <li><a href="graphs1.htm">Graphs 1</a></li>
+                <li><a href="graphs2.htm">Graphs 2</a></li>
+                <li><a href="scheduler.htm">Scheduler</a></li>
+                <li><a href="system.htm">System</a></li>
             </ul>
         </div>
     </header>
@@ -256,7 +266,8 @@
         <table>
             <thead>
                 <tr>
-                    <th rowspan="2">Sensors
+                    <th rowspan="2">
+                        Sensors
                     </th>
                     <th>Main Unit</th>
                     <th colspan="2">Remote Unit</th>
@@ -300,15 +311,20 @@
         <table style="width: 100%;">
             <thead>
                 <tr>
-                    <th rowspan="2">Relays
+                    <th rowspan="2">
+                        Relays
                     </th>
-                    <th>Relay 1
+                    <th>
+                        Relay 1
                     </th>
-                    <th>Relay 2
+                    <th>
+                        Relay 2
                     </th>
-                    <th>Relay 3
+                    <th>
+                        Relay 3
                     </th>
-                    <th>Relay 4
+                    <th>
+                        Relay 4
                     </th>
                 </tr>
                 <tr>
@@ -320,13 +336,17 @@
             </thead>
             <tr>
                 <td class="leftHeader">Status</td>
-                <td id="s1">&nbsp;
+                <td id="s1">
+                    &nbsp;
                 </td>
-                <td id="s2">&nbsp;
+                <td id="s2">
+                    &nbsp;
                 </td>
-                <td id="s3">&nbsp;
+                <td id="s3">
+                    &nbsp;
                 </td>
-                <td id="s4">&nbsp;
+                <td id="s4">
+                    &nbsp;
                 </td>
             </tr>
             <tr>

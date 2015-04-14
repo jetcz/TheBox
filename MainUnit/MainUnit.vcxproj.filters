@@ -35,6 +35,12 @@
     <None Include="index.htm">
       <Filter>www</Filter>
     </None>
+    <None Include="graphs1.htm">
+      <Filter>www</Filter>
+    </None>
+    <None Include="graphs2.htm">
+      <Filter>www</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">

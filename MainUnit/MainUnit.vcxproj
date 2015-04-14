@@ -76,6 +76,12 @@
     <None Include="DataTypesConversion.ino">
       <FileType>CppCode</FileType>
     </None>
+    <None Include="graphs1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="graphs2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="index.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
