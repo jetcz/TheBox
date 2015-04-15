@@ -25,7 +25,7 @@ unsigned long inline ntpUnixTime(UDP &udp)
 	udp.flush();
 
 	// Send an NTP request
-	if (!(udp.beginPacket(timeServer, 123) // 123 is the NTP port
+	if (!(udp.beginPacket(cTimeServer, 123) // 123 is the NTP port
 		&& udp.write((byte *)&ntpFirstFourBytes, 48) == 48
 		&& udp.endPacket()))
 		return 0;				// sending request failed

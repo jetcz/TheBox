@@ -94,6 +94,7 @@
     <None Include="MainUnit.ino">
       <FileType>CppCode</FileType>
     </None>
+    <None Include="menu.css" />
     <None Include="Misc.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -105,6 +106,9 @@
     </None>
     <None Include="Relays.ino">
       <FileType>CppCode</FileType>
+    </None>
+    <None Include="scheduler.htm">
+      <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="SDsettings.ino">
       <FileType>CppCode</FileType>

@@ -46,7 +46,7 @@ const byte iRestartEthernetThreshold = 10;	//if thingspeak update fails x times 
 const byte iRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
 
 /* ntp server */
-const char timeServer[] = "tik.cesnet.cz";
+const char cTimeServer[] = "tik.cesnet.cz";
 
 /* timezone settings */
 TimeChangeRule CEST = { "CEST", Last, Sun, Mar, 2, 120 };    //summer time = UTC + 2 hours
@@ -62,8 +62,13 @@ const byte lightIntensity[] = { 6, 1, 2 }; //0-255, these led are very bright so
 /* sensor polling settings */
 const byte iUpdateSensorsInterval = 10;
 
+/* sensor offsets */
+const float fSysTempOffset = -0.2;
+const byte iPressureOffset = 24;
+const float fMainTempOffset = -0.9;
+
 /* ini files settings
-relay config must be int following format:
+relay config must be in following format:
 modes = 0, 1, 1, 2 where 0 is off, 1 is on and 2 is auto */
 
 char *ethernet = "/settings/ethernet.ini";
@@ -97,30 +102,32 @@ byte iCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
 String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
-byte byLcdMsgTimeoutCnt = 0;
 boolean bConnectivityCheck = true;
-boolean bRelaySettingsChanged = false;
 
 /* weather */
 const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
 byte forecast = 5;
 
 /* array of pointers to iterate through when updating thingspeak channels */
-DataSet *DataSetPointer[] = { (DataSet*)&MainDS, (DataSet*)&RemoteDS, (DataSet*)&SystemDS };
+DataSet *DataSetPtr[] = { (DataSet*)&MainDS, (DataSet*)&RemoteDS, (DataSet*)&SystemDS };
+
+/*Target variables are :
+0 MainPir
+1 MainTemperature
+2 MainHumidity
+3 MainHumidex
+4 RemoteTemperature
+5 RemoteHumidity
+6 RemoteHumidex
+7 RemoteSoilTemperature
+8 RemoteSoilHumidity
+9 Light
+10 Rain
+*/
+float *TargetVarPtr[] = { &MainDS.Data[3], &MainDS.Data[0], &MainDS.Data[1], &MainDS.Data[2], &RemoteDS.Data[0], &RemoteDS.Data[1], &RemoteDS.Data[2], &RemoteDS.Data[3], &RemoteDS.Data[4], &RemoteDS.Data[5], &RemoteDS.Data[6] };
 
 /* relay states/modes*/
-byte byRelay[] = { 0, 0, 0, 0 };
-
-/* sensor variables */
-/* bmp180 */
-RunningAverage rmSysTemp(6);
-const float fSysTempOffset = -0.2;
-RunningAverage rmPressure(6);
-const byte iPressureOffset = 24;
-/* main dht22 */
-RunningAverage rmMainTemp(6);
-RunningAverage rmMainHumidity(6);
-const float fMainTempOffset = -0.9;
+byte byRelay[4] = { 0 };
 
 /* network settings */
 byte mac[] = { 0xB0, 0x0B, 0x5B, 0x00, 0xB5, 0x00 };
@@ -350,7 +357,6 @@ void loop()
 
 //TO DO
 //clean and organize project - commands for webduino shouldnt need to be in main sketch
-//refactor command functions and get rid of unecessary buffers
 //handle connectivity check better without dhcp
 //ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
 

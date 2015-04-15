@@ -16,6 +16,9 @@
     <Filter Include="www">
       <UniqueIdentifier>{c3714f80-4fb7-4690-bcbe-c6c9645b7244}</UniqueIdentifier>
     </Filter>
+    <Filter Include="www\css">
+      <UniqueIdentifier>{94cb7f53-1fc7-450b-a6de-3226356e56c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="MainUnit.ino" />
@@ -40,6 +43,12 @@
     </None>
     <None Include="graphs2.htm">
       <Filter>www</Filter>
+    </None>
+    <None Include="scheduler.htm">
+      <Filter>www</Filter>
+    </None>
+    <None Include="menu.css">
+      <Filter>www\css</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

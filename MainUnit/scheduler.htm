@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/menu.css">
+
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+
+
+    <script type="text/javascript" src="http://jet.php5.cz/thebox/js/jstepper/jquery.jstepper.min.js"></script>
+    <script type="text/javascript" src="http://jet.php5.cz/thebox/js/mousewheel/jquery.mousewheel.js"></script>
+
+    <title>The Box - Scheduler</title>
+
+    <style media="screen" type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ccc;
+        }
+
+        .content {
+            display: block;
+            font-family: 'Oswald', sans-serif;
+            background: white;
+            padding: 15px 15px 15px 15px;
+            margin: 15px 15px 15px 15px;
+            -moz-box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
+            -webkit-box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
+            box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
+        }
+
+        #wrapContent {
+            width: 600px;
+        }
+
+        table {
+            border-collapse: collapse;
+            text-align: left;
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+            table thead th {
+                background: #333;
+                color: #FFFFFF;
+                padding: 10px;
+                text-align: center;
+                text-transform: uppercase;
+                font-size: 1em;
+            }
+
+            table tbody td {
+                text-align: center;
+                background: #efefef;
+                transition: .3s background-color;
+                height: 3em;
+            }
+
+        input[type=checkbox] {
+            margin: 0;
+            vertical-align: middle;
+            width: 100%;
+            height: 1.2em;
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <div class="nav">
+            <ul>
+                <li><a href="index.htm">Home</a></li>
+                <li><a href="graphs1.htm">Graphs 1</a></li>
+                <li><a href="graphs2.htm">Graphs 2</a></li>
+                <li><a class="active" href="scheduler.htm">Scheduler</a></li>
+                <li><a href="system.htm">System</a></li>
+            </ul>
+        </div>
+    </header>
+    <div id="wrapContent">
+        <div class="content">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">
+                            RELAY 1
+                        </th>
+                        <th style="font-weight: normal; background-color: #555;">
+                            Target variable
+                        </th>
+                        <th class="subtitle" style="color: black; background-color: #555;">
+                            <select>
+                                <option value="0">asd</option>
+                                <option value="1">asd</option>
+                                <option value="2">asd</option>
+                                <option value="3">asd</option>
+                                <option value="4">asd</option>
+                                <option value="5">asd</option>
+                                <option value="6">asd</option>
+                                <option value="7">asd</option>
+                                <option value="8">asd</option>
+                                <option value="9">asd</option>
+                                <option value="10">asd</option>
+                            </select>
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+
+            <div class="datagrid">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                Enabled
+                            </th>
+                            <th>
+                                Time of day
+                            </th>
+                            <th colspan="2">
+                                Target range
+                            </th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="R1Int1">
+                        </td>
+                        <td></td>
+                        <td>
+                            <input type="number" class="decimal R1Int1" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" class="decimal R1Int1" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+
+        //disable inputs
+        $(function () {
+            $('#R1Int1').click(function () {
+                var cb1 = $('#R1Int1').is(':checked');
+                if (!cb1) {
+                    $('.R1Int1').val('');
+                    $('.R1Int1').prop('disabled', true);
+
+
+                } else {
+                    $('.R1Int1').prop('disabled', false);
+
+                }
+            });
+        });
+
+        //jstepper for numeric field
+        $(document).ready(function () { $('.decimal').jStepper({ minValue: -100, maxValue: 100 }); });
+        //validator for numeric values
+        $(document).on('keyup', '.decimal', function (event) {
+            var v = this.value;
+            if ($.isNumeric(v) === false) {
+                //chop off the last char entered
+                this.value = this.value.slice(0, -1);
+            }
+        });
+
+
+    </script>
+</body>
+</html>

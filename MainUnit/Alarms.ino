@@ -141,7 +141,7 @@ void printLcd() {
 
 void thingSpeak(){
 	//before we update thingspeak, check if the dataset is valid 
-	if (!DataSetPointer[iCurrentDataSet]->Valid)
+	if (!DataSetPtr[iCurrentDataSet]->Valid)
 	{
 
 		Serial.println();
@@ -181,7 +181,7 @@ void thingSpeak(){
 		}
 		Serial.print(F("Update ThingSpeak with dataset "));
 		Serial.println(intToString(iCurrentDataSet));
-		updateThingSpeak(*DataSetPointer[iCurrentDataSet]);
+		updateThingSpeak(*DataSetPtr[iCurrentDataSet]);
 		iCurrentDataSet++;
 	}
 	// Check if Ethernet needs to be restarted
@@ -234,6 +234,7 @@ void enableDisableAlarms() {
 
 
 	//enable lcd refreshing after some msg shows up for x sec
+	static byte byLcdMsgTimeoutCnt = 0;
 	if (!Alarm.active(printLcdAlarm) && byLcdMsgTimeoutCnt > byLcdMsgTimeout)
 	{
 		lcd.clear();
@@ -297,5 +298,17 @@ void dhcp() {
 }
 
 void writeSD() {
-		writeSDRelaySettings(relays);
+	boolean succes = writeSDRelaySettings(relays);
+	if (!succes)
+	{
+		Serial.println(F("Writing relay settings to SD card failed!"));
+		Alarm.disable(printLcdAlarm);
+		lcd.clear();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Writing relay"));
+		lcd.setCursor(0, 1);
+		lcd.print(F("settings to SD card"));
+		lcd.setCursor(0, 2);
+		lcd.print(F("failed!"));
+	};
 }

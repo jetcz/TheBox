@@ -13,11 +13,11 @@ int weatherForecast() {
 
 	if (minuteCount == 5) {
 		// Avg pressure in first 5 min
-		pressureAvg[0] = rmPressure.getAverage();
+		pressureAvg[0] = MainDS.Data[4];
 	}
 	else if (minuteCount == 35) {
 		// Avg pressure in 30 min
-		pressureAvg[1] = rmPressure.getAverage();
+		pressureAvg[1] = MainDS.Data[4];
 		float change = (pressureAvg[1] - pressureAvg[0]);
 		if (firstRound) // first time initial 3 hour
 			dP_dt = ((65.0 / 1023.0) * 2 * change); // note this is for t = 0.5hour
@@ -26,7 +26,7 @@ int weatherForecast() {
 	}
 	else if (minuteCount == 60) {
 		// Avg pressure at end of the hour
-		pressureAvg[2] = rmPressure.getAverage();
+		pressureAvg[2] = MainDS.Data[4];
 		float change = (pressureAvg[2] - pressureAvg[0]);
 		if (firstRound) //first time initial 3 hour
 			dP_dt = ((65.0 / 1023.0) * change); //note this is for t = 1 hour
@@ -35,7 +35,7 @@ int weatherForecast() {
 	}
 	else if (minuteCount == 95) {
 		// Avg pressure at end of the hour
-		pressureAvg[3] = rmPressure.getAverage();
+		pressureAvg[3] = MainDS.Data[4];
 		float change = (pressureAvg[3] - pressureAvg[0]);
 		if (firstRound) // first time initial 3 hour
 			dP_dt = (((65.0 / 1023.0) * change) / 1.5); // note this is for t = 1.5 hour
@@ -44,7 +44,7 @@ int weatherForecast() {
 	}
 	else if (minuteCount == 120) {
 		// Avg pressure at end of the hour
-		pressureAvg[4] = rmPressure.getAverage();
+		pressureAvg[4] = MainDS.Data[4];
 		float change = (pressureAvg[4] - pressureAvg[0]);
 		if (firstRound) // first time initial 3 hour
 			dP_dt = (((65.0 / 1023.0) * change) / 2); // note this is for t = 2 hour
@@ -53,7 +53,7 @@ int weatherForecast() {
 	}
 	else if (minuteCount == 155) {
 		// Avg pressure at end of the hour
-		pressureAvg[5] = rmPressure.getAverage();
+		pressureAvg[5] = MainDS.Data[4];
 		float change = (pressureAvg[5] - pressureAvg[0]);
 		if (firstRound) // first time initial 3 hour
 			dP_dt = (((65.0 / 1023.0) * change) / 2.5); // note this is for t = 2.5 hour
@@ -62,7 +62,7 @@ int weatherForecast() {
 	}
 	else if (minuteCount == 180) {
 		// Avg pressure at end of the hour
-		pressureAvg[6] = rmPressure.getAverage();
+		pressureAvg[6] = MainDS.Data[4];
 		float change = (pressureAvg[6] - pressureAvg[0]);
 		if (firstRound) // first time initial 3 hour
 			dP_dt = (((65.0 / 1023.0) * change) / 3); // note this is for t = 3 hour

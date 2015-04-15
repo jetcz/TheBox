@@ -103,7 +103,6 @@ boolean writeSDRelaySettings(char *path) {
 	myFile = SD.open(path, FILE_WRITE);
 	if (!myFile)
 	{
-		Serial.println(F("Relay settings saving failed!"));
 		return false;
 	}
 	else {
@@ -116,8 +115,6 @@ boolean writeSDRelaySettings(char *path) {
 		myFile.print(",");
 		myFile.print(byRelay[3]);
 		myFile.close();
-
-		Serial.println(F("Relay settings saved to SD"));
 		return true;
 	}
 }

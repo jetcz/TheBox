@@ -1,0 +1,48 @@
+.nav ul {
+    list-style: none;
+    background-color: #333;
+    padding: 0;
+    margin: 0;
+}
+
+.nav li {
+    text-transform: uppercase;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+    line-height: 35px;
+    height: 35px;
+    border-bottom: 1px solid #888;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #fff;
+    display: block;
+    transition: .3s background-color;
+}
+
+    .nav a:hover {
+        background-color: #005f5f;
+    }
+
+    .nav a.active {
+        background-color: #fff;
+        color: #333;
+        cursor: default;
+    }
+
+@media screen and (min-width: 700px) {
+    .nav li {
+        text-transform: uppercase;
+        width: 120px;
+        border-bottom: none;
+        height: 45px;
+        line-height: 45px;
+        font-size: 1.1em;
+    }
+
+    .nav li {
+        display: inline-block;
+        margin-right: -4px;
+    }
+}
