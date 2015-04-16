@@ -21,7 +21,7 @@
 			for (i = 0; i < rb.length; i++) {
 				rb[i].onclick = function () {
 					var request = new XMLHttpRequest();
-					request.open("POST", "relayCmd", false);
+					request.open("POST", "relayCmd", true);
 					request.send("1" + "=" + this.value);
 					getSensors();
 				};
@@ -31,7 +31,7 @@
 			for (i = 0; i < rb.length; i++) {
 				rb[i].onclick = function () {
 					var request = new XMLHttpRequest();
-					request.open("POST", "relayCmd", false);
+					request.open("POST", "relayCmd", true);
 					request.send("2" + "=" + this.value);
 					getSensors();
 				};
@@ -41,7 +41,7 @@
 			for (i = 0; i < rb.length; i++) {
 				rb[i].onclick = function () {
 					var request = new XMLHttpRequest();
-					request.open("POST", "relayCmd", false);
+					request.open("POST", "relayCmd", true);
 					request.send("3" + "=" + this.value);
 					getSensors();
 				};
@@ -51,7 +51,7 @@
 			for (i = 0; i < rb.length; i++) {
 				rb[i].onclick = function () {
 					var request = new XMLHttpRequest();
-					request.open("POST", "relayCmd", false);
+					request.open("POST", "relayCmd", true);
 					request.send("4" + "=" + this.value);
 					getSensors();
 				};
@@ -236,9 +236,9 @@
 				</thead>
 				<tr>
 					<td class="leftHeader">Temperature</td>
-					<td><span class="sensor"></span>°C</td>
-					<td class="remote"><span class="sensor"></span>°C</td>
-					<td class="remote"><span class="sensor"></span>°C</td>
+					<td><span class="sensor"></span>Â°C</td>
+					<td class="remote"><span class="sensor"></span>Â°C</td>
+					<td class="remote"><span class="sensor"></span>Â°C</td>
 				</tr>
 				<tr>
 					<td class="leftHeader">Humidity</td>

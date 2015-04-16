@@ -10,7 +10,7 @@ struct DataSet
 struct RelayScheduler
 {	
 	byte Variable;
-
+	boolean Enabled[5];
 	byte Time[5][2]; //5x time of day - consists of two values h:m
 	float Value[5][2]; //5x pair of valuemin and valuemax
 
