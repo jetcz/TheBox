@@ -2,16 +2,55 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/menu.css">
-
-
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-
-
     <script type="text/javascript" src="http://jet.php5.cz/thebox/js/jstepper/jquery.jstepper.min.js"></script>
     <script type="text/javascript" src="http://jet.php5.cz/thebox/js/mousewheel/jquery.mousewheel.js"></script>
-
-    <title>The Box - Scheduler</title>
-
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "scheduler.xml",
+                cache: false,
+                dataType: "xml",
+                success: xmlParser,
+                error: function () {
+                    //nothing here now
+                }
+            });
+        });
+        //DORESIT POLE REQUIRED PO NALOADOVANI STRANKY U AKTIVNICH RADKU
+        function xmlParser(xml) {
+            //for each relay
+            $(xml).find("Relay").each(function () {
+                var i = $(this).index();
+                var variable = $(this).find("Variable").text().trim();
+                $(".cmb").eq(i).val(parseInt(variable));
+                if (variable == 0) disableForm(i); //disable form if variable is pir
+                //for each interval
+                $(this).find("Interval").each(function () {
+                    var j = $(this).index() - 1 + (i * 5); //j index strats for some reason on 1, 5 is the number of line indexes in one form
+                    //checkbox enabled
+                    var enabled = $(this).find("Enabled").text().trim();
+                    enabled = (enabled == "true");
+                    $(".cb").eq(j).prop('checked', enabled);
+                    if (enabled == false) disableInterval(j);
+                    //target time
+                    var H = $(this).find("H").text().trim();
+                    var M = $(this).find("M").text().trim();
+                    $(".H").eq(j).val(parseInt(H));
+                    $(".M").eq(j).val(parseInt(M));
+                    //target values
+                    var From = $(this).find("From").text().trim();
+                    var To = $(this).find("To").text().trim();
+                    $(".From").eq(j).val(parseFloat(From));
+                    $(".To").eq(j).val(parseFloat(To));
+                })
+            })
+        }
+    </script>
+    <title>
+        The Box - Scheduler
+    </title>
     <style media="screen" type="text/css">
         body {
             margin: 0;
@@ -20,7 +59,6 @@
         }
 
         .content {
-            display: block;
             font-family: 'Oswald', sans-serif;
             background: white;
             padding: 15px 15px 15px 15px;
@@ -39,7 +77,6 @@
             text-align: left;
             width: 100%;
             border: 1px solid #ccc;
-            margin-bottom: 10px;
         }
 
             table thead th {
@@ -48,14 +85,12 @@
                 padding: 10px;
                 text-align: center;
                 text-transform: uppercase;
-                font-size: 1em;
             }
 
             table tbody td {
                 text-align: center;
                 background: #efefef;
                 transition: .3s background-color;
-                height: 3em;
             }
 
         input[type=checkbox] {
@@ -64,24 +99,39 @@
             width: 100%;
             height: 1.2em;
         }
-    </style>
 
+        button {
+            vertical-align: middle;
+            width: 100%;
+            height: 2em;
+        }
+
+    </style>
 </head>
 <body>
     <header>
         <div class="nav">
             <ul>
-                <li><a href="index.htm">Home</a></li>
-                <li><a href="graphs1.htm">Graphs 1</a></li>
-                <li><a href="graphs2.htm">Graphs 2</a></li>
-                <li><a class="active" href="scheduler.htm">Scheduler</a></li>
-                <li><a href="system.htm">System</a></li>
+                <li>
+                    <a href="index.htm">Home</a>
+                </li>
+                <li>
+                    <a href="graphs1.htm">Graphs 1</a>
+                </li>
+                <li>
+                    <a href="graphs2.htm">Graphs 2</a>
+                </li>
+                <li>
+                    <a class="active" href="scheduler.htm">Scheduler</a>
+                </li>
+                <li>
+                    <a href="system.htm">System</a>
+                </li>
             </ul>
         </div>
     </header>
     <div id="wrapContent">
         <div class="content">
-
             <table>
                 <thead>
                     <tr>
@@ -92,24 +142,45 @@
                             Target variable
                         </th>
                         <th class="subtitle" style="color: black; background-color: #555;">
-                            <select>
-                                <option value="0">asd</option>
-                                <option value="1">asd</option>
-                                <option value="2">asd</option>
-                                <option value="3">asd</option>
-                                <option value="4">asd</option>
-                                <option value="5">asd</option>
-                                <option value="6">asd</option>
-                                <option value="7">asd</option>
-                                <option value="8">asd</option>
-                                <option value="9">asd</option>
-                                <option value="10">asd</option>
+                            <select class="cmb">
+                                <option value="0">
+                                    0
+                                </option>
+                                <option value="1">
+                                    1
+                                </option>
+                                <option value="2">
+                                    2
+                                </option>
+                                <option value="3">
+                                    3
+                                </option>
+                                <option value="4">
+                                    4
+                                </option>
+                                <option value="5">
+                                    5
+                                </option>
+                                <option value="6">
+                                    6
+                                </option>
+                                <option value="7">
+                                    7
+                                </option>
+                                <option value="8">
+                                    8
+                                </option>
+                                <option value="9">
+                                    9
+                                </option>
+                                <option value="10">
+                                    10
+                                </option>
                             </select>
                         </th>
                     </tr>
                 </thead>
             </table>
-
             <div class="datagrid">
                 <table>
                     <thead>
@@ -127,51 +198,588 @@
                     </thead>
                     <tr>
                         <td>
-                            <input type="checkbox" id="R1Int1">
-                        </td>
-                        <td></td>
-                        <td>
-                            <input type="number" class="decimal R1Int1" name="value" min="-100" max="100" step="0.1">
+                            <input type="checkbox" class="cb">
                         </td>
                         <td>
-                            <input type="number" class="decimal R1Int1" name="value" min="-100" max="100" step="0.1">
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
                         </td>
                     </tr>
                 </table>
             </div>
         </div>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">
+                            RELAY 2
+                        </th>
+                        <th style="font-weight: normal; background-color: #555;">
+                            Target variable
+                        </th>
+                        <th class="subtitle" style="color: black; background-color: #555;">
+                            <select class="cmb">
+                                <option value="0">
+                                    0
+                                </option>
+                                <option value="1">
+                                    1
+                                </option>
+                                <option value="2">
+                                    2
+                                </option>
+                                <option value="3">
+                                    3
+                                </option>
+                                <option value="4">
+                                    4
+                                </option>
+                                <option value="5">
+                                    5
+                                </option>
+                                <option value="6">
+                                    6
+                                </option>
+                                <option value="7">
+                                    7
+                                </option>
+                                <option value="8">
+                                    8
+                                </option>
+                                <option value="9">
+                                    9
+                                </option>
+                                <option value="10">
+                                    10
+                                </option>
+                            </select>
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="datagrid">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                Enabled
+                            </th>
+                            <th>
+                                Time of day
+                            </th>
+                            <th colspan="2">
+                                Target range
+                            </th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">
+                            RELAY 3
+                        </th>
+                        <th style="font-weight: normal; background-color: #555;">
+                            Target variable
+                        </th>
+                        <th class="subtitle" style="color: black; background-color: #555;">
+                            <select class="cmb">
+                                <option value="0">
+                                    0
+                                </option>
+                                <option value="1">
+                                    1
+                                </option>
+                                <option value="2">
+                                    2
+                                </option>
+                                <option value="3">
+                                    3
+                                </option>
+                                <option value="4">
+                                    4
+                                </option>
+                                <option value="5">
+                                    5
+                                </option>
+                                <option value="6">
+                                    6
+                                </option>
+                                <option value="7">
+                                    7
+                                </option>
+                                <option value="8">
+                                    8
+                                </option>
+                                <option value="9">
+                                    9
+                                </option>
+                                <option value="10">
+                                    10
+                                </option>
+                            </select>
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="datagrid">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                Enabled
+                            </th>
+                            <th>
+                                Time of day
+                            </th>
+                            <th colspan="2">
+                                Target range
+                            </th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">
+                            RELAY 4
+                        </th>
+                        <th style="font-weight: normal; background-color: #555;">
+                            Target variable
+                        </th>
+                        <th class="subtitle" style="color: black; background-color: #555;">
+                            <select class="cmb">
+                                <option value="0">
+                                    0
+                                </option>
+                                <option value="1">
+                                    1
+                                </option>
+                                <option value="2">
+                                    2
+                                </option>
+                                <option value="3">
+                                    3
+                                </option>
+                                <option value="4">
+                                    4
+                                </option>
+                                <option value="5">
+                                    5
+                                </option>
+                                <option value="6">
+                                    6
+                                </option>
+                                <option value="7">
+                                    7
+                                </option>
+                                <option value="8">
+                                    8
+                                </option>
+                                <option value="9">
+                                    9
+                                </option>
+                                <option value="10">
+                                    10
+                                </option>
+                            </select>
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="datagrid">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                Enabled
+                            </th>
+                            <th>
+                                Time of day
+                            </th>
+                            <th colspan="2">
+                                Target range
+                            </th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="cb">
+                        </td>
+                        <td>
+                            <input type="number" required class="time H" name="value" min="0" max="23" step="1">&nbsp;:
+                            <input type="number" required class="time M" name="value" min="0" max="59" step="1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal From" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                        <td>
+                            <input type="number" required class="decimal To" name="value" min="-100" max="100" step="0.1">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="content">
+            <button>
+                Save scheduler settings
+            </button>
+        </div>
     </div>
     <script type="text/javascript">
-
-
-        //disable inputs
-        $(function () {
-            $('#R1Int1').click(function () {
-                var cb1 = $('#R1Int1').is(':checked');
-                if (!cb1) {
-                    $('.R1Int1').val('');
-                    $('.R1Int1').prop('disabled', true);
-
-
-                } else {
-                    $('.R1Int1').prop('disabled', false);
-
-                }
-            });
+        $("button").click(function () {
+            // $.post("http://jet.php5.cz/thebox/scheduler.xml", function (data, status) {
+            //when we get response
+            //   });
         });
-
+        //handler for comboboxes
+        $(".cmb").change(function () {
+            var i = $('.cmb').index(this);
+            disableForm(i);
+        });
+        //handler for checkboxes
+        $(".cb").click(function () {
+            var i = $('.cb').index(this);
+            disableInterval(i);
+        });
+        //disable relay form if variable is set to pir
+        function disableForm(i) {
+            var val = $('.cmb').eq(i).find('option:selected').val();
+            if (val == 0) {
+                $('.datagrid').eq(i).find('tr').each(function () {
+                    $(this).find('*').each(function () {
+                        $(this).attr('disabled', true);
+                        $(this).removeAttr('required');
+                    })
+                })
+            } else {
+                $('.datagrid').eq(i).find('tr').each(function () {
+                    var j = $(this).index();
+                    $(this).find('*').each(function () {
+                        $(this).attr('disabled', false);
+                        $(this).prop('required', true);
+                    })
+                    disableInterval(j + (i * 5)); //disable lines, if we want to disable lines from second form, it means that indexes of these lines has values index+5
+                })
+            }
+        }
+        //disable line in form if checkbox of enabled is unchecked
+        function disableInterval(i) {
+            var cb = $('.cb').eq(i).is(':checked');
+            if (!cb) {
+                $('.H').eq(i).prop('disabled', true);
+                $('.M').eq(i).prop('disabled', true);
+                $('.From').eq(i).prop('disabled', true);
+                $('.To').eq(i).prop('disabled', true);
+                $('.H').eq(i).removeAttr('required');
+                $('.M').eq(i).removeAttr('required');
+                $('.From').eq(i).removeAttr('required');
+                $('.To').eq(i).removeAttr('required');
+            } else {
+                $('.H').eq(i).prop('disabled', false);
+                $('.M').eq(i).prop('disabled', false);
+                $('.From').eq(i).prop('disabled', false);
+                $('.To').eq(i).prop('disabled', false);
+                $('.H').eq(i).prop('required', true);
+                $('.M').eq(i).prop('required', true);
+                $('.From').eq(i).prop('required', true);
+                $('.To').eq(i).prop('required', true);
+            }
+        }
         //jstepper for numeric field
         $(document).ready(function () { $('.decimal').jStepper({ minValue: -100, maxValue: 100 }); });
+        $(document).ready(function () { $('.time').jStepper({ minValue: 0 }); });
         //validator for numeric values
-        $(document).on('keyup', '.decimal', function (event) {
+        $(document).on('keyup', '.decimal, .time', function (event) {
             var v = this.value;
             if ($.isNumeric(v) === false) {
                 //chop off the last char entered
                 this.value = this.value.slice(0, -1);
             }
         });
-
-
     </script>
 </body>
 </html>
