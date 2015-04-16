@@ -44,11 +44,11 @@
     <None Include="graphs2.htm">
       <Filter>www</Filter>
     </None>
-    <None Include="scheduler.htm">
-      <Filter>www</Filter>
-    </None>
     <None Include="menu.css">
       <Filter>www\css</Filter>
+    </None>
+    <None Include="sched.htm">
+      <Filter>www</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -21,7 +21,7 @@
 			for (i = 0; i < rb.length; i++) {
 				rb[i].onclick = function () {
 					var request = new XMLHttpRequest();
-					request.open("POST", "relayCmd", true);
+					request.open("POST", "relays.data", true);
 					request.send("1" + "=" + this.value);
 					getSensors();
 				};
@@ -31,7 +31,7 @@
 			for (i = 0; i < rb.length; i++) {
 				rb[i].onclick = function () {
 					var request = new XMLHttpRequest();
-					request.open("POST", "relayCmd", true);
+					request.open("POST", "relays.data", true);
 					request.send("2" + "=" + this.value);
 					getSensors();
 				};
@@ -41,7 +41,7 @@
 			for (i = 0; i < rb.length; i++) {
 				rb[i].onclick = function () {
 					var request = new XMLHttpRequest();
-					request.open("POST", "relayCmd", true);
+					request.open("POST", "relays.data", true);
 					request.send("3" + "=" + this.value);
 					getSensors();
 				};
@@ -51,7 +51,7 @@
 			for (i = 0; i < rb.length; i++) {
 				rb[i].onclick = function () {
 					var request = new XMLHttpRequest();
-					request.open("POST", "relayCmd", true);
+					request.open("POST", "relays.data", true);
 					request.send("4" + "=" + this.value);
 					getSensors();
 				};
@@ -125,7 +125,7 @@
 					}
 				}
 			}
-			request.open("GET", "XMLresponseCmd", true);
+			request.open("GET", "sensors.xml", true);
 			request.send(null);
 		}
 
@@ -148,8 +148,8 @@
 			box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
 		}
 
-		#wrapContent {
-			width: 600px;
+		.wrapContent {
+			width: 650px;
 		}
 
 		table {
@@ -212,12 +212,12 @@
 				<li><a class="active" href="index.htm">Home</a></li>
 				<li><a href="graphs1.htm">Graphs 1</a></li>
 				<li><a href="graphs2.htm">Graphs 2</a></li>
-				<li><a href="scheduler.htm">Scheduler</a></li>
+				<li><a href="sched.htm">Scheduler</a></li>
 				<li><a href="system.htm">System</a></li>
 			</ul>
 		</div>
 	</header>
-	<div id="wrapContent">
+	<div class="wrapContent">
 		<div class="content">
 			<table>
 				<thead>
@@ -236,9 +236,9 @@
 				</thead>
 				<tr>
 					<td class="leftHeader">Temperature</td>
-					<td><span class="sensor"></span>°C</td>
-					<td class="remote"><span class="sensor"></span>°C</td>
-					<td class="remote"><span class="sensor"></span>°C</td>
+					<td><span class="sensor"></span>&deg;C</td>
+					<td class="remote"><span class="sensor"></span>&deg;C</td>
+					<td class="remote"><span class="sensor"></span>&deg;C</td>
 				</tr>
 				<tr>
 					<td class="leftHeader">Humidity</td>

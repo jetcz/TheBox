@@ -9,16 +9,15 @@
         $(document).ready(function () {
             $.ajax({
                 type: "GET",
-                url: "scheduler.xml",
+                url: "sched.xml",
                 cache: false,
                 dataType: "xml",
                 success: xmlParser,
                 error: function () {
-                    //nothing here now
+                    $("header").append("<div class=\"wrapContent\"><div class=\"content\" style=\"color:red\"><b>FAILED TO GET SCHEDULER SETTINGS, DO NOT CONTINUE!</b></div></div>");
                 }
             });
         });
-        //DORESIT POLE REQUIRED PO NALOADOVANI STRANKY U AKTIVNICH RADKU
         function xmlParser(xml) {
             //for each relay
             $(xml).find("Relay").each(function () {
@@ -28,7 +27,7 @@
                 if (variable == 0) disableForm(i); //disable form if variable is pir
                 //for each interval
                 $(this).find("Interval").each(function () {
-                    var j = $(this).index() - 1 + (i * 5); //j index strats for some reason on 1, 5 is the number of line indexes in one form
+                    var j = $(this).index() - 1 + (i * 5); //j index starts for some reason on 1, 5 is the number of line indexes in one form
                     //checkbox enabled
                     var enabled = $(this).find("Enabled").text().trim();
                     enabled = (enabled == "true");
@@ -68,8 +67,8 @@
             box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
         }
 
-        #wrapContent {
-            width: 600px;
+        .wrapContent {
+            width: 650px;
         }
 
         table {
@@ -106,6 +105,11 @@
             height: 2em;
         }
 
+        select {
+            vertical-align: middle;
+            width: 100%;
+            height: 1.5em;
+        }
     </style>
 </head>
 <body>
@@ -122,7 +126,7 @@
                     <a href="graphs2.htm">Graphs 2</a>
                 </li>
                 <li>
-                    <a class="active" href="scheduler.htm">Scheduler</a>
+                    <a class="active" href="sched.htm">Scheduler</a>
                 </li>
                 <li>
                     <a href="system.htm">System</a>
@@ -130,7 +134,7 @@
             </ul>
         </div>
     </header>
-    <div id="wrapContent">
+    <div class="wrapContent">
         <div class="content">
             <table>
                 <thead>
@@ -711,9 +715,7 @@
     </div>
     <script type="text/javascript">
         $("button").click(function () {
-            // $.post("http://jet.php5.cz/thebox/scheduler.xml", function (data, status) {
-            //when we get response
-            //   });
+        //placeholder for submit button
         });
         //handler for comboboxes
         $(".cmb").change(function () {

@@ -152,7 +152,7 @@ int writeSDAlarm;
 void(*resetFunc) (void) = 0;
 
 /* commands for webserver */
-void homeCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	server.httpSuccess("text/html", "Connection: keep-alive"CRLF);
 	if (type == WebServer::GET)
@@ -168,7 +168,7 @@ void homeCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 		else server.print(F("SD failed"));
 	}
 }
-void XMLresponseCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	if (type == WebServer::POST)
 	{
@@ -254,7 +254,7 @@ void XMLresponseCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.print(F("</inputs>"));
 	}
 }
-void relayCmd(WebServer &server, WebServer::ConnectionType type, char *url_param, bool param_complete) {
+void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *url_param, bool param_complete) {
 	server.httpSuccess();
 	char name[3];
 	char value[3];
@@ -269,7 +269,7 @@ void relayCmd(WebServer &server, WebServer::ConnectionType type, char *url_param
 		writeSDAlarm = Alarm.timerOnce(5, writeSD);
 	}
 }
-void graphs1Cmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
@@ -285,7 +285,7 @@ void graphs1Cmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 		else server.print(F("SD failed"));
 	}
 }
-void graphs2Cmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
@@ -301,7 +301,30 @@ void graphs2Cmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 		else server.print(F("SD failed"));
 	}
 }
+void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	server.httpSuccess("text/html"CRLF);
+	if (type == WebServer::GET)
+	{
+		myFile = SD.open("/www/sched.htm");        // open web page file
+		if (myFile)   {
+			int16_t c;
+			while ((c = myFile.read()) >= 0) {
+				server.print((char)c);
+			}
+			myFile.close();
+		}
+		else server.print(F("SD failed"));
+	}
+}
+void schedXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
 
+}
+void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+
+}
 
 void setup()
 {
@@ -324,12 +347,15 @@ void setup()
 	setupEthernet();
 	setupAlarms();
 
-	webserver.setDefaultCommand(&homeCmd);
-	webserver.addCommand("index.htm", homeCmd);
-	webserver.addCommand("XMLresponseCmd", XMLresponseCmd);
-	webserver.addCommand("relayCmd", relayCmd);
-	webserver.addCommand("graphs1.htm", graphs1Cmd);
-	webserver.addCommand("graphs2.htm", graphs2Cmd);
+	webserver.setDefaultCommand(&homePageCmd); //get page
+	webserver.addCommand("index.htm", homePageCmd); //get page
+	webserver.addCommand("sensors.xml", sensorsXMLCmd); //get xml
+	webserver.addCommand("relays.data", relayDataCmd); //post data
+	webserver.addCommand("graphs1.htm", graphs1PageCmd); //get page
+	webserver.addCommand("graphs2.htm", graphs2PageCmd); //get page
+	webserver.addCommand("sched.htm", schedPageCmd); //get page
+	webserver.addCommand("sched.xml", schedXMLCmd); //get xml
+	webserver.addCommand("sched.data", schedDataCmd); //post data
 	webserver.begin();
 
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
