@@ -11,6 +11,7 @@
 */
 unsigned long inline ntpUnixTime(UDP &udp)
 {
+	lastNTPsync = DateTime(now());
 	static int udpInited = udp.begin(123); // open socket on arbitrary port
 
 	// Only the first four bytes of an outgoing NTP packet need to be set

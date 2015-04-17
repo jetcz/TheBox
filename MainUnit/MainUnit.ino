@@ -96,8 +96,11 @@ const size_t bufferLen = 30;
 char buffer[bufferLen];
 
 /* variables */
-byte iFailedCounter = 0;					//failed thingspeak uploads
+int iFailedCounter = 0;					//failed thingspeak uploads
+unsigned int iFailedCntTSTotal = 0;		//total failed thing speak messages
+unsigned int iFailedCntRadioTotal = 0;
 DateTime sysStart;							//time of system start for uptime 
+DateTime lastNTPsync = 0;
 byte iCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
 String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
@@ -181,7 +184,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 	{
 
 		P(tag_start_sensor) = "<V>";
-		P(tag_end_sensor) = "<V>";
+		P(tag_end_sensor) = "</V>";
 
 		server.print(F("<?xml version = \"1.0\" ?>"));
 		server.print(F("<Inputs>"));
@@ -246,7 +249,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		for (int i = 0; i < 4; i++)
 		{
 			server.print(F("<S>"));
-			server.print(getRelayState(i));
+			server.print(int(getRelayState(i)));
 			server.print(F("</S>"));
 		}
 		server.print(F("</States>"));
@@ -325,6 +328,131 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 {
 
 }
+void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	server.httpSuccess("text/html"CRLF);
+	if (type == WebServer::GET)
+	{
+		myFile = SD.open("/www/system.htm");        // open web page file
+		if (myFile)   {
+			int16_t c;
+			while ((c = myFile.read()) >= 0) {
+				server.print((char)c);
+			}
+			myFile.close();
+		}
+		else server.print(F("SD failed"));
+	}
+};
+void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool){
+
+
+	if (type == WebServer::POST)
+	{
+		server.httpFail();
+		return;
+	}
+	server.httpSuccess("text/xml", "Connection: keep-alive"CRLF);
+
+	if (type == WebServer::GET)
+	{
+		P(tag_start_sensor) = "<V>";
+		P(tag_end_sensor) = "</V>";
+
+		server.print(F("<?xml version = \"1.0\" ?>"));
+		server.print(F("<Sys>"));
+		server.print(F("<Time>"));
+		server.print(F("<Loc>"));
+		server.print(sNow);
+		server.print(F("</Loc>"));
+		server.print(F("<Sync>"));
+		server.print(getUptimeString(DateTime(now()) - lastNTPsync));
+		server.print(F("</Sync>"));
+		server.print(F("</Time>"));
+		server.print(F("<Stats>"));
+
+		server.printP(tag_start_sensor);
+		server.print(sMainUptime);
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(sRemoteUptime);
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(readVcc());
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(int(SystemDS.Data[6]));
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(now() - MainDS.Timestamp.unixtime());
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(now() - RemoteDS.Timestamp.unixtime());
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(iFailedCntTSTotal);
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(iFailedCntRadioTotal);
+		server.printP(tag_end_sensor);
+
+		server.print(F("</Stats>"));
+		server.print(F("</Sys>"));
+	};
+
+};
+void networkXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool){
+
+	if (type == WebServer::POST)
+	{
+		server.httpFail();
+		return;
+	}
+	server.httpSuccess("text/xml", "Connection: keep-alive"CRLF);
+
+	if (type == WebServer::GET)
+	{
+
+		P(tag_start_sensor) = "<V>";
+		P(tag_end_sensor) = "</V>";
+
+		server.print(F("<?xml version = \"1.0\" ?>"));
+		server.print(F("<Net>"));
+
+		for (int i = 0; i < 4; i++)
+		{
+			server.printP(tag_start_sensor);
+			server.print(ip[i]);
+			server.printP(tag_end_sensor);
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			server.printP(tag_start_sensor);
+			server.print(gw[i]);
+			server.printP(tag_end_sensor);
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			server.printP(tag_start_sensor);
+			server.print(subnet[i]);
+			server.printP(tag_end_sensor);
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			server.printP(tag_start_sensor);
+			server.print(dns1[i]);
+			server.printP(tag_end_sensor);
+		}
+		server.print(F("</Net>"));
+	};
+}
 
 void setup()
 {
@@ -356,6 +484,9 @@ void setup()
 	webserver.addCommand("sched.htm", schedPageCmd); //get page
 	webserver.addCommand("sched.xml", schedXMLCmd); //get xml
 	webserver.addCommand("sched.data", schedDataCmd); //post data
+	webserver.addCommand("system.htm", systemPageCmd); //get page
+	webserver.addCommand("stats.xml", statsXMLCmd); //get xml
+	webserver.addCommand("network.xml", networkXMLCmd); //get xml
 	webserver.begin();
 
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";

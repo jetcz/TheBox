@@ -76,6 +76,8 @@
     <None Include="DataTypesConversion.ino">
       <FileType>CppCode</FileType>
     </None>
+    <None Include="general.css" />
+    <None Include="graph.css" />
     <None Include="graphs1.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -85,6 +87,7 @@
     <None Include="index.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="index.js" />
     <None Include="Lcd.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -110,6 +113,7 @@
     <None Include="sched.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="sched.js" />
     <None Include="SDsettings.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -122,6 +126,8 @@
     <None Include="system.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="system.js" />
+    <None Include="table.css" />
     <None Include="Thingspeak.ino">
       <FileType>CppCode</FileType>
     </None>

@@ -22,6 +22,9 @@
     <Filter Include="sample xml">
       <UniqueIdentifier>{7630c559-cdc0-493f-9f3c-f41614c123ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="www\js">
+      <UniqueIdentifier>{b0873bf7-659d-4078-93fc-0c2a57eb4733}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="MainUnit.ino" />
@@ -55,6 +58,24 @@
     </None>
     <None Include="system.htm">
       <Filter>www</Filter>
+    </None>
+    <None Include="index.js">
+      <Filter>www\js</Filter>
+    </None>
+    <None Include="table.css">
+      <Filter>www\css</Filter>
+    </None>
+    <None Include="general.css">
+      <Filter>www\css</Filter>
+    </None>
+    <None Include="graph.css">
+      <Filter>www\css</Filter>
+    </None>
+    <None Include="sched.js">
+      <Filter>www\js</Filter>
+    </None>
+    <None Include="system.js">
+      <Filter>www\js</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

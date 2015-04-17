@@ -9,139 +9,13 @@
 <html>
 <head>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="http://jet.php5.cz/thebox/js/index.js"></script>
     <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/menu.css">
+    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/general.css">
+    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/table.css">
     <title>
         The Box - Home
     </title>
-    <script>
-        $(document).ready(function () {
-            getInputsRepeat();
-            var rb = document.getElementsByName('r2');
-            for (i = 0; i < rb.length; i++) {
-                rb[i].onclick = function () {
-                    console.log(this.value);
-                    $.ajax({
-                        type: "POST",
-                        url: "relays.data",
-                        data: "2=" + this.value,
-                        complete: getInputs()
-                    });
-                };
-            }
-            var rb = document.getElementsByName('r2');
-            for (i = 0; i < rb.length; i++) {
-                rb[i].onclick = function () {
-                    console.log(this.value);
-                    $.ajax({
-                        type: "POST",
-                        url: "relays.data",
-                        data: "2=" + this.value,
-                        complete: getInputs()
-                    });
-                };
-            }
-            var rb = document.getElementsByName('r3');
-            for (i = 0; i < rb.length; i++) {
-                rb[i].onclick = function () {
-                    console.log(this.value);
-                    $.ajax({
-                        type: "POST",
-                        url: "relays.data",
-                        data: "3=" + this.value,
-                        complete: getInputs()
-                    });
-                };
-            }
-            var rb = document.getElementsByName('r4');
-            for (i = 0; i < rb.length; i++) {
-                rb[i].onclick = function () {
-                    console.log(this.value);
-                    $.ajax({
-                        type: "POST",
-                        url: "relays.data",
-                        data: "4=" + this.value,
-                        complete: getInputs()
-                    });
-                };
-            }
-        }); //end of on document ready
-        //get inputs once
-        function getInputs() {
-            $.ajax({
-                type: "GET",
-                url: "sensors.xml",
-                cache: false,
-                dataType: "xml",
-                success: xmlParseInputs,
-            });
-        }
-        //get inputs repeatedly
-        function getInputsRepeat() {
-            $.ajax({
-                type: "GET",
-                url: "sensors.xml",
-                cache: false,
-                dataType: "xml",
-                success: xmlParseInputs,
-                complete: function () {
-                    setTimeout(getInputsRepeat, 5000);
-                }
-            }
-            );
-        }
-        //parse inputs
-        function xmlParseInputs(xml) {
-            //sensor values
-            $(xml).find("Sen V").each(function () {
-                var i = $(this).index();
-                var value = $(this).text().trim();
-                $(".sensor").eq(i).text(value);
-            })
-            //relay radio buttons
-            $(xml).find("Mod M").each(function () {
-                var i = $(this).index();
-                var mode = $(this).text().trim();
-                var name = "r" + String(i + 1);
-                var elements = document.getElementsByName(name);
-                switch (parseInt(mode)) {
-                    case 1:
-                        elements[0].checked = true;
-                        break;
-                    case 0:
-                        elements[1].checked = true;
-                        break;
-                    case 2:
-                        elements[2].checked = true;
-                        break;
-                    default:
-                        break;
-                }
-            })
-            //color labels for relays
-            var element = $(document).find('.state');
-            $(xml).find("States S").each(function () {
-                var i = $(this).index();
-                var state = $(this).text().trim();
-                switch (parseInt(state)) {
-                    case 1:
-                        element[i].style.background = "green";
-                        break;
-                    case 0:
-                        element[i].style.background = "#c70000";
-                        break;
-                    default:
-                        break;
-                }
-            })
-            //grey out invalid remote values
-            var elements = $(document).find('.remote');
-            var valid = $(xml).find("OK").text().trim();
-            for (i = 0; i < elements.length; i++) {
-                if (parseInt(valid) == 0) elements[i].style.color = "#888";
-                else elements[i].removeAttribute("style");
-            }
-        };
-    </script>
     <style media="screen" type="text/css">
         input[type=radio] {
             margin: 0;
@@ -150,65 +24,9 @@
             height: 2em;
         }
 
-        body {
-            margin: 0;
-            padding: 0;
-            background: #ccc;
-        }
-
-        .content {
-            display: block;
-            font-family: 'Oswald', sans-serif;
-            background: white;
-            padding: 15px 15px 15px 15px;
-            margin: 15px 15px 15px 15px;
-            -moz-box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
-            -webkit-box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
-            box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
-        }
-
         .wrapContent {
             width: 650px;
         }
-
-        table {
-            border-collapse: collapse;
-            text-align: left;
-            width: 100%;
-            border: 1px solid #ccc;
-        }
-
-            table thead th {
-                background: #333;
-                color: #FFFFFF;
-                padding: 18px;
-                text-align: center;
-                text-transform: uppercase;
-                padding-left: 20px;
-                padding-right: 20px;
-                font-size: 1.1em;
-            }
-
-            table .leftHeader {
-                background: #333;
-                color: #FFFFFF;
-                text-align: right;
-                text-transform: uppercase;
-            }
-
-            table td {
-                padding: 10px 10px;
-                text-align: center;
-                background: #efefef;
-                transition: .3s background-color;
-            }
-
-            table .subtitle {
-                font-weight: normal;
-                background-color: #555;
-                padding: 8px;
-                font-size: 0.75em;
-            }
     </style>
 </head>
 <body>

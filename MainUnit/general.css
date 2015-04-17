@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #ccc;
+}
+
+.content {
+    font-family: 'Oswald', sans-serif;
+    background: white;
+    padding: 15px 15px 15px 15px;
+    margin: 15px 15px 15px 15px;
+    -moz-box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
+    -webkit-box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
+    box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
+}

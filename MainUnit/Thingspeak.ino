@@ -45,6 +45,7 @@ void updateThingSpeak(DataSet ds){
 			else
 				ledLight(3, 'y');
 			iFailedCounter++;
+			iFailedCntTSTotal++;
 			Alarm.disable(printLcdAlarm);
 			lcd.clear();
 			lcd.setCursor(0, 0);
@@ -68,6 +69,7 @@ void updateThingSpeak(DataSet ds){
 		else
 			ledLight(3, 'y');
 		iFailedCounter++;
+		iFailedCntTSTotal++;
 
 		Alarm.disable(printLcdAlarm);
 		lcd.clear();

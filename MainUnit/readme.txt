@@ -1,7 +1,10 @@
-RadioHead library:
+RadioHead library - RH_ASK.cpp:
 Arduino ethernet library probably uses timer 1 somehow therefore you MUST add this to RH_ASK.cpp:
 #define RH_ASK_ARDUINO_USE_TIMER2
 
-Ethernet library:
-It is recommended that you decrease timeout in Dhcp.h in beginWithDHCP method to something like 10-20s
+Ethernet library - Dhcp.h:
+It is recommended that you decrease timeout in beginWithDHCP method to something like 10-20s
+
+Webduino library - WebServer.h:
+change WEBDUINO_COMMANDS_COUNT to 16
 

@@ -10,6 +10,15 @@ void resetEthShield(int pin) {
 
 boolean isRemoteDataSetValid() {
 	boolean v;
+	static unsigned long counter = 0;
+	counter++;
+
+	//this is to find out how many radio transmissions failed
+	if (now() - RemoteDS.Timestamp.unixtime() > 67 && counter > 61)
+	{
+		iFailedCntRadioTotal++;
+		counter = 0;
+	}
 
 	if (now() - RemoteDS.Timestamp.unixtime() < iRemoteDataSetTimeout / 2 )
 	{
@@ -31,13 +40,12 @@ boolean isRemoteDataSetValid() {
 	return v;
 }
 
-
 int freeRam() {
 	extern int __heap_start, *__brkval;
 	int v;
 	return (int)&v - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
 }
-/* we dont need this for now
+
 long readVcc() {
 // Read 1.1V reference against AVcc
 // set the reference to Vcc and the measurement to the internal 1.1V reference
@@ -60,8 +68,6 @@ result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
 //result = 1122500L / result;
 return result; // Vcc in millivolts
 }
-*/
-
 
 String getDateTimeString(DateTime t)
 {
