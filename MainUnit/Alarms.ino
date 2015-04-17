@@ -43,6 +43,7 @@ void prepareDataSetArrays() {
 	}
 	else MainDS.Data[4] = getPressure(event);
 
+	MainDS.Timestamp = now();
 
 }
 

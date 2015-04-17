@@ -119,6 +119,9 @@
     <None Include="SetupFunctions.ino">
       <FileType>CppCode</FileType>
     </None>
+    <None Include="system.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="Thingspeak.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -135,6 +138,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="network.xml" />
+    <Xml Include="sched.xml" />
+    <Xml Include="sensors.xml" />
+    <Xml Include="stats.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

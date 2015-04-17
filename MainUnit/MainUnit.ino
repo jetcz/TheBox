@@ -180,15 +180,15 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 	if (type == WebServer::GET)
 	{
 
-		P(tag_start_sensor) = "<sensor>";
-		P(tag_end_sensor) = "</sensor>";
+		P(tag_start_sensor) = "<V>";
+		P(tag_end_sensor) = "<V>";
 
 		server.print(F("<?xml version = \"1.0\" ?>"));
-		server.print(F("<inputs>"));
-		server.print(F("<valid>"));
+		server.print(F("<Inputs>"));
+		server.print(F("<OK>"));
 		server.print(RemoteDS.Valid); //remote data set valid?
-		server.print(F("</valid>"));
-		server.print(F("<sensors>"));
+		server.print(F("</OK>"));
+		server.print(F("<Sen>"));
 
 		server.printP(tag_start_sensor);
 		server.print(MainDS.Data[0], 1); //mainairtemp
@@ -230,28 +230,28 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.print(RemoteDS.Data[6], 1); //rain
 		server.printP(tag_end_sensor);
 
-		server.print(F("</sensors>"));
+		server.print(F("</Sen>"));
 
-		server.print(F("<relays>"));
-		server.print(F("<modes>"));
+		server.print(F("<Relays>"));
+		server.print(F("<Mod>"));
 		for (int i = 0; i < 4; i++)
 		{
-			server.print(F("<relay>"));
+			server.print(F("<M>"));
 			server.print(byRelay[i]);
-			server.print(F("</relay>"));
+			server.print(F("</M>"));
 		}
-		server.print(F("</modes>"));
-		server.print(F("<states>"));
+		server.print(F("</Mod>"));
+		server.print(F("<States>"));
 
 		for (int i = 0; i < 4; i++)
 		{
-			server.print(F("<state>"));
+			server.print(F("<S>"));
 			server.print(getRelayState(i));
-			server.print(F("</state>"));
+			server.print(F("</S>"));
 		}
-		server.print(F("</states>"));
-		server.print(F("</relays>"));
-		server.print(F("</inputs>"));
+		server.print(F("</States>"));
+		server.print(F("</Relays>"));
+		server.print(F("</Inputs>"));
 	}
 }
 void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *url_param, bool param_complete) {
@@ -361,6 +361,7 @@ void setup()
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
 	MainDS.Size = 5;
 	MainDS.Valid = true;
+	MainDS.Timestamp = sysStart.unixtime();
 
 	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
 	RemoteDS.Size = 7;

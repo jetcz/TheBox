@@ -19,6 +19,9 @@
     <Filter Include="www\css">
       <UniqueIdentifier>{94cb7f53-1fc7-450b-a6de-3226356e56c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sample xml">
+      <UniqueIdentifier>{7630c559-cdc0-493f-9f3c-f41614c123ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="MainUnit.ino" />
@@ -50,6 +53,9 @@
     <None Include="sched.htm">
       <Filter>www</Filter>
     </None>
+    <None Include="system.htm">
+      <Filter>www</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">
@@ -61,5 +67,19 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="network.xml">
+      <Filter>sample xml</Filter>
+    </Xml>
+    <Xml Include="sensors.xml">
+      <Filter>sample xml</Filter>
+    </Xml>
+    <Xml Include="sched.xml">
+      <Filter>sample xml</Filter>
+    </Xml>
+    <Xml Include="stats.xml">
+      <Filter>sample xml</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
