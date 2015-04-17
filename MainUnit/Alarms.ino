@@ -1,4 +1,3 @@
-
 void printDebug() {
 	time_t ntp = time_t(ntpUnixTime(udp));
 	if (ntp != 0)
@@ -10,7 +9,6 @@ void printDebug() {
 	Serial.println("LOCAL" + getDateTimeString(local));
 }
 
-
 void system() {
 	sNow = getDateTimeString(myTZ.toLocal(now()));
 	enableDisableAlarms();
@@ -19,7 +17,6 @@ void system() {
 	RemoteDS.Valid = isRemoteDataSetValid();
 	receiveData();
 }
-
 
 void prepareDataSetArrays() {
 
@@ -139,14 +136,15 @@ void printLcd() {
 	}
 }
 
-
 void thingSpeak(){
 	//before we update thingspeak, check if the dataset is valid 
 	if (!DataSetPtr[iCurrentDataSet]->Valid)
 	{
 
+#if DEBUG
 		Serial.println();
 		Serial.println(F("DataSet not valid, aborting upload!"));
+#endif
 		iCurrentDataSet++;
 		return; //cancel thingspeak update
 	}
@@ -165,14 +163,19 @@ void thingSpeak(){
 	}
 	if (iTimeout > 5000)
 	{
+#if DEBUG
 		Serial.println();
 		Serial.println(F("Couldn't close connection"));
+#endif
+
 		ledLight(3, 'r');
 	}
 	else
+#if DEBUG
 		Serial.println();
 	Serial.println(F("Connection closed"));
 	Serial.println();
+#endif
 
 	// Update ThingSpeak
 	if (!client.connected())
@@ -180,16 +183,20 @@ void thingSpeak(){
 		if (iCurrentDataSet > 2) {
 			iCurrentDataSet = 0;
 		}
+#if DEBUG
 		Serial.print(F("Update ThingSpeak with dataset "));
 		Serial.println(intToString(iCurrentDataSet));
+#endif
 		updateThingSpeak(*DataSetPtr[iCurrentDataSet]);
 		iCurrentDataSet++;
 	}
 	// Check if Ethernet needs to be restarted
 	if ((iFailedCounter % iRestartEthernetThreshold) == 0 && iFailedCounter != 0){
 		ledLight(3, 'r');
+#if DEBUG
 		Serial.println(F("Ethernet Shield needs to be restarted!"));
 		Serial.println();
+#endif
 		Alarm.disable(printLcdAlarm);
 		lcd.clear();
 		lcd.setCursor(0, 0);
@@ -202,8 +209,10 @@ void thingSpeak(){
 	if ((iFailedCounter % iRestartArduinoThreshold) == 0 && iFailedCounter != 0) {
 		ledLight(1, 'r');
 		ledLight(3, 'r');
+#if DEBUG
 		Serial.println(F("Arduino needs to be restarted!"));
 		Serial.println();
+#endif
 		Alarm.disable(printLcdAlarm);
 		lcd.clear();
 		lcdBacklight();
@@ -216,20 +225,23 @@ void thingSpeak(){
 	}
 }
 
-
 // disable thingspeak updating if we do not have ip address
 void enableDisableAlarms() {
 
 	// enable or disable thingspeak depending on obtained dhcp lease (its no necesary but if we dont have connectioon on startup, its good to disable thingspeak)
 	if (bConnectivityCheck && !Alarm.active(updateTSAlarm) && bDhcp)
 	{
+#if DEBUG
 		Serial.println(F("Enabling ThingSpeak functionality"));
+#endif
 		Alarm.enable(updateTSAlarm);
 	}
 	else
 		if (!bConnectivityCheck && Alarm.active(updateTSAlarm) && bDhcp)
 		{
+#if DEBUG
 			Serial.print(F("Disabling ThingSpeak functionality"));
+#endif
 			Alarm.disable(updateTSAlarm);
 		}
 
@@ -263,12 +275,16 @@ void syncRTCwithNTP() {
 		lastNTPsync = DateTime(now());
 		rtc.adjust(DateTime(ntp));
 		lcd.print(F("NTP timesync success"));
+#if DEBUG
 		Serial.println(F("NTP time sync success"));
+#endif
 	}
 	else
 	{
 		lcd.print(F("NTP timesync failed!"));
+#if DEBUG
 		Serial.println(F("NTP time sync failed!"));
+#endif
 	}
 }
 
@@ -276,8 +292,10 @@ void dhcp() {
 	if (Ethernet.maintain() % 2 == 1) {  //renew dhcp lease, if failed, set flag
 		bConnectivityCheck = false;
 		Alarm.disable(printLcdAlarm);
+#if DEBUG
 		Serial.println();
 		Serial.println(F("Failed to obtain DHCP lease!"));
+#endif
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Failed to obtain"));
@@ -287,6 +305,7 @@ void dhcp() {
 	}
 	else {
 		bConnectivityCheck = true;
+#if DEBUG
 		Serial.println();
 		Serial.println(F("Obtained DHCP lease"));
 		Serial.print(F("IP: "));
@@ -295,6 +314,7 @@ void dhcp() {
 		Serial.println(Ethernet.gatewayIP());
 		Serial.print(F("DNS: "));
 		Serial.println(Ethernet.dnsServerIP());
+#endif
 		ledLight(1, 'g');
 	}
 }
@@ -303,7 +323,9 @@ void writeSD() {
 	boolean succes = writeSDRelaySettings(relays);
 	if (!succes)
 	{
+#if DEBUG
 		Serial.println(F("Writing relay settings to SD card failed!"));
+#endif
 		Alarm.disable(printLcdAlarm);
 		lcd.clear();
 		lcd.setCursor(0, 0);
@@ -312,5 +334,11 @@ void writeSD() {
 		lcd.print(F("settings to SD card"));
 		lcd.setCursor(0, 2);
 		lcd.print(F("failed!"));
-	};
+	}
+	else
+	{
+#if DEBUG
+		Serial.println(F("Writing relay settings to SD card ok"));
+#endif
+	}
 }

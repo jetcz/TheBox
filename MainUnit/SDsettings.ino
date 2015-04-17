@@ -1,3 +1,5 @@
+
+#if DEBUG
 void printErrorMessage(uint8_t e, bool eol = true)
 {
 	switch (e) {
@@ -35,6 +37,7 @@ void printErrorMessage(uint8_t e, bool eol = true)
 	if (eol)
 		Serial.println();
 }
+#endif
 
 
 boolean readSettings(char *path) {
@@ -52,8 +55,10 @@ boolean readSettings(char *path) {
 
 			}
 			else {
+#if DEBUG
 				Serial.print(F("Could not read 'ip', error was "));
 				printErrorMessage(ini.getError());
+#endif
 				return false;
 			}
 
@@ -61,24 +66,30 @@ boolean readSettings(char *path) {
 				chArrToByteArr(buffer, subnet);
 			}
 			else {
+#if DEBUG
 				Serial.print(F("Could not read 'subnet', error was "));
 				printErrorMessage(ini.getError());
+#endif
 				return false;
 			}
 			if (ini.getValue(NULL, "gw", buffer, bufferLen)) {
 				chArrToByteArr(buffer, gw);
 			}
 			else {
+#if DEBUG
 				Serial.print(F("Could not read 'gw', error was "));
 				printErrorMessage(ini.getError());
+#endif
 				return false;
 			}
 			if (ini.getValue(NULL, "dns", buffer, bufferLen)) {
 				chArrToByteArr(buffer, dns1);
 			}
 			else {
+#if DEBUG
 				Serial.print(F("Could not read 'dns', error was "));
 				printErrorMessage(ini.getError());
+#endif
 				return false;
 			}
 
@@ -89,8 +100,10 @@ boolean readSettings(char *path) {
 				chArrToByteArr(buffer, byRelay);
 			}
 			else {
+#if DEBUG
 				Serial.print(F("Could not read 'modes', error was "));
 				printErrorMessage(ini.getError());
+#endif
 				return false;
 			}
 		}

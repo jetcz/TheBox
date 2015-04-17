@@ -14,12 +14,16 @@ void updateThingSpeak(DataSet ds){
 		}
 	}
 	//update thingspeak
+#if DEBUG
 	Serial.print(F("Connecting to ThingSpeak..."));
+#endif
 	ledLight(3, 'b');
 	if (client.connect(cThingSpeakAddress, 80)) //string, int
 	{
 		ledLight(3, 'g');
+#if DEBUG
 		Serial.println(F("connected"));
+#endif
 		//POST update to thingspeak, print line by line
 		client.print(F("POST /update HTTP/1.1\n"));
 		client.print(F("Host: api.thingspeak.com\n"));
@@ -33,8 +37,10 @@ void updateThingSpeak(DataSet ds){
 
 		if (client.connected())
 		{
+#if DEBUG
 			Serial.println(F("Sending data... "));
 			Serial.println(s);
+#endif
 			iFailedCounter = 0;
 		}
 		else
@@ -54,10 +60,12 @@ void updateThingSpeak(DataSet ds){
 			lcd.print(F("failed "));
 			lcd.print(intToString(iFailedCounter));
 			lcd.print(F(" times"));
+#if DEBUG
 			Serial.print(F("client.connected() failed "));
 			Serial.print(intToString(iFailedCounter));
 			Serial.println(F(" times"));
 			Serial.println();
+#endif
 		}
 	}
 	else
@@ -79,9 +87,11 @@ void updateThingSpeak(DataSet ds){
 		lcd.print(F("failed "));
 		lcd.print(intToString(iFailedCounter));
 		lcd.print(F(" times"));
+#if DEBUG
 		Serial.print(F("client.connect() failed "));
 		Serial.print(intToString(iFailedCounter));
 		Serial.println(F(" times"));
 		Serial.println();
+#endif
 	}
 }

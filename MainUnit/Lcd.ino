@@ -160,33 +160,3 @@ void lcdBacklight() {
 		lcd.noBacklight();
 	}
 }
-
-
-/*	//line 1
-	lcd.setCursor(0, 0);
-	lcd.print(MainDS.Data[0], 1);
-	lcd.print(F("C"));
-	lcd.setCursor(13, 0);
-	lcd.print(MainDS.Data[1], 1);
-	lcd.print(F("%RH"));
-
-	//line 2
-	lcd.setCursor(0, 1);
-	lcd.print(weather[forecast]);
-	lcd.setCursor(strlen(weather[forecast]), 1);
-	lcd.print(F("      "));
-	lcd.setCursor(13, 1);
-	lcd.print(MainDS.Data[4], 0);
-	lcd.setCursor(17, 1);
-	lcd.print(F("hPa"));
-
-	//line 3
-	lcd.setCursor(0, 2);
-	lcd.print(SystemDS.Data[0], 1);
-	lcd.print(F("C"));
-	lcd.setCursor(20 - sMainUptime.length(), 2);
-	lcd.print(sMainUptime);
-
-	//line 4
-	lcd.setCursor(0, 3);
-	lcd.print(sNow);*/

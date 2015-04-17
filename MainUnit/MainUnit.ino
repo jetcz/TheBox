@@ -22,6 +22,8 @@
 
 //////////////////////USER CONFIGURABLE///////////////////////////////////
 
+#define DEBUG false //enable disable all serial.print messages
+
 /* pins */
 const int RESET_ETH_SHIELD_PIN = 14;
 const int DHT22_PIN = 9;
@@ -453,10 +455,29 @@ void networkXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.print(F("</Net>"));
 	};
 }
+void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	P(message) =
+		"<!DOCTYPE html><html><head>"
+		"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
+		"<script language=\"javascript\">"
+		"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+		"</script>"
+		"</head>"
+		"<body>"
+		"Rebooting, please wait..."
+		"</body>"
+		"</html>";
+	server.printP(message);
+	server.flushBuf();
+	resetFunc();
+}
 
 void setup()
 {
+#if DEBUG
 	setupSerial();
+#endif
 	setupPins();
 	setupSD();
 	readSettings(relays);
@@ -487,6 +508,7 @@ void setup()
 	webserver.addCommand("system.htm", systemPageCmd); //get page
 	webserver.addCommand("stats.xml", statsXMLCmd); //get xml
 	webserver.addCommand("network.xml", networkXMLCmd); //get xml
+	webserver.addCommand("reboot", rebootCmd);
 	webserver.begin();
 
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
@@ -503,7 +525,9 @@ void setup()
 	SystemDS.Size = 8;
 	SystemDS.Valid = true;
 
+#if DEBUG
 	Serial.println(F("Setup Done"));
+#endif
 }
 
 /* control everything by timer alarms */

@@ -1,13 +1,17 @@
+#if DEBUG
 void setupSerial() {
 	Serial.begin(9600);
 	Serial.println(F("Serial initialized"));
 }
+#endif
 
 
 void setupSD() {
 	ledLight(1, 'y');
 	if (!SD.begin(SD_SELECT_PIN)) {
+#if DEBUG
 		Serial.println(F("SD failed, or not present!"));
+#endif
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("SD failed,"));
@@ -16,7 +20,9 @@ void setupSD() {
 		ledLight(1, 'c');
 		while (1);
 	}
+#if DEBUG
 	else Serial.println(F("SD card initialized"));
+#endif
 	ledLight(1, 'g');
 }
 
@@ -53,26 +59,34 @@ void setupPins(){
 		ledLight(i, 'k');
 		pinMode(LCD_SWITCH[i], INPUT_PULLUP);
 	}
+#if DEBUG
 	Serial.println(F("Pins initialized and set"));
+#endif
 }
 
 void setupWire() {
 	Wire.begin();
+#if DEBUG
 	Serial.println(F("Wire initialized"));
+#endif
 	ledLight(1, 'g');
 }
 
 
 void setupDHT(){
 	dht.begin();
+#if DEBUG
 	Serial.println(F("DHT22 initialized"));
+#endif
 }
 
 void setupBMP(){
 	ledLight(1, 'y');
 	if (!bmp.begin())
 	{
+#if DEBUG
 		Serial.print(F("BMP180 failed, or not present!"));
+#endif
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("BMP180 failed,"));
@@ -81,7 +95,11 @@ void setupBMP(){
 		ledLight(1, 'r');
 		while (1);
 	}
-	else Serial.println(F("BMP180 initialized"));
+	else {
+#if DEBUG
+		Serial.println(F("BMP180 initialized"));
+#endif
+	};
 	ledLight(1, 'g');
 }
 
@@ -89,7 +107,9 @@ void setupRTC(){
 	ledLight(1, 'y');
 	if (!rtc.begin())
 	{
+#if DEBUG
 		Serial.print(F("RTC module failed, or not present!"));
+#endif
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("RTC module failed,"));
@@ -99,7 +119,9 @@ void setupRTC(){
 		while (1);
 	}
 	if (!rtc.isrunning()) {
+#if DEBUG
 		Serial.println(F("RTC is not running!"));
+#endif
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("RTC is not running!"));
@@ -107,7 +129,9 @@ void setupRTC(){
 	}
 	else {
 		//rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //set RTC clock to compile date MUST COMMENT OUT
+#if DEBUG
 		Serial.println(F("RTC initialized and clock adjusted"));
+#endif
 		setSyncProvider(syncProvider); //sync system clock from RTC module
 		setSyncInterval(600);
 		ledLight(1, 'g');
@@ -117,9 +141,13 @@ void setupRTC(){
 
 void setupRadio(){
 	if (!driver.init()) {
+#if DEBUG
 		Serial.println(F("Radio failed"));
+#endif
 	}
+#if DEBUG
 	else Serial.println(F("Radio initialized"));
+#endif
 }
 
 void setupEthernet() {
@@ -134,7 +162,9 @@ void setupEthernet() {
 
 		if (Ethernet.begin(mac) == 0) {
 			bConnectivityCheck = false;
+#if DEBUG
 			Serial.println(F("Failed to initialize ethernet using DHCP"));
+#endif
 			lcd.clear();
 			lcd.setCursor(0, 0);
 			lcd.print(F("Failed to initialize"));
@@ -144,29 +174,33 @@ void setupEthernet() {
 		}
 		else {
 			bConnectivityCheck = true;
-			Serial.println(F("Ethernet DHCP initialized"));
 			ledLight(1, 'g');
 			lcd.clear();
+#if DEBUG
+			Serial.println(F("Ethernet DHCP initialized"));
 			Serial.print(F("IP: "));
 			Serial.println(Ethernet.localIP());
 			Serial.print(F("GW: "));
 			Serial.println(Ethernet.gatewayIP());
 			Serial.print(F("DNS: "));
 			Serial.println(Ethernet.dnsServerIP());
+#endif
 		}
 	}
 	else {
 		bConnectivityCheck = true;
 		Ethernet.begin(mac, ip, dns1, gw, subnet);
-		Serial.println(F("Ethernet static initialized"));
 		ledLight(1, 'g');
 		lcd.clear();
+#if DEBUG
+		Serial.println(F("Ethernet static initialized"));
 		Serial.print(F("IP: "));
 		Serial.println(Ethernet.localIP());
 		Serial.print(F("GW: "));
 		Serial.println(Ethernet.gatewayIP());
 		Serial.print(F("DNS: "));
 		Serial.println(Ethernet.dnsServerIP());
+#endif
 	}
 	//this gives client.connect() max timeout approx 3s
 	W5100.setRetransmissionTime(0x07D0);
@@ -176,7 +210,9 @@ void setupEthernet() {
 void setupLCD(){
 	lcd.begin(20, 4);
 	lcd.clear();
+#if DEBUG
 	Serial.println(F("LCD initialized"));
+#endif
 }
 
 void setupAlarms() {
@@ -193,6 +229,8 @@ void setupAlarms() {
 	{
 		dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 	}
+#if DEBUG
 	Serial.println(F("Timers initialized"));
+#endif
 }
 
