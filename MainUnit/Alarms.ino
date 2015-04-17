@@ -260,6 +260,7 @@ void syncRTCwithNTP() {
 	unsigned long ntp = ntpUnixTime(udp);
 	if (ntp != 0)
 	{
+		lastNTPsync = DateTime(now());
 		rtc.adjust(DateTime(ntp));
 		lcd.print(F("NTP timesync success"));
 		Serial.println(F("NTP time sync success"));
