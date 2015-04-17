@@ -1,10 +1,9 @@
-#if DEBUG
 void setupSerial() {
+#if DEBUG
 	Serial.begin(9600);
 	Serial.println(F("Serial initialized"));
-}
 #endif
-
+}
 
 void setupSD() {
 	ledLight(1, 'y');
@@ -72,7 +71,6 @@ void setupWire() {
 	ledLight(1, 'g');
 }
 
-
 void setupDHT(){
 	dht.begin();
 #if DEBUG
@@ -101,7 +99,7 @@ void setupBMP(){
 #endif
 	};
 	ledLight(1, 'g');
-}
+	}
 
 void setupRTC(){
 	ledLight(1, 'y');
@@ -186,7 +184,7 @@ void setupEthernet() {
 			Serial.println(Ethernet.dnsServerIP());
 #endif
 		}
-	}
+		}
 	else {
 		bConnectivityCheck = true;
 		Ethernet.begin(mac, ip, dns1, gw, subnet);
@@ -205,7 +203,7 @@ void setupEthernet() {
 	//this gives client.connect() max timeout approx 3s
 	W5100.setRetransmissionTime(0x07D0);
 	W5100.setRetransmissionCount(3);
-}
+	}
 
 void setupLCD(){
 	lcd.begin(20, 4);

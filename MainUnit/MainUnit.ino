@@ -475,9 +475,7 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 
 void setup()
 {
-#if DEBUG
 	setupSerial();
-#endif
 	setupPins();
 	setupSD();
 	readSettings(relays);
