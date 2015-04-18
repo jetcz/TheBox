@@ -7,6 +7,9 @@ $(document).ready(function () {
         success: xmlParser,
         error: function () {
             $("header").append("<div class=\"wrapContent\"><div class=\"content\" style=\"color:red\"><b>FAILED TO GET SCHEDULER SETTINGS, DO NOT CONTINUE!</b></div></div>");
+            for (var i = 0; i < 4; i++) {
+                disableForm(i);
+            }
         }
     });
 });
@@ -40,20 +43,26 @@ function xmlParser(xml) {
     })
 }
 
-//handler for button
-$("button").click(function () {
-    //placeholder for submit button
-});
-//handler for comboboxes
-$(".cmb").change(function () {
-    var i = $('.cmb').index(this);
-    disableForm(i);
-});
-//handler for checkboxes
-$(".cb").click(function () {
-    var i = $('.cb').index(this);
-    disableInterval(i);
-});
+$(document).ready(function () {
+    //handler for button
+    $("button").click(function () {
+        //placeholder for submit button
+    });
+    //handler for comboboxes
+    $(".cmb").change(function () {
+        var i = $('.cmb').index(this);
+        disableForm(i);
+    });
+    //handler for checkboxes
+    $(".cb").click(function () {
+        var i = $('.cb').index(this);
+        disableInterval(i);
+    });
+
+    $('.decimal').jStepper({ minValue: -100, maxValue: 100, normalStep: 0.1 });
+    $('.time.H').jStepper({ minValue: 0, maxValue: 23 });
+    $('.time.M').jStepper({ minValue: 0, maxValue: 59 });
+})
 //disable relay form if variable is set to pir
 function disableForm(i) {
     var val = $('.cmb').eq(i).find('option:selected').val();
@@ -98,9 +107,7 @@ function disableInterval(i) {
         $('.To').eq(i).prop('required', true);
     }
 }
-//jstepper for numeric field
-$(document).ready(function () { $('.decimal').jStepper({ minValue: -100, maxValue: 100 }); });
-$(document).ready(function () { $('.time').jStepper({ minValue: 0 }); });
+
 //validator for numeric values
 $(document).on('keyup', '.decimal, .time', function (event) {
     var v = this.value;

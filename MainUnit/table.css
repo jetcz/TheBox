@@ -36,3 +36,7 @@ table {
         padding: 8px;
         font-size: 0.75em;
     }
+
+    table input[type="number"] {
+        width: 3em;
+    }

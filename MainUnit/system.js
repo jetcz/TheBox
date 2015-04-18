@@ -36,6 +36,50 @@ function xmlParseStats(xml) {
         var i = $(this).index();
         var value = $(this).text().trim();
         $(".Value").eq(i).text(value);
+
+        //preset voltage background color
+        if (i == 2 || i == 3) {
+            if (parseInt(value) > 4500) {
+                $('.tdVal').eq(i).css("background-color", "green");
+                $('.tdVal').eq(i).css("color", "white");
+            }
+            if (parseInt(value) <= 4500 && parseInt(value) > 3500) {
+                $('.tdVal').eq(i).css("background-color", "#e97900");
+                $('.tdVal').eq(i).css("color", "white");
+            }
+            if (parseInt(value) <= 3500) {
+                $('.tdVal').eq(i).css("background-color", "#c70000");
+                $('.tdVal').eq(i).css("color", "white");
+            }
+        }
+        //preset ds age  
+        if (i == 4) {
+            if (parseInt(value) < 12) {
+                $('.tdVal').eq(i).css("background-color", "green");
+                $('.tdVal').eq(i).css("color", "white");
+            }
+
+            if (parseInt(value) >= 12) {
+                $('.tdVal').eq(i).css("background-color", "#c70000");
+                $('.tdVal').eq(i).css("color", "white");
+            }
+        }
+
+        if (i == 5) {
+            if (parseInt(value) < 65) {
+                $('.tdVal').eq(i).css("background-color", "green");
+                $('.tdVal').eq(i).css("color", "white");
+            }
+
+            if (parseInt(value) >= 65 && parseInt(value) < 130) {
+                $('.tdVal').eq(i).css("background-color", "#e97900");
+                $('.tdVal').eq(i).css("color", "white");
+            }
+            if (parseInt(value) >= 130) {
+                $('.tdVal').eq(i).css("background-color", "#c70000");
+                $('.tdVal').eq(i).css("color", "white");
+            }
+        }
     })
 };
 function xmlParseNetwork(xml) {
