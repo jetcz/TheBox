@@ -40,44 +40,36 @@ function xmlParseStats(xml) {
         //preset voltage background color
         if (i == 2 || i == 3) {
             if (parseInt(value) > 4500) {
-                $('.tdVal').eq(i).css("background-color", "green");
-                $('.tdVal').eq(i).css("color", "white");
+                $('.tdVal').eq(i-2).css("background-color", "green");
             }
             if (parseInt(value) <= 4500 && parseInt(value) > 3500) {
-                $('.tdVal').eq(i).css("background-color", "#e97900");
-                $('.tdVal').eq(i).css("color", "white");
+                $('.tdVal').eq(i-2).css("background-color", "#e97900");
             }
             if (parseInt(value) <= 3500) {
-                $('.tdVal').eq(i).css("background-color", "#c70000");
-                $('.tdVal').eq(i).css("color", "white");
+                $('.tdVal').eq(i-2).css("background-color", "#c70000");
             }
         }
         //preset ds age  
         if (i == 4) {
             if (parseInt(value) < 12) {
-                $('.tdVal').eq(i).css("background-color", "green");
-                $('.tdVal').eq(i).css("color", "white");
+                $('.tdVal').eq(i-2).css("background-color", "green");
             }
 
             if (parseInt(value) >= 12) {
-                $('.tdVal').eq(i).css("background-color", "#c70000");
-                $('.tdVal').eq(i).css("color", "white");
+                $('.tdVal').eq(i-2).css("background-color", "#c70000");
             }
         }
 
         if (i == 5) {
             if (parseInt(value) < 65) {
-                $('.tdVal').eq(i).css("background-color", "green");
-                $('.tdVal').eq(i).css("color", "white");
+                $('.tdVal').eq(i-2).css("background-color", "green");
             }
 
             if (parseInt(value) >= 65 && parseInt(value) < 130) {
-                $('.tdVal').eq(i).css("background-color", "#e97900");
-                $('.tdVal').eq(i).css("color", "white");
+                $('.tdVal').eq(i-2).css("background-color", "#e97900");
             }
             if (parseInt(value) >= 130) {
-                $('.tdVal').eq(i).css("background-color", "#c70000");
-                $('.tdVal').eq(i).css("color", "white");
+                $('.tdVal').eq(i-2).css("background-color", "#c70000");
             }
         }
     })

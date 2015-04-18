@@ -40,3 +40,7 @@ table {
     table input[type="number"] {
         width: 3em;
     }
+
+    table .tdVal {
+        color: white;
+    }
