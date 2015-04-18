@@ -131,3 +131,58 @@ boolean writeSDRelaySettings(char *path) {
 		return true;
 	}
 }
+
+boolean writeSDEthernetSettings() {
+	SD.remove(ethernet);
+	myFile = SD.open(ethernet, FILE_WRITE);
+	if (!myFile)
+	{
+		return false;
+	}
+	else {
+		myFile.print(F("ip="));
+		for (int i = 0; i < 4; i++)
+		{
+			myFile.print(ip[i]);
+			if (i < 3)
+			{
+				myFile.print(F("."));
+			}
+		}
+		myFile.println();
+
+		myFile.print(F("subnet="));
+		for (int i = 0; i < 4; i++)
+		{
+			myFile.print(subnet[i]);
+			if (i < 3)
+			{
+				myFile.print(F("."));
+			}
+		}
+		myFile.println();
+
+		myFile.print(F("gw="));
+		for (int i = 0; i < 4; i++)
+		{
+			myFile.print(gw[i]);
+			if (i < 3)
+			{
+				myFile.print(F("."));
+			}
+		}
+		myFile.println();
+
+		myFile.print(F("dns="));
+		for (int i = 0; i < 4; i++)
+		{
+			myFile.print(dns1[i]);
+			if (i < 3)
+			{
+				myFile.print(F("."));
+			}
+		}
+		myFile.close();
+		return true;
+	}
+}

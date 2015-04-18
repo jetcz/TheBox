@@ -22,7 +22,7 @@
 
 //////////////////////USER CONFIGURABLE///////////////////////////////////
 
-#define DEBUG false //enable disable all serial.print messages
+#define DEBUG true //enable disable all serial.print messages
 
 /* pins */
 const int RESET_ETH_SHIELD_PIN = 14;
@@ -136,10 +136,10 @@ byte byRelay[4] = { 0 };
 
 /* network settings */
 byte mac[] = { 0xB0, 0x0B, 0x5B, 0x00, 0xB5, 0x00 };
-byte ip[4];
-byte gw[4];
-byte subnet[4];
-byte dns1[4];
+byte ip[4] = { 0 };
+byte gw[4] = { 0 };
+byte subnet[4] = { 0 };
+byte dns1[4] = { 0 };
 boolean bDhcp;
 
 /* alarms */
@@ -259,7 +259,8 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.print(F("</Inputs>"));
 	}
 }
-void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *url_param, bool param_complete) {
+void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *url_param, bool param_complete)
+{
 	server.httpSuccess();
 	char name[3];
 	char value[3];
@@ -437,13 +438,13 @@ void networkXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(gw[i]);
+			server.print(subnet[i]);
 			server.printP(tag_end_sensor);
 		}
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(subnet[i]);
+			server.print(gw[i]);
 			server.printP(tag_end_sensor);
 		}
 		for (int i = 0; i < 4; i++)
@@ -471,6 +472,93 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 	server.printP(message);
 	server.flushBuf();
 	resetFunc();
+}
+void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	server.httpSuccess();
+	char name[5];
+	char value[4];
+	if (type == WebServer::POST)
+	{
+		while (server.readPOSTparam(name, 5, value, 4))
+		{
+			if (String(name) == "IP")
+			{
+				static int i = 0;
+				ip[i] = atoi(value);
+				i++;
+			}
+			if (String(name) == "Mask")
+			{
+				static int i = 0;
+				subnet[i] = atoi(value);
+				i++;
+			}
+			if (String(name) == "GW")
+			{
+				static int i = 0;
+				gw[i] = atoi(value);
+				i++;
+			}
+			if (String(name) == "DNS")
+			{
+				static int i = 0;
+				dns1[i] = atoi(value);
+				i++;
+			}
+		}
+		//build new ip to string for future redirect
+		String sNewIP = "";
+		for (int i = 0; i < 4; i++)
+		{
+			sNewIP += String(ip[i]);
+			if (i < 3)
+			{
+				sNewIP += ".";
+			}
+			else sNewIP += "/";
+		}
+
+		P(saveNetSucces1) =
+			"<!DOCTYPE html><html><head>"
+			"<script language=\"javascript\">"
+			"setTimeout(function(){ location.href = \"http://";
+		P(saveNetSucces2) = "system.htm\" }, 5000);"
+			"</script>"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"</head>"
+			"<body>"
+			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
+			"Saving network settings succes!"
+			"</div>"
+			"</body>"
+			"</html>";
+		P(saveNetFail) =
+			"<!DOCTYPE html><html><head>"
+			"<meta http-equiv=\"refresh\" content=\"5; url=system.htm\">"
+			"<script language=\"javascript\">"
+			"setTimeout(function(){ location.href = \"system.htm\" }, 5000);"
+			"</script>"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"</head>"
+			"<body>"
+			"<div class=\"content\" style=\"color:red;font-weight:bold\">"
+			"Saving network settings failed!"
+			"</div>"
+			"</body>"
+			"</html>";
+		if (writeSDEthernetSettings()) {
+			server.printP(saveNetSucces1);
+			server.print(sNewIP);
+			server.printP(saveNetSucces2);
+			server.flushBuf();
+			setupEthernet();
+		}
+		else {
+			server.printP(saveNetFail);
+			server.flushBuf();
+		}
+	}
 }
 
 void setup()
@@ -506,6 +594,7 @@ void setup()
 	webserver.addCommand("system.htm", systemPageCmd); //get page
 	webserver.addCommand("stats.xml", statsXMLCmd); //get xml
 	webserver.addCommand("network.xml", networkXMLCmd); //get xml
+	webserver.addCommand("network.data", networkDataCmd); //post data
 	webserver.addCommand("reboot", rebootCmd);
 	webserver.begin();
 
