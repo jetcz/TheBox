@@ -12,15 +12,6 @@ void resetEthShield(int pin) {
 
 boolean isRemoteDataSetValid() {
 	boolean v;
-	static unsigned long counter = 0;
-	counter++;
-
-	//this is to find out how many radio transmissions failed
-	if (now() - RemoteDS.Timestamp.unixtime() > 67 && counter > 61)
-	{
-		iFailedCntRadioTotal++;
-		counter = 0;
-	}
 
 	if (now() - RemoteDS.Timestamp.unixtime() < iRemoteDataSetTimeout / 2)
 	{
@@ -66,14 +57,14 @@ long readVcc() {
 	uint8_t low = ADCL; // must read ADCL first - it then locks ADCH
 	uint8_t high = ADCH; // unlocks both
 	long result = (high << 8) | low;
-	result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
-	//result = 1122500L / result;
+	//result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
+	result = 1122500L / result;
 	return result; // Vcc in millivolts
 }
 
 String getDateTimeString(DateTime t)
 {
-	sprintf(buffer, "%04d-%02d-%02d  %02d:%02d:%02d", t.year(), t.month(), t.day(), t.hour(), t.minute(), t.second());
+	sprintf(buffer, "%02d.%02d.%04d  %02d:%02d:%02d", t.day(), t.month(), t.year(), t.hour(), t.minute(), t.second());
 	return buffer;
 }
 

@@ -16,6 +16,7 @@ void system() {
 	sMainUptime = getUptimeString(getUptime());
 	RemoteDS.Valid = isRemoteDataSetValid();
 	receiveData();
+	getFailedRadioMessages();
 }
 
 void prepareDataSetArrays() {

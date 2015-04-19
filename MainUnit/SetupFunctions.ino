@@ -99,7 +99,7 @@ void setupBMP(){
 #endif
 	};
 	ledLight(1, 'g');
-	}
+}
 
 void setupRTC(){
 	ledLight(1, 'y');
@@ -178,13 +178,15 @@ void setupEthernet() {
 			Serial.println(F("Ethernet DHCP initialized"));
 			Serial.print(F("IP: "));
 			Serial.println(Ethernet.localIP());
+			Serial.print(F("Mask: "));
+			Serial.println(Ethernet.subnetMask());
 			Serial.print(F("GW: "));
 			Serial.println(Ethernet.gatewayIP());
 			Serial.print(F("DNS: "));
 			Serial.println(Ethernet.dnsServerIP());
 #endif
 		}
-		}
+	}
 	else {
 		bConnectivityCheck = true;
 		Ethernet.begin(mac, ip, dns1, gw, subnet);
@@ -194,6 +196,8 @@ void setupEthernet() {
 		Serial.println(F("Ethernet static initialized"));
 		Serial.print(F("IP: "));
 		Serial.println(Ethernet.localIP());
+		Serial.print(F("Mask: "));
+		Serial.println(Ethernet.subnetMask());
 		Serial.print(F("GW: "));
 		Serial.println(Ethernet.gatewayIP());
 		Serial.print(F("DNS: "));
@@ -203,7 +207,7 @@ void setupEthernet() {
 	//this gives client.connect() max timeout approx 3s
 	W5100.setRetransmissionTime(0x07D0);
 	W5100.setRetransmissionCount(3);
-	}
+}
 
 void setupLCD(){
 	lcd.begin(20, 4);
@@ -228,7 +232,7 @@ void setupAlarms() {
 		dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 	}
 #if DEBUG
-	Serial.println(F("Timers initialized"));
+	Serial.println(F("Alarms initialized"));
 #endif
 }
 

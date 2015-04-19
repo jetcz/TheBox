@@ -108,6 +108,7 @@ String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
 boolean bConnectivityCheck = true;
+boolean bReceivedRadioMsg = false;
 
 /* weather */
 const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -369,7 +370,8 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.print(sNow);
 		server.print(F("</Loc>"));
 		server.print(F("<Sync>"));
-		server.print(getUptimeString(DateTime(now()) - lastNTPsync));
+		if (now() - lastNTPsync.unixtime() > 1000000000) server.print("never");
+		else server.print(getUptimeString(DateTime(now()) - lastNTPsync)+" ago");
 		server.print(F("</Sync>"));
 		server.print(F("</Time>"));
 		server.print(F("<Stats>"));
@@ -395,7 +397,8 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(now() - RemoteDS.Timestamp.unixtime());
+		if (bReceivedRadioMsg) server.print(now() - RemoteDS.Timestamp.unixtime());
+		else server.print(9999);
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
@@ -460,13 +463,16 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	P(message) =
 		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
+		"<meta http-equiv=\"refresh\" content=\"3; url=system.htm\">"
 		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+		"setTimeout(function(){ location.href = \"system.htm\" }, 3000);"
 		"</script>"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
 		"</head>"
 		"<body>"
+		"<div class=\"content\" style=\"font-weight:bold\">"
 		"Rebooting, please wait..."
+		"</div>"
 		"</body>"
 		"</html>";
 	server.printP(message);
@@ -476,37 +482,34 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	server.httpSuccess();
-	char name[5];
 	char value[4];
+	byte counter[4] = { 0 };
 	if (type == WebServer::POST)
 	{
-		while (server.readPOSTparam(name, 5, value, 4))
+		while (server.readPOSTparam(buffer, 10, value, 4))
 		{
-			if (String(name) == "IP")
+			if (strcmp(buffer, "IP") == 0)
 			{
-				static int i = 0;
-				ip[i] = atoi(value);
-				i++;
+				ip[counter[0]] = atoi(value);
+				counter[0]++;
 			}
-			if (String(name) == "Mask")
+			if (strcmp(buffer, "Mask") == 0)
 			{
-				static int i = 0;
-				subnet[i] = atoi(value);
-				i++;
+				subnet[counter[1]] = atoi(value);
+				counter[1]++;
 			}
-			if (String(name) == "GW")
+			if (strcmp(buffer, "GW") == 0)
 			{
-				static int i = 0;
-				gw[i] = atoi(value);
-				i++;
+				gw[counter[2]] = atoi(value);
+				counter[2]++;
 			}
-			if (String(name) == "DNS")
+			if (strcmp(buffer, "DNS") == 0)
 			{
-				static int i = 0;
-				dns1[i] = atoi(value);
-				i++;
+				dns1[counter[3]] = atoi(value);
+				counter[3]++;
 			}
 		}
+
 		//build new ip to string for future redirect
 		String sNewIP = "";
 		for (int i = 0; i < 4; i++)
@@ -519,25 +522,26 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			else sNewIP += "/";
 		}
 
+
 		P(saveNetSucces1) =
 			"<!DOCTYPE html><html><head>"
 			"<script language=\"javascript\">"
 			"setTimeout(function(){ location.href = \"http://";
-		P(saveNetSucces2) = "system.htm\" }, 5000);"
+		P(saveNetSucces2) = "system.htm\" }, 3000);"
 			"</script>"
 			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
-			"Saving network settings succes!"
+			"Network settings saved successfully"
 			"</div>"
 			"</body>"
 			"</html>";
 		P(saveNetFail) =
 			"<!DOCTYPE html><html><head>"
-			"<meta http-equiv=\"refresh\" content=\"5; url=system.htm\">"
+			"<meta http-equiv=\"refresh\" content=\"4; url=system.htm\">"
 			"<script language=\"javascript\">"
-			"setTimeout(function(){ location.href = \"system.htm\" }, 5000);"
+			"setTimeout(function(){ location.href = \"system.htm\" }, 4000);"
 			"</script>"
 			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
 			"</head>"
@@ -606,7 +610,6 @@ void setup()
 	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
 	RemoteDS.Size = 7;
 	RemoteDS.Valid = false;
-	RemoteDS.Timestamp = sysStart.unixtime() - iRemoteDataSetTimeout;
 
 	SystemDS.APIkey = "GNQST00GBW05EYGC";
 	SystemDS.Size = 8;

@@ -139,7 +139,9 @@ void printLcdScreen3() {
 	lcd.print(sRemoteUptime);
 
 	//3
-	String s = intToString(now() - RemoteDS.Timestamp.unixtime());
+	String s;
+	if (bReceivedRadioMsg) s = intToString(now() - RemoteDS.Timestamp.unixtime());
+	else s = "NaN";
 	lcd.setCursor(0, 2);
 	lcd.print(F("RemoteDS age"));
 	lcd.setCursor(13, 2);
