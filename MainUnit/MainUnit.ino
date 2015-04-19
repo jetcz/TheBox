@@ -102,12 +102,13 @@ int iFailedCounter = 0;					//failed thingspeak uploads
 unsigned int iFailedCntTSTotal = 0;		//total failed thing speak messages
 unsigned int iFailedCntRadioTotal = 0;
 DateTime sysStart;							//time of system start for uptime 
-DateTime lastNTPsync;
+DateTime lastNTPsync = 0;
 byte iCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
 String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
 boolean bConnectivityCheck = true;
+boolean bReceivedRadioMsg = false;
 
 /* weather */
 const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -369,8 +370,8 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.print(sNow);
 		server.print(F("</Loc>"));
 		server.print(F("<Sync>"));
-		if (!isnan(lastNTPsync.unixtime())) server.print("never");
-		else server.print(getUptimeString(DateTime(now()) - lastNTPsync) + " ago");
+		if (now() - lastNTPsync.unixtime() > 1000000000) server.print("never");
+		else server.print(getUptimeString(DateTime(now()) - lastNTPsync)+" ago");
 		server.print(F("</Sync>"));
 		server.print(F("</Time>"));
 		server.print(F("<Stats>"));
@@ -396,8 +397,8 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		if (!isnan(RemoteDS.Timestamp.unixtime())) server.print(9999);
-		else server.print(now() - RemoteDS.Timestamp.unixtime());
+		if (bReceivedRadioMsg) server.print(now() - RemoteDS.Timestamp.unixtime());
+		else server.print(9999);
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
