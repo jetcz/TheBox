@@ -160,6 +160,7 @@ void(*resetFunc) (void) = 0;
 /* commands for webserver */
 void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'b');
 	server.httpSuccess("text/html", "Connection: keep-alive"CRLF);
 	if (type == WebServer::GET)
 	{
@@ -173,9 +174,11 @@ void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		}
 		else server.print(F("SD failed"));
 	}
+	ledLight(1, 'g');
 }
 void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'c');
 	if (type == WebServer::POST)
 	{
 		server.httpFail();
@@ -259,9 +262,11 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.print(F("</Relays>"));
 		server.print(F("</Inputs>"));
 	}
+	ledLight(1, 'g');
 }
 void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *url_param, bool param_complete)
 {
+	ledLight(1, 'y');
 	server.httpSuccess();
 	char name[3];
 	char value[3];
@@ -275,9 +280,11 @@ void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *url_p
 		Alarm.disable(writeSDAlarm);
 		writeSDAlarm = Alarm.timerOnce(5, writeSD);
 	}
+	ledLight(1, 'g');
 }
 void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'b');
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
 	{
@@ -291,9 +298,11 @@ void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		}
 		else server.print(F("SD failed"));
 	}
+	ledLight(1, 'g');
 }
 void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'b');
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
 	{
@@ -307,9 +316,11 @@ void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		}
 		else server.print(F("SD failed"));
 	}
+	ledLight(1, 'g');
 }
 void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'b');
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
 	{
@@ -323,17 +334,23 @@ void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 		}
 		else server.print(F("SD failed"));
 	}
+	ledLight(1, 'g');
 }
 void schedXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'c');
 
+	ledLight(1, 'g');
 }
 void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'y');
 
+	ledLight(1, 'g');
 }
 void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'b');
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
 	{
@@ -347,9 +364,10 @@ void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		}
 		else server.print(F("SD failed"));
 	}
+	ledLight(1, 'g');
 };
 void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool){
-
+	ledLight(1, 'c');
 
 	if (type == WebServer::POST)
 	{
@@ -412,10 +430,11 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.print(F("</Stats>"));
 		server.print(F("</Sys>"));
 	};
-
+	ledLight(1, 'g');
 };
-void networkXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool){
-
+void networkXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	ledLight(1, 'c');
 	if (type == WebServer::POST)
 	{
 		server.httpFail();
@@ -458,9 +477,11 @@ void networkXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		}
 		server.print(F("</Net>"));
 	};
+	ledLight(1, 'g');
 }
 void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'c');
 	P(message) =
 		"<!DOCTYPE html><html><head>"
 		"<meta http-equiv=\"refresh\" content=\"3; url=system.htm\">"
@@ -481,6 +502,7 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 }
 void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	ledLight(1, 'y');
 	server.httpSuccess();
 	char value[4];
 	byte counter[4] = { 0 };
@@ -563,6 +585,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			server.flushBuf();
 		}
 	}
+	ledLight(1, 'g');
 }
 
 void setup()

@@ -3,58 +3,55 @@ $(document).ready(function () {
     var rb = document.getElementsByName('r1');
     for (i = 0; i < rb.length; i++) {
         rb[i].onclick = function () {
+            sending = true;
             console.log(this.value);
             $.ajax({
                 type: "POST",
                 url: "relays.data",
                 data: "1=" + this.value,
-                async: false,
-                complete: getInputs()
-            });
+            }).done(getInputs());
         };
     }
     var rb = document.getElementsByName('r2');
     for (i = 0; i < rb.length; i++) {
         rb[i].onclick = function () {
+            sending = true;
             console.log(this.value);
             $.ajax({
                 type: "POST",
                 url: "relays.data",
                 data: "2=" + this.value,
-                async: false,
-                complete: getInputs()
-            });
+            }).done(getInputs());
         };
     }
     var rb = document.getElementsByName('r3');
     for (i = 0; i < rb.length; i++) {
         rb[i].onclick = function () {
+            sending = true;
             console.log(this.value);
             $.ajax({
                 type: "POST",
                 url: "relays.data",
                 data: "3=" + this.value,
-                async: false,
-                complete: getInputs()
-            });
+            }).done(getInputs());
         };
     }
     var rb = document.getElementsByName('r4');
     for (i = 0; i < rb.length; i++) {
         rb[i].onclick = function () {
+            sending = true;
             console.log(this.value);
             $.ajax({
                 type: "POST",
                 url: "relays.data",
                 data: "4=" + this.value,
-                async: false,
-                complete: getInputs()
-            });
+            }).done(getInputs());
         };
     }
 }); //end of on document ready
 //get inputs once
 function getInputs() {
+    req.abort();
     $.ajax({
         type: "GET",
         url: "sensors.xml",
@@ -64,8 +61,9 @@ function getInputs() {
     });
 }
 //get inputs repeatedly
+var req;
 function getInputsRepeat() {
-    $.ajax({
+    req = $.ajax({
         type: "GET",
         url: "sensors.xml",
         cache: false,
@@ -74,9 +72,10 @@ function getInputsRepeat() {
         complete: function () {
             setTimeout(getInputsRepeat, 5000);
         }
-    }
-    );
+    })
 }
+
+
 //parse inputs
 function xmlParseInputs(xml) {
     //sensor values

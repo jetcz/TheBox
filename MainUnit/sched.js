@@ -11,6 +11,7 @@ $(document).ready(function () {
                 disableForm(i);
             }
         }
+
     });
 });
 
@@ -20,7 +21,7 @@ function xmlParser(xml) {
         var i = $(this).index();
         var variable = $(this).find("Variable").text().trim();
         $(".cmb").eq(i).val(parseInt(variable));
-        if (variable == 0) disableForm(i); //disable form if variable is pir
+
         //for each interval
         $(this).find("Interval").each(function () {
             var j = $(this).index() - 1 + (i * 5); //j index starts for some reason on 1, 5 is the number of line indexes in one form
@@ -28,7 +29,7 @@ function xmlParser(xml) {
             var enabled = $(this).find("Enabled").text().trim();
             enabled = (enabled == "true");
             $(".cb").eq(j).prop('checked', enabled);
-            if (enabled == false) disableInterval(j);
+            if (!enabled) disableInterval(j);
             //target time
             var H = $(this).find("H").text().trim();
             var M = $(this).find("M").text().trim();
@@ -40,31 +41,25 @@ function xmlParser(xml) {
             $(".From").eq(j).val(parseFloat(From));
             $(".To").eq(j).val(parseFloat(To));
         })
+
+    })
+    disableCbs();
+    disableforms();
+}
+
+function disableforms() {
+    $(document).find(".cmb").each(function () {
+        var i = $(this).index();
+        var pir = $(this).find('option:selected').val()
+        if (pir == 0) {
+            disableForm(i);
+        }
     })
 }
 
-$(document).ready(function () {
-    //handler for button
-    $("button").click(function () {
-        //placeholder for submit button
-    });
-    //handler for comboboxes
-    $(".cmb").change(function () {
-        var i = $('.cmb').index(this);
-        disableForm(i);
-    });
-    //handler for checkboxes
-    $(".cb").click(function () {
-        var i = $('.cb').index(this);
-        disableInterval(i);
-    });
-
-    $('.decimal').jStepper({ minValue: -100, maxValue: 100, normalStep: 0.1 });
-    $('.time.H').jStepper({ minValue: 0, maxValue: 23 });
-    $('.time.M').jStepper({ minValue: 0, maxValue: 59 });
-})
 //disable relay form if variable is set to pir
 function disableForm(i) {
+    //disable
     var val = $('.cmb').eq(i).find('option:selected').val();
     if (val == 0) {
         $('.datagrid').eq(i).find('tr').each(function () {
@@ -74,16 +69,41 @@ function disableForm(i) {
             })
         })
     } else {
+        //enable
         $('.datagrid').eq(i).find('tr').each(function () {
             var j = $(this).index();
-            $(this).find('*').each(function () {
+            $(this).find('*').not(".cb").each(function () {
                 $(this).attr('disabled', false);
                 $(this).prop('required', true);
             })
             disableInterval(j + (i * 5)); //disable lines, if we want to disable lines from second form, it means that indexes of these lines has values index+5
+
         })
+        disableCbs();
     }
 }
+
+//after loading xml, disable/enable appropriate checkboxes
+//TODO
+function disableCbs() {
+    $(document).find(".cb").each(function () {
+        var s = "." + this.classList[0] + "." + this.classList[1]; //this creates string like .cb.r1
+        var j = 0;
+        $(document).find(s).each(function () {
+            var i = $(s).index(this);
+            if ($(s).eq(i).prop('checked')) {
+                j++;
+            }
+        })
+        $(document).find(s).each(function () {
+            var i = $(s).index(this);
+            if (i == j || i + 1 == j)
+                $(s).eq(i).attr('disabled', false);
+            else $(s).eq(i).attr('disabled', true);
+        })
+    })
+}
+
 //disable line in form if checkbox of enabled is unchecked
 function disableInterval(i) {
     var cb = $('.cb').eq(i).is(':checked');
@@ -107,6 +127,48 @@ function disableInterval(i) {
         $('.To').eq(i).prop('required', true);
     }
 }
+
+$(document).ready(function () {
+    //handler for button
+    $("button").click(function () {
+        //placeholder for submit button
+    });
+    //handler for comboboxes
+    $(".cmb").change(function () {
+        var i = $('.cmb').index(this);
+        disableForm(i);
+    });
+    //disabling lines according to interval
+    $(".cb").click(function () {
+        var i = $('.cb').index(this);
+        disableInterval(i);
+    });
+
+    //disabling checkboxes according to other checkboxes
+    $(".cb").click(function () {
+        var s = "." + this.classList[0] + "." + this.classList[1]; //this creates string like .cb.r1
+        var i = $(s).index(this);
+        //firs disable all checkboxes for given class
+        $(s).each(function () {
+            $(this).attr('disabled', true);
+        });
+        //then enable the right checkboxes
+        if ($(this).is(':checked')) {
+            $(s).eq(i).attr('disabled', false);
+            if (!(i + 1 > 5))
+                $(s).eq(i + 1).attr('disabled', false);
+        } else {
+            if (!(i - 1 < 0))
+                $(s).eq(i - 1).attr('disabled', false);
+            $(s).eq(i).attr('disabled', false);
+        }
+    });
+
+    $('.decimal').jStepper({ minValue: -100, maxValue: 100, normalStep: 0.1 });
+    $('.time.H').jStepper({ minValue: 0, maxValue: 23 });
+    $('.time.M').jStepper({ minValue: 0, maxValue: 59 });
+})
+
 
 //validator for numeric values
 $(document).on('keyup', '.decimal, .time', function (event) {
