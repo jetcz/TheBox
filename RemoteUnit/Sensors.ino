@@ -98,14 +98,20 @@ float getAirHumidity(){
 #endif
 		return -255;
 	}
-	else{
+	else if (fRemoteUnitDataSet[0] == -255) return -255;
+	else {
 		AirHum.addValue(h);
 		return AirHum.getAverage();
 	};
 }
 
 float getAirHumidex() {
-	return (dht.computeHeatIndex(AirTemp.getAverage()*1.8 + 32, AirHum.getAverage()) - 32)*0.556;
+	if ((fRemoteUnitDataSet[0] == -255) || (fRemoteUnitDataSet[1] == -255))
+	{
+		return -255;
+	}
+	else
+		return (dht.computeHeatIndex(AirTemp.getAverage()*1.8 + 32, AirHum.getAverage()) - 32)*0.556;
 }
 
 byte getLight() {

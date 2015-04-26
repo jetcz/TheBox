@@ -88,6 +88,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <Ntp.ino>
 #include <Radio.ino>
 #include <Relays.ino>
+#include <SDscheduler.ino>
 #include <SDsettings.ino>
 #include <Sensors.ino>
 #include <SetupFunctions.ino>

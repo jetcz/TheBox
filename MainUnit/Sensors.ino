@@ -46,7 +46,7 @@ float getMainHumidity() {
 }
 
 float getMainHumidex() {
-	if (MainDS.Data[0] || MainDS.Data[1] == -255)
+	if ((MainDS.Data[0] == -255  ) || (MainDS.Data[1] == -255))
 	{
 		return -255;
 	}

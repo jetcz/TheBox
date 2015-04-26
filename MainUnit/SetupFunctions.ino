@@ -222,7 +222,7 @@ void setupAlarms() {
 	Alarm.timerOnce(180, syncRTCwithNTP);
 	systemAlarm = Alarm.timerRepeat(1, system);
 	prepareDatasetAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
-	//	printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+	//printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	updateTSAlarm = Alarm.timerRepeat(iUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
 	weatherAlarm = Alarm.timerRepeat(60, weatherForecastTimer); //update weather forecast every minute - this MUST be interval 60s
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd); //refresh sensor data to lcd every second

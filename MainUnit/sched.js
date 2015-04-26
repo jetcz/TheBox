@@ -26,7 +26,7 @@ function xmlParser(xml) {
             var j = ii + (i * 5);
             //checkbox enabled
             var enabled = $(this).find("Enabled").text().trim();
-            enabled = (enabled == "true");
+            if (parseInt(enabled) == 0) enabled = false; else enabled = true;
             $(".cb").eq(j).prop('checked', enabled);
             if (!enabled) disableInterval(j);
             //target time
@@ -56,7 +56,7 @@ function disableForm(i) {
     var val = $('.cmb').eq(i).find('option:selected').val();
     if (val == 0) {
         $('.datagrid').eq(i).find('tr').each(function () {
-            $(this).find('*').each(function () {
+            $(this).find('*').not(":hidden").each(function () {
                 $(this).attr('disabled', true);
                 $(this).removeAttr('required');
             })
@@ -132,8 +132,8 @@ function validateForm() {
         for (var j = 0; j < 10; j += 2) {
             if (j > 1) {
                 if (!$(this).find(".time").eq(j).is(":disabled") || !$(this).find(".time").eq(j + 1).is(":disabled")) {
-                    var secs = $(this).find(".time").eq(j).val() * 60 + $(this).find(".time").eq(j + 1).val();
-                    var prevsecs = $(this).find(".time").eq(j - 2).val() * 60 + $(this).find(".time").eq(j - 1).val();
+                    var secs = parseInt($(this).find(".time").eq(j).val()) * 60 + parseInt($(this).find(".time").eq(j + 1).val());
+                    var prevsecs = parseInt($(this).find(".time").eq(j - 2).val()) * 60 + parseInt($(this).find(".time").eq(j - 1).val());
                     if (secs <= prevsecs) {
                         valid = false;
                         break;
@@ -146,26 +146,26 @@ function validateForm() {
     return valid;
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
 
     //handler for comboboxes
-    $(".cmb").change(function() {
+    $(".cmb").change(function () {
         var i = $('.cmb').index(this);
         disableForm(i);
     });
     //disabling lines according to interval
-    $(".cb").click(function() {
+    $(".cb").click(function () {
         var i = $('.cb').index(this);
         disableInterval(i);
         setHiddenField(i);
     });
 
     //disabling checkboxes according to other checkboxes
-    $(".cb").click(function() {
-        var s = "." + this.classList[0]+ "." + this.classList[1]; //this creates string like .cb.r1
+    $(".cb").click(function () {
+        var s = "." + this.classList[0] + "." + this.classList[1]; //this creates string like .cb.r1
         var i = $(s).index(this);
         //firs disable all checkboxes for given class
-        $(s).each(function() {
+        $(s).each(function () {
             $(this).attr('disabled', true);
         });
         //then enable the right checkboxes

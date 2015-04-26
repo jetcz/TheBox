@@ -22,7 +22,7 @@
 
 //////////////////////USER CONFIGURABLE///////////////////////////////////
 
-#define DEBUG true //enable disable all serial.print messages
+#define DEBUG false //enable disable all serial.print messages
 
 /* pins */
 const int RESET_ETH_SHIELD_PIN = 14;
@@ -342,7 +342,52 @@ void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 void schedXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'c');
+	if (type == WebServer::POST)
+	{
+		server.httpFail();
+		return;
+	}
+	server.httpSuccess("text/xml", "Connection: keep-alive"CRLF);
 
+	if (type == WebServer::GET)
+	{
+		server.print(F("<?xml version = \"1.0\" ?>"));
+		server.print(F("<Schedulers>"));
+		for (int i = 0; i < 4; i++)
+		{
+			server.print(F("<Relay>"));
+			server.print(F("<Variable>"));
+			server.print(Sched[i].Variable);
+			server.print(F("</Variable>"));
+
+			for (int j = 0; j < 5; j++)
+			{
+				server.print(F("<Interval>"));
+				server.print(F("<Enabled>"));
+				server.print(Sched[i].Enabled[j]);
+				server.print(F("</Enabled>"));
+				server.print(F("<Time>"));
+				server.print(F("<H>"));
+				server.print(Sched[i].Time[j][0]);
+				server.print(F("</H>"));
+				server.print(F("<M>"));
+				server.print(Sched[i].Time[j][1]);
+				server.print(F("</M>"));
+				server.print(F("</Time>"));
+				server.print(F("<Value>"));
+				server.print(F("<From>"));
+				server.print(Sched[i].Value[j][0]);
+				server.print(F("</From>"));
+				server.print(F("<To>"));
+				server.print(Sched[i].Value[j][1]);
+				server.print(F("</To>"));
+				server.print(F("</Value>"));
+				server.print(F("</Interval>"));
+			}
+			server.print(F("</Relay>"));
+		}
+		server.print(F("</Schedulers>"));
+	}
 	ledLight(1, 'g');
 }
 void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -356,7 +401,6 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 	{
 		while (server.readPOSTparam(buffer, 10, value, 4))
 		{
-
 			if (buffer[0] == 'R')
 			{
 				int _relay = buffer[1] - '1';
@@ -391,7 +435,7 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 		}
 	}
 
-
+#if debug
 	for (int i = 0; i < 4; i++)
 	{
 		Serial.print(F("Variable "));
@@ -409,8 +453,43 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 			Serial.print("-");
 			Serial.println(Sched[i].Value[j][1]);
 		}
-
 	}
+#endif // debug
+
+	P(messageSuccess) =
+		"<!DOCTYPE html><html><head>"
+		"<meta http-equiv=\"refresh\" content=\"2; url=sched.htm\">"
+		"<script language=\"javascript\">"
+		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
+		"</script>"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"</head>"
+		"<body>"
+		"<div class=\"content\" style=\"color:green;font-weight:bold\">"
+		"Scheduler settings successfully saved"
+		"</div>"
+		"</body>"
+		"</html>";
+
+	P(messageFail) =
+		"<!DOCTYPE html><html><head>"
+		"<meta http-equiv=\"refresh\" content=\"2; url=sched.htm\">"
+		"<script language=\"javascript\">"
+		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
+		"</script>"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"</head>"
+		"<body>"
+		"<div class=\"content\" style=\"color:red;font-weight:bold\">"
+		"Failed to save scheduler settings!"
+		"</div>"
+		"</body>"
+		"</html>";
+
+	if (writeSDSched()) server.printP(messageSuccess);
+	else server.printP(messageFail);
+	server.flushBuf();
+
 	ledLight(1, 'g');
 }
 void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -445,8 +524,6 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 	{
 		P(tag_start_sensor) = "<V>";
 		P(tag_end_sensor) = "</V>";
-
-
 
 		server.print(F("<?xml version = \"1.0\" ?>"));
 		server.print(F("<Sys>"));
@@ -661,6 +738,7 @@ void setup()
 	setupPins();
 	setupSD();
 	readSettings(relays);
+	readSDSched();
 	switchRelays();
 	if (!readSettings(ethernet)) //reading ethernet settings must for some reason take place much earlier that ethernet.begin
 	{
@@ -707,7 +785,7 @@ void setup()
 
 #if DEBUG
 	Serial.println(F("Setup Done"));
-#endif
+#endif	
 }
 
 /* control everything by timer alarms */
