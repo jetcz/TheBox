@@ -1,3 +1,5 @@
+//disable form doesnt work as expected
+
 $(document).ready(function () {
     $.ajax({
         type: "GET",
@@ -17,14 +19,13 @@ $(document).ready(function () {
 
 function xmlParser(xml) {
     //for each relay
-    $(xml).find("Relay").each(function () {
-        var i = $(this).index();
+    $(xml).find("Relay").each(function (i) {
         var variable = $(this).find("Variable").text().trim();
         $(".cmb").eq(i).val(parseInt(variable));
 
         //for each interval
-        $(this).find("Interval").each(function () {
-            var j = $(this).index() - 1 + (i * 5); //j index starts for some reason on 1, 5 is the number of line indexes in one form
+        $(this).find("Interval").each(function (ii) {
+            var j = ii + (i * 5);
             //checkbox enabled
             var enabled = $(this).find("Enabled").text().trim();
             enabled = (enabled == "true");
@@ -45,11 +46,11 @@ function xmlParser(xml) {
     })
     disableCbs();
     disableforms();
+    syncHiddenFields();
 }
 
 function disableforms() {
-    $(document).find(".cmb").each(function () {
-        var i = $(this).index();
+    $(document).find(".cmb").each(function (i) {
         var pir = $(this).find('option:selected').val()
         if (pir == 0) {
             disableForm(i);
@@ -70,8 +71,7 @@ function disableForm(i) {
         })
     } else {
         //enable
-        $('.datagrid').eq(i).find('tr').each(function () {
-            var j = $(this).index();
+        $('.datagrid').eq(i).find('tr').each(function (j) {
             $(this).find('*').not(".cb").each(function () {
                 $(this).attr('disabled', false);
                 $(this).prop('required', true);
@@ -79,7 +79,7 @@ function disableForm(i) {
             disableInterval(j + (i * 5)); //disable lines, if we want to disable lines from second form, it means that indexes of these lines has values index+5
 
         })
-        disableCbs();
+        disableCbs(); //this does some wird shit
     }
 }
 
@@ -89,14 +89,12 @@ function disableCbs() {
     $(document).find(".cb").each(function () {
         var s = "." + this.classList[0] + "." + this.classList[1]; //this creates string like .cb.r1
         var j = 0;
-        $(document).find(s).each(function () {
-            var i = $(s).index(this);
+        $(document).find(s).each(function (i) {
             if ($(s).eq(i).prop('checked')) {
                 j++;
             }
         })
-        $(document).find(s).each(function () {
-            var i = $(s).index(this);
+        $(document).find(s).each(function (i) {
             if (i == j || i + 1 == j)
                 $(s).eq(i).attr('disabled', false);
             else $(s).eq(i).attr('disabled', true);
@@ -104,6 +102,11 @@ function disableCbs() {
     })
 }
 
+function syncHiddenFields() {
+    $(document).find(".cb").each(function (i) {
+        setHiddenField(i);
+    })
+}
 //disable line in form if checkbox of enabled is unchecked
 function disableInterval(i) {
     var cb = $('.cb').eq(i).is(':checked');
@@ -128,6 +131,12 @@ function disableInterval(i) {
     }
 }
 
+function setHiddenField(i) {
+    var cb = $(".cb").eq(i);
+    if (cb.prop('checked')) cb.next().val(1);
+    else cb.next().val(0);
+}
+
 $(document).ready(function () {
     //handler for button
     $("button").click(function () {
@@ -142,6 +151,7 @@ $(document).ready(function () {
     $(".cb").click(function () {
         var i = $('.cb').index(this);
         disableInterval(i);
+        setHiddenField(i);
     });
 
     //disabling checkboxes according to other checkboxes

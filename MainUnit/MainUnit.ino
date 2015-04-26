@@ -54,6 +54,7 @@ const char cTimeServer[] = "tik.cesnet.cz";
 TimeChangeRule CEST = { "CEST", Last, Sun, Mar, 2, 120 };    //summer time = UTC + 2 hours
 TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };     //winter time = UTC + 1 hours
 Timezone myTZ(CEST, CET);
+TimeChangeRule *tcr;
 
 /* lcd settings */
 const byte byLcdMsgTimeout = 4;
@@ -92,6 +93,8 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 DataSet MainDS;
 DataSet RemoteDS;
 DataSet SystemDS;
+
+RelayScheduler Sched[4];
 
 /* general buffer for various usages (datatypes conversion, reading ini settings)*/
 const size_t bufferLen = 30;
@@ -346,6 +349,68 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 {
 	ledLight(1, 'y');
 
+	server.httpSuccess();
+	char value[4];
+
+	if (type == WebServer::POST)
+	{
+		while (server.readPOSTparam(buffer, 10, value, 4))
+		{
+
+			if (buffer[0] == 'R')
+			{
+				int _relay = buffer[1] - '1';
+				int _interval = buffer[3] - '1';
+
+				if (buffer[2] == 'V') {
+					Sched[_relay].Variable = atoi(value);
+				}
+
+				if (buffer[2] == 'I') {
+					Sched[_relay].Enabled[_interval] = value[0] != '0';
+				}
+
+				if (buffer[2] == 'H')
+				{
+					Sched[_relay].Time[_interval][0] = atoi(value);
+				}
+				if (buffer[2] == 'M')
+				{
+					Sched[_relay].Time[_interval][1] = atoi(value);
+				}
+				if (buffer[2] == 'F')
+				{
+					Sched[_relay].Value[_interval][0] = atof(value);
+				}
+				if (buffer[2] == 'T')
+				{
+					Sched[_relay].Value[_interval][1] = atof(value);
+				}
+
+			}
+		}
+	}
+
+
+	for (int i = 0; i < 4; i++)
+	{
+		Serial.print(F("Variable "));
+		Serial.println(Sched[i].Variable);
+		Serial.println(F("Enabled\tTime\t\tValue"));
+		for (int j = 0; j < 5; j++)
+		{
+			Serial.print(Sched[i].Enabled[j]);
+			Serial.print("\t");
+			Serial.print(Sched[i].Time[j][0]);
+			Serial.print(":");
+			Serial.print(Sched[i].Time[j][1]);
+			Serial.print("\t\t");
+			Serial.print(Sched[i].Value[j][0]);
+			Serial.print("-");
+			Serial.println(Sched[i].Value[j][1]);
+		}
+
+	}
 	ledLight(1, 'g');
 }
 void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -381,15 +446,17 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		P(tag_start_sensor) = "<V>";
 		P(tag_end_sensor) = "</V>";
 
+
+
 		server.print(F("<?xml version = \"1.0\" ?>"));
 		server.print(F("<Sys>"));
 		server.print(F("<Time>"));
 		server.print(F("<Loc>"));
-		server.print(sNow);
+		server.print(sNow + " " + tcr->abbrev);
 		server.print(F("</Loc>"));
 		server.print(F("<Sync>"));
 		if (now() - lastNTPsync.unixtime() > 1000000000) server.print("never");
-		else server.print(getUptimeString(DateTime(now()) - lastNTPsync)+" ago");
+		else server.print(getUptimeString(DateTime(now()) - lastNTPsync) + " ago");
 		server.print(F("</Sync>"));
 		server.print(F("</Time>"));
 		server.print(F("<Stats>"));

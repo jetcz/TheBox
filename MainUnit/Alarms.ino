@@ -10,7 +10,7 @@ void printDebug() {
 }
 
 void system() {
-	sNow = getDateTimeString(myTZ.toLocal(now()));
+	sNow = getDateTimeString(now());
 	enableDisableAlarms();
 	lcdBacklight();
 	sMainUptime = getUptimeString(getUptime());

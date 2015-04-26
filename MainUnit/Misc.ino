@@ -77,7 +77,7 @@ String getUptimeString(TimeSpan ts) {
 	return buffer;
 }
 
-time_t syncProvider()     //this does the same thing as RTC_DS1307::get()
+time_t syncProvider()     //this does the same thing as RTC_DS1307::get() + gets the local time (respecting timezone and dalylight saving time)
 {
-	return rtc.now().unixtime();
+	return myTZ.toLocal(rtc.now().unixtime(), &tcr);
 }

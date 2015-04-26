@@ -50,9 +50,11 @@ $(document).ready(function () {
     }
 }); //end of on document ready
 //get inputs once
+var req2;
 function getInputs() {
-    req.abort();
-    $.ajax({
+    if (req) req.abort();
+    if (req2) req2.abort();
+    req2 = $.ajax({
         type: "GET",
         url: "sensors.xml",
         cache: false,

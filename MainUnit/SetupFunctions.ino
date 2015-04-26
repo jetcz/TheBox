@@ -131,7 +131,7 @@ void setupRTC(){
 		Serial.println(F("RTC initialized and clock adjusted"));
 #endif
 		setSyncProvider(syncProvider); //sync system clock from RTC module
-		setSyncInterval(600);
+		setSyncInterval(60);
 		ledLight(1, 'g');
 	} //sync interval for system clock from RTC module
 	sysStart = now();
@@ -226,7 +226,7 @@ void setupAlarms() {
 	updateTSAlarm = Alarm.timerRepeat(iUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
 	weatherAlarm = Alarm.timerRepeat(60, weatherForecastTimer); //update weather forecast every minute - this MUST be interval 60s
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd); //refresh sensor data to lcd every second
-	syncRTCAlarm = Alarm.timerRepeat(0, 0, 0, syncRTCwithNTP); //sync RTC module with NTP every midnight
+	syncRTCAlarm = Alarm.alarmRepeat(0, 0, 0, syncRTCwithNTP); //sync RTC module with NTP every midnight
 	if (bDhcp)
 	{
 		dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
