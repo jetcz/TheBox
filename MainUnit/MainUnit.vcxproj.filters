@@ -77,6 +77,9 @@
     <None Include="system.js">
       <Filter>www\js</Filter>
     </None>
+    <None Include="sched2.js">
+      <Filter>www\js</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">

@@ -1,5 +1,3 @@
-//disable form doesnt work as expected
-
 $(document).ready(function () {
     $.ajax({
         type: "GET",
@@ -44,19 +42,13 @@ function xmlParser(xml) {
         })
 
     })
-    disableCbs();
-    disableforms();
+    for (var i = 0; i < 4; i++) {
+        disableCbs(i);
+        disableForm(i);
+    }
     syncHiddenFields();
 }
 
-function disableforms() {
-    $(document).find(".cmb").each(function (i) {
-        var pir = $(this).find('option:selected').val()
-        if (pir == 0) {
-            disableForm(i);
-        }
-    })
-}
 
 //disable relay form if variable is set to pir
 function disableForm(i) {
@@ -72,21 +64,16 @@ function disableForm(i) {
     } else {
         //enable
         $('.datagrid').eq(i).find('tr').each(function (j) {
-            $(this).find('*').not(".cb").each(function () {
-                $(this).attr('disabled', false);
-                $(this).prop('required', true);
-            })
             disableInterval(j + (i * 5)); //disable lines, if we want to disable lines from second form, it means that indexes of these lines has values index+5
-
         })
-        disableCbs(); //this does some wird shit
+        disableCbs(i);
     }
 }
 
 //after loading xml, disable/enable appropriate checkboxes
 //TODO
-function disableCbs() {
-    $(document).find(".cb").each(function () {
+function disableCbs(i) {
+    $('.datagrid').eq(i).find(".cb").each(function () {
         var s = "." + this.classList[0] + "." + this.classList[1]; //this creates string like .cb.r1
         var j = 0;
         $(document).find(s).each(function (i) {
@@ -99,6 +86,7 @@ function disableCbs() {
                 $(s).eq(i).attr('disabled', false);
             else $(s).eq(i).attr('disabled', true);
         })
+
     })
 }
 
@@ -137,29 +125,47 @@ function setHiddenField(i) {
     else cb.next().val(0);
 }
 
-$(document).ready(function () {
-    //handler for button
-    $("button").click(function () {
-        //placeholder for submit button
-    });
+
+function validateForm() {
+    var valid = true;
+    $(document).find(".datagrid").each(function (i) {
+        for (var j = 0; j < 10; j += 2) {
+            if (j > 1) {
+                if (!$(this).find(".time").eq(j).is(":disabled") || !$(this).find(".time").eq(j + 1).is(":disabled")) {
+                    var secs = $(this).find(".time").eq(j).val() * 60 + $(this).find(".time").eq(j + 1).val();
+                    var prevsecs = $(this).find(".time").eq(j - 2).val() * 60 + $(this).find(".time").eq(j - 1).val();
+                    if (secs <= prevsecs) {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+        }
+    })
+    if (!valid) alert("Times must be sorted from earliest to latest.");
+    return valid;
+}
+
+$(document).ready(function() {
+
     //handler for comboboxes
-    $(".cmb").change(function () {
+    $(".cmb").change(function() {
         var i = $('.cmb').index(this);
         disableForm(i);
     });
     //disabling lines according to interval
-    $(".cb").click(function () {
+    $(".cb").click(function() {
         var i = $('.cb').index(this);
         disableInterval(i);
         setHiddenField(i);
     });
 
     //disabling checkboxes according to other checkboxes
-    $(".cb").click(function () {
-        var s = "." + this.classList[0] + "." + this.classList[1]; //this creates string like .cb.r1
+    $(".cb").click(function() {
+        var s = "." + this.classList[0]+ "." + this.classList[1]; //this creates string like .cb.r1
         var i = $(s).index(this);
         //firs disable all checkboxes for given class
-        $(s).each(function () {
+        $(s).each(function() {
             $(this).attr('disabled', true);
         });
         //then enable the right checkboxes
@@ -177,14 +183,16 @@ $(document).ready(function () {
     $('.decimal').jStepper({ minValue: -100, maxValue: 100, normalStep: 0.1 });
     $('.time.H').jStepper({ minValue: 0, maxValue: 23 });
     $('.time.M').jStepper({ minValue: 0, maxValue: 59 });
+
+
+
+    //validator for numeric values
+    $(document).on('keyup', '.decimal, .time', function (event) {
+        var v = this.value;
+        if ($.isNumeric(v) === false) {
+            //chop off the last char entered
+            this.value = this.value.slice(0, -1);
+        }
+    });
+
 })
-
-
-//validator for numeric values
-$(document).on('keyup', '.decimal, .time', function (event) {
-    var v = this.value;
-    if ($.isNumeric(v) === false) {
-        //chop off the last char entered
-        this.value = this.value.slice(0, -1);
-    }
-});

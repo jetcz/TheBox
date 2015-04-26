@@ -114,6 +114,7 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="sched.js" />
+    <None Include="sched2.js" />
     <None Include="SDsettings.ino">
       <FileType>CppCode</FileType>
     </None>

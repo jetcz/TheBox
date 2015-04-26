@@ -66,7 +66,7 @@
         </div>
     </header>
     <div class="wrapContent">
-        <form id="schedForm" method="post" action="sched.data">
+        <form id="schedForm" method="post" action="sched.data" onsubmit="return validateForm()">
             <div class="content">
                 <table>
                     <thead>
@@ -78,7 +78,7 @@
                                 Target variable
                             </th>
                             <th class="subtitle" style="color: black; background-color: #555;">
-                                <select class="cmb" name="R1V">
+                                <select class="cmb r1" name="R1V">
                                     <option value="0">
                                         Main Pir
                                     </option>
@@ -226,7 +226,7 @@
                                 Target variable
                             </th>
                             <th class="subtitle" style="color: black; background-color: #555;">
-                                <select class="cmb" name="R2V">
+                                <select class="cmb r2" name="R2V">
                                     <option value="0">
                                         Main Pir
                                     </option>
@@ -374,7 +374,7 @@
                                 Target variable
                             </th>
                             <th class="subtitle" style="color: black; background-color: #555;">
-                                <select class="cmb" name="R3V">
+                                <select class="cmb r3" name="R3V">
                                     <option value="0">
                                         Main Pir
                                     </option>
@@ -522,7 +522,7 @@
                                 Target variable
                             </th>
                             <th class="subtitle" style="color: black; background-color: #555;">
-                                <select class="cmb" name="R4V">
+                                <select class="cmb r4" name="R4V">
                                     <option value="0">
                                         Main Pir
                                     </option>
