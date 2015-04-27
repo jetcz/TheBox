@@ -77,9 +77,16 @@ function getInputsRepeat() {
     })
 }
 
-
+var runned = false;
 //parse inputs
 function xmlParseInputs(xml) {
+    //set panels
+    if (!runned) {
+        $(document).find(".wrapContent.message").hide();
+        $(document).find(".wrapContent.data").removeAttr('style');
+        runned = true;
+    }
+
     //sensor values
     $(xml).find("Sen V").each(function () {
         var i = $(this).index();

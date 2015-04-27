@@ -15,7 +15,14 @@ $(document).ready(function () {
     });
 });
 
+var runned = false;
 function xmlParser(xml) {
+    //set panels
+    if (!runned) {
+        $(document).find(".wrapContent.message").hide();
+        $(document).find(".wrapContent.data").removeAttr('style');
+        runned = true;
+    }
     //for each relay
     $(xml).find("Relay").each(function (i) {
         var variable = $(this).find("Variable").text().trim();
@@ -53,6 +60,7 @@ function xmlParser(xml) {
 //disable relay form if variable is set to pir
 function disableForm(i) {
     //disable
+    $('.datagrid').eq(i).hide();
     var val = $('.cmb').eq(i).find('option:selected').val();
     if (val == 0) {
         $('.datagrid').eq(i).find('tr').each(function () {
@@ -63,6 +71,7 @@ function disableForm(i) {
         })
     } else {
         //enable
+        $('.datagrid').eq(i).show();
         $('.datagrid').eq(i).find('tr').each(function (j) {
             disableInterval(j + (i * 5)); //disable lines, if we want to disable lines from second form, it means that indexes of these lines has values index+5
         })

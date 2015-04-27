@@ -120,7 +120,9 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="sched.js" />
-    <None Include="SDscheduler.ino" />
+    <None Include="SDscheduler.ino">
+      <FileType>CppCode</FileType>
+    </None>
     <None Include="SDsettings.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -130,6 +132,7 @@
     <None Include="SetupFunctions.ino">
       <FileType>CppCode</FileType>
     </None>
+    <None Include="spinner.css" />
     <None Include="system.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>

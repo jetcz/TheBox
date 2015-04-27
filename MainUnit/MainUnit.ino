@@ -99,6 +99,8 @@ RelayScheduler Sched[4];
 /* general buffer for various usages (datatypes conversion, reading ini settings)*/
 const size_t bufferLen = 30;
 char buffer[bufferLen];
+const size_t buffLen = 22;
+char buff[buffLen];
 
 /* variables */
 int iFailedCounter = 0;					//failed thingspeak uploads
@@ -395,11 +397,10 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 	ledLight(1, 'y');
 
 	server.httpSuccess();
-	char value[4];
 
 	if (type == WebServer::POST)
 	{
-		while (server.readPOSTparam(buffer, 10, value, 4))
+		while (server.readPOSTparam(buffer, bufferLen, buff, buffLen)) //buffer = name, buff = value
 		{
 			if (buffer[0] == 'R')
 			{
@@ -407,28 +408,28 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 				int _interval = buffer[3] - '1';
 
 				if (buffer[2] == 'V') {
-					Sched[_relay].Variable = atoi(value);
+					Sched[_relay].Variable = atoi(buff);
 				}
 
 				if (buffer[2] == 'I') {
-					Sched[_relay].Enabled[_interval] = value[0] != '0';
+					Sched[_relay].Enabled[_interval] = buff[0] != '0';
 				}
 
 				if (buffer[2] == 'H')
 				{
-					Sched[_relay].Time[_interval][0] = atoi(value);
+					Sched[_relay].Time[_interval][0] = atoi(buff);
 				}
 				if (buffer[2] == 'M')
 				{
-					Sched[_relay].Time[_interval][1] = atoi(value);
+					Sched[_relay].Time[_interval][1] = atoi(buff);
 				}
 				if (buffer[2] == 'F')
 				{
-					Sched[_relay].Value[_interval][0] = atof(value);
+					Sched[_relay].Value[_interval][0] = atof(buff);
 				}
 				if (buffer[2] == 'T')
 				{
-					Sched[_relay].Value[_interval][1] = atof(value);
+					Sched[_relay].Value[_interval][1] = atof(buff);
 				}
 
 			}

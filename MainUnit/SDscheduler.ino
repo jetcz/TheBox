@@ -38,8 +38,6 @@ boolean writeSDSched() {
 }
 
 boolean readSDSched() {
-	const size_t buffLen = 22;
-	char buff[buffLen];
 
 	for (int i = 0; i < 4; i++)
 	{

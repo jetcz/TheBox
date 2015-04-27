@@ -27,7 +27,13 @@ function getNetwork() {
         }
     });
 }
+var runned = false;
 function xmlParseStats(xml) {
+    if (!runned) {
+        $(document).find(".wrapContent.message").hide();
+        $(document).find(".wrapContent.data").removeAttr('style');
+        runned = true;
+    }
     var LocalTime = $(xml).find("Loc").text().trim();
     $("#LocalTime").text(LocalTime);
     var LastSync = $(xml).find("Sync").text().trim();

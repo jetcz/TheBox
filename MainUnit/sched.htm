@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/menu.css">
     <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/general.css">
     <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/table.css">
+    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/spinner.css">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script src="http://jet.php5.cz/thebox/js/sched.js"></script>
     <script type="text/javascript" src="http://jet.php5.cz/thebox/js/jstepper/jquery.jstepper.min.js"></script>
@@ -65,7 +66,11 @@
             </ul>
         </div>
     </header>
-    <div class="wrapContent">
+    <div class="wrapContent message">
+        <div class="spinner">
+        </div>
+    </div>
+    <div class="wrapContent data" style="visibility:hidden">
         <form id="schedForm" method="post" action="sched.data" onsubmit="return validateForm()">
             <div class="content">
                 <table>
