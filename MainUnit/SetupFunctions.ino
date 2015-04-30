@@ -226,7 +226,7 @@ void setupAlarms() {
 	updateTSAlarm = Alarm.timerRepeat(iUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
 	weatherAlarm = Alarm.timerRepeat(60, weatherForecastTimer); //update weather forecast every minute - this MUST be interval 60s
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd); //refresh sensor data to lcd every second
-	syncRTCAlarm = Alarm.alarmRepeat(0, 0, 0, syncRTCwithNTP); //sync RTC module with NTP every midnight
+	syncRTCAlarm = Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC every 24h
 	if (bDhcp)
 	{
 		dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)

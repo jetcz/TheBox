@@ -68,7 +68,7 @@ const byte iUpdateSensorsInterval = 10;
 /* sensor offsets */
 const float fSysTempOffset = -0.2;
 const byte iPressureOffset = 24;
-const float fMainTempOffset = -0.9;
+const float fMainTempOffset = -1.2;
 
 /* ini files settings
 relay config must be in following format:

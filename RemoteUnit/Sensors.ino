@@ -92,13 +92,12 @@ float getAirTemperature() {
 
 float getAirHumidity(){
 	float h = dht.readHumidity();
-	if (isnan(h)) {
+	if (isnan(h) || (fRemoteUnitDataSet[0] == -255)) {
 #if debug
 		Serial.print(F("Failed to read from DHT sensor! "));
 #endif
 		return -255;
 	}
-	else if (fRemoteUnitDataSet[0] == -255) return -255;
 	else {
 		AirHum.addValue(h);
 		return AirHum.getAverage();

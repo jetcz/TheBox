@@ -29,11 +29,11 @@ const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
 
-const int nSleepTime2 = 1000;
+const int nSleepTime2 = 1100;
 #if debug
 const int nSleepTime = 18548 - nSleepTime2 - 1000; 
 #else
-const int nSleepTime = 18548 - nSleepTime2;
+const int nSleepTime = 18560 - nSleepTime2;
 #endif
 char buffer[24];
 #define DHTTYPE DHT22
@@ -52,8 +52,8 @@ float fRemoteUnitDataSet[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 volatile int nRainTips = 0;
 float *Vcc = &fRemoteUnitDataSet[7];
 
-const float fAirTemperatureOffset = -0.5;
-const float fSoilTemperatureOffset = 0.4;
+const float fAirTemperatureOffset = -0.7;
+const float fSoilTemperatureOffset = -0.2;
 
 unsigned int previousSec = 0; // last time update
 unsigned int interval = 3600; // interval at which to do something (rain mm/h)
@@ -76,14 +76,19 @@ void setup() {
 		ledLightDigital('r');
 	}
 
-	ledLightDigital('g');
-	delay(200);
-	ledLightDigital('m');
-	delay(200);
-	ledLightDigital('g');
-	delay(200);
 	nRainTips = 0;
 	interrupts();
+
+	digitalWrite(DHT22_PWR_PIN, HIGH);
+	Sleepy::loseSomeTime(nSleepTime2);
+	ledLightDigital('g');
+	ledLightDigital('k');
+	prepareDataSetArrays();
+	digitalWrite(DHT22_PWR_PIN, LOW);
+	ledLightDigital('b');
+	delayMicroseconds(100);
+	ledLightDigital('k');
+	sendMessage();
 }
 
 void loop() {
@@ -127,7 +132,7 @@ void loop() {
 #endif
 	//send sensor data
 	ledLightDigital('b');
-	delayMicroseconds(150);
+	delayMicroseconds(100);
 	ledLightDigital('k');
 	sendMessage();
 	Sleepy::loseSomeTime(nSleepTime);
