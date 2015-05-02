@@ -45,13 +45,13 @@ function xmlParseStats(xml) {
 
         //preset voltage background color
         if (i == 2 || i == 3) {
-            if (parseInt(value) > 4500) {
+            if (parseInt(value) > 4800) {
                 $('.tdVal').eq(i-2).css("background-color", "green");
             }
-            if (parseInt(value) <= 4500 && parseInt(value) > 3500) {
+            if (parseInt(value) <= 4800 && parseInt(value) > 4000) {
                 $('.tdVal').eq(i-2).css("background-color", "#e97900");
             }
-            if (parseInt(value) <= 3500) {
+            if (parseInt(value) <= 4000) {
                 $('.tdVal').eq(i-2).css("background-color", "#c70000");
             }
         }
@@ -67,11 +67,11 @@ function xmlParseStats(xml) {
         }
 
         if (i == 5) {
-            if (parseInt(value) < 65) {
+            if (parseInt(value) < 63) {
                 $('.tdVal').eq(i-2).css("background-color", "green");
             }
 
-            if (parseInt(value) >= 65 && parseInt(value) < 130) {
+            if (parseInt(value) >= 63 && parseInt(value) < 130) {
                 $('.tdVal').eq(i-2).css("background-color", "#e97900");
             }
             if (parseInt(value) >= 130) {

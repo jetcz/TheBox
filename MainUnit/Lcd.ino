@@ -2,8 +2,10 @@
 void printLcdScreen1() {
 	static byte byLastLenMainData0;
 	static byte byLastLenRemoteData0;
+	static byte byLastLenRemoteData1;
 	byte byCurrLenMainData0 = floatToString(MainDS.Data[0]).length();
 	byte byCurrLenRemoteData0 = floatToString(RemoteDS.Data[0]).length();
+	byte byCurrLenRemoteData1 = floatToString(RemoteDS.Data[1]).length();
 
 	//line 1
 	if (byLastLenMainData0 != byCurrLenMainData0)
@@ -19,6 +21,7 @@ void printLcdScreen1() {
 		lcd.setCursor(10, 0);
 		lcd.print(F("          "));
 	}
+
 	lcd.setCursor(19 - byCurrLenRemoteData0, 0);
 	lcd.print(RemoteDS.Data[0], 1);
 	lcd.print(F("C"));
@@ -29,9 +32,15 @@ void printLcdScreen1() {
 	lcd.setCursor(0, 1);
 	lcd.print(MainDS.Data[1], 1);
 	lcd.print(F("%RH"));
-	lcd.setCursor(17 - floatToString(RemoteDS.Data[1]).length(), 1);
+	if (byLastLenRemoteData1 != byCurrLenRemoteData1)
+	{
+		lcd.setCursor(10, 1);
+		lcd.print(F("          "));
+	}
+	lcd.setCursor(17 - byCurrLenRemoteData1, 1);
 	lcd.print(RemoteDS.Data[1], 1);
 	lcd.print(F("%RH"));
+	byLastLenRemoteData1 = byCurrLenRemoteData1;
 
 	//line 3
 	lcd.setCursor(0, 2);

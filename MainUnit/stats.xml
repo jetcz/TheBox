@@ -1,33 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version = "1.0" ?>
 <Sys>
   <Time>
-    <Loc>25.4.2015 15:50:30</Loc>
-    <Sync>0d 5h 20m 30s</Sync>
+    <Loc>01.05.2015 17:50:21 CEST</Loc>
+    <Sync>0d 00:43:21 ago</Sync>
   </Time>
   <Stats>
-    <V>2d 5h 20m 30s
-      <!-- uptime main -->
-    </V>
-    <V>3d 0h 10m 10s
-      <!-- uptime remote -->
-    </V>
-    <V>5023
-      <!-- voltage main -->
-    </V>
-    <V>4185
-      <!--voltage remote -->
-    </V>
-    <V>8
-      <!-- ds age main-->
-    </V>
-    <V>32
-      <!-- ds age remote-->
-    </V>
-    <V>31
-      <!-- failed msg count main ts-->
-    </V>
-    <V>20
-      <!-- failed msg count remote-->
-    </V>
+    <V>0d 00:46:21</V>
+    <V>0d 01:01:39</V>
+    <V>5056</V>
+    <V>5318</V>
+    <V>3</V>
+    <V>28</V>
+    <V>0</V>
+    <V>3</V>
   </Stats>
 </Sys>

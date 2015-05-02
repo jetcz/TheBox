@@ -10,8 +10,8 @@ void resetEthShield(int pin) {
 	delay(250);
 }
 
-boolean isRemoteDataSetValid() {
-	boolean v;
+bool isRemoteDataSetValid() {
+	bool v;
 
 	if (now() - RemoteDS.Timestamp.unixtime() < iRemoteDataSetTimeout / 2)
 	{

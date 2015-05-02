@@ -40,7 +40,7 @@ void printErrorMessage(uint8_t e, bool eol = true)
 #endif
 
 
-boolean readSettings(char *path) {
+bool readSettings(char *path) {
 
 	IniFile ini(path);
 	if (!ini.open()) {
@@ -97,7 +97,7 @@ boolean readSettings(char *path) {
 		}
 		if (path == relays) {
 			if (ini.getValue(NULL, "modes", buffer, bufferLen)) { //modes=0,1,1,0
-				chArrToByteArr(buffer, byRelay);
+				chArrToByteArr(buffer, byRelayMode);
 			}
 			else {
 #if DEBUG
@@ -111,7 +111,7 @@ boolean readSettings(char *path) {
 }
 
 // Writes A Configuration file
-boolean writeSDRelaySettings(char *path) {
+bool writeSDRelaySettings(char *path) {
 	SD.remove(path);
 	myFile = SD.open(path, FILE_WRITE);
 	if (!myFile)
@@ -120,19 +120,19 @@ boolean writeSDRelaySettings(char *path) {
 	}
 	else {
 		myFile.print(F("modes="));
-		myFile.print(byRelay[0]);
+		myFile.print(byRelayMode[0]);
 		myFile.print(",");
-		myFile.print(byRelay[1]);
+		myFile.print(byRelayMode[1]);
 		myFile.print(",");
-		myFile.print(byRelay[2]);
+		myFile.print(byRelayMode[2]);
 		myFile.print(",");
-		myFile.print(byRelay[3]);
+		myFile.print(byRelayMode[3]);
 		myFile.close();
 		return true;
 	}
 }
 
-boolean writeSDEthernetSettings() {
+bool writeSDEthernetSettings() {
 	SD.remove(ethernet);
 	myFile = SD.open(ethernet, FILE_WRITE);
 	if (!myFile)

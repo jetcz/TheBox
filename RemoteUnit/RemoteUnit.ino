@@ -29,7 +29,7 @@ const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
 
-const int nSleepTime2 = 1100;
+const int nSleepTime2 = 1200;
 #if debug
 const int nSleepTime = 18548 - nSleepTime2 - 1000; 
 #else
@@ -40,7 +40,7 @@ char buffer[24];
 OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
 DHT dht(DHT22_DATA_PIN, DHTTYPE);
-RH_ASK driver(1000, 14, RADIO_TX_PIN);
+RH_ASK driver(2000, 14, RADIO_TX_PIN);
 RunningAverage Light(3);
 RunningAverage AirTemp(3);
 RunningAverage AirHum(3);

@@ -86,7 +86,7 @@ DHT dht(DHT22_PIN, DHT22);
 EthernetClient client;
 EthernetUDP udp;
 File myFile;
-RH_ASK driver(1000, RADIO_RX_PIN, 0);
+RH_ASK driver(2000, RADIO_RX_PIN, 0);
 WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
@@ -112,8 +112,8 @@ byte iCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
 String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
-boolean bConnectivityCheck = true;
-boolean bReceivedRadioMsg = false;
+bool bConnectivityCheck = true;
+bool bReceivedRadioMsg = false;
 
 /* weather */
 const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -137,8 +137,8 @@ DataSet *DataSetPtr[] = { (DataSet*)&MainDS, (DataSet*)&RemoteDS, (DataSet*)&Sys
 */
 float *TargetVarPtr[] = { &MainDS.Data[3], &MainDS.Data[0], &MainDS.Data[1], &MainDS.Data[2], &RemoteDS.Data[0], &RemoteDS.Data[1], &RemoteDS.Data[2], &RemoteDS.Data[3], &RemoteDS.Data[4], &RemoteDS.Data[5], &RemoteDS.Data[6] };
 
-/* relay states/modes*/
-byte byRelay[4] = { 0 };
+/* relay modes*/
+byte byRelayMode[4] = { 0 };
 
 /* network settings */
 byte mac[] = { 0xB0, 0x0B, 0x5B, 0x00, 0xB5, 0x00 };
@@ -146,7 +146,7 @@ byte ip[4] = { 0 };
 byte gw[4] = { 0 };
 byte subnet[4] = { 0 };
 byte dns1[4] = { 0 };
-boolean bDhcp;
+bool bDhcp;
 
 /* alarms */
 int systemAlarm;
@@ -251,7 +251,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		for (int i = 0; i < 4; i++)
 		{
 			server.print(F("<M>"));
-			server.print(byRelay[i]);
+			server.print(byRelayMode[i]);
 			server.print(F("</M>"));
 		}
 		server.print(F("</Mod>"));
@@ -279,7 +279,7 @@ void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *url_p
 	{
 		while (server.readPOSTparam(name, 3, value, 3))
 		{
-			byRelay[atoi(name) - 1] = atoi(value);
+			byRelayMode[atoi(name) - 1] = atoi(value);
 		}
 		switchRelays();
 		Alarm.disable(writeSDAlarm);
@@ -436,7 +436,7 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 		}
 	}
 
-#if debug
+#if DEBUG
 	for (int i = 0; i < 4; i++)
 	{
 		Serial.print(F("Variable "));

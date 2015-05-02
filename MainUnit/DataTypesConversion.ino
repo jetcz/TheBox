@@ -7,7 +7,7 @@ String floatToString(float val) {
 String intToString(register int i) {
 	register unsigned char L = 1;
 	register char c;
-	register boolean m = false;
+	register bool m = false;
 	register char b;  // lower-byte of i
 	// negative
 	if (i < 0) {

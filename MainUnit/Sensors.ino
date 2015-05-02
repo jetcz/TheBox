@@ -54,7 +54,7 @@ float getMainHumidex() {
 		return (dht.computeHeatIndex(MainDS.Data[0] * 1.8 + 32, MainDS.Data[1]) - 32)*0.556;
 }
 
-boolean getMainPir() {
+bool getMainPir() {
 	return digitalRead(PIR_PIN);
 }
 

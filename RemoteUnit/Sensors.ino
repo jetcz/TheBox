@@ -62,7 +62,7 @@ void printSensorData() {
 	Serial.println();
 }
 
-void powerSensors(boolean state) {
+void powerSensors(bool state) {
 	if (state)
 	{
 		digitalWrite(PHOTORESISTOR_PWR_PIN, HIGH);

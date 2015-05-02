@@ -1,22 +1,36 @@
 void printDebug() {
-	time_t ntp = time_t(ntpUnixTime(udp));
-	if (ntp != 0)
+	for (int i = 0; i < 4; i++)
 	{
-		rtc.adjust(DateTime(ntp));
-	}
+		if (Sched[i].Variable != 0)
+		{
 
-	time_t local = myTZ.toLocal(now());
-	Serial.println("LOCAL" + getDateTimeString(local));
+			Serial.print("current val ");
+			Serial.println(*TargetVarPtr[Sched[i].Variable]);
+			Serial.print("target val min ");
+			Serial.println(Sched[i].Value[Sched[i].CurrentInterval][0]);
+			Serial.print("target val max ");
+			Serial.println(Sched[i].Value[Sched[i].CurrentInterval][1]);
+		}
+	}
+	Serial.println();
 }
 
 void system() {
+	receiveData();
+	RemoteDS.Valid = isRemoteDataSetValid();
 	sNow = getDateTimeString(now());
+	sMainUptime = getUptimeString(getUptime());
 	enableDisableAlarms();
 	lcdBacklight();
-	sMainUptime = getUptimeString(getUptime());
-	RemoteDS.Valid = isRemoteDataSetValid();
-	receiveData();
 	getFailedRadioMessages();
+	//scheduler part
+	for (int i = 0; i < 4; i++)
+	{
+		if (byRelayMode[i] > 1)
+		{
+			serviceSchedulers(i);
+		}
+	}
 }
 
 void prepareDataSetArrays() {
@@ -321,7 +335,7 @@ void dhcp() {
 }
 
 void writeSD() {
-	boolean succes = writeSDRelaySettings(relays);
+	bool succes = writeSDRelaySettings(relays);
 	if (!succes)
 	{
 #if DEBUG

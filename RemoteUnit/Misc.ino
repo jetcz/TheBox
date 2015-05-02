@@ -30,7 +30,7 @@ int freeRam() {
 int millisRollover() {
   // get the current millis() value for how long the microcontroller has been running
   //
-  // To avoid any possiblity of missing the rollover, we use a boolean toggle that gets flipped
+  // To avoid any possiblity of missing the rollover, we use a bool toggle that gets flipped
   //   off any time during the first half of the total millis period and
   //   then on during the second half of the total millis period.
   // This would work even if the function were only run once every 4.5 hours, though typically,
@@ -38,7 +38,7 @@ int millisRollover() {
   // The rollover counter is good for over 35 years of runtime. --Rob Faludi http://rob.faludi.com
   //
   static int numRollovers=0; // variable that permanently holds the number of rollovers since startup
-  static boolean readyToRoll = false; // tracks whether we've made it halfway to rollover
+  static bool readyToRoll = false; // tracks whether we've made it halfway to rollover
   unsigned long now = millis(); // the time right now
   unsigned long halfwayMillis = 2147483647; // this is halfway to the max millis value (17179868 for earlier versions of Arduino)
 

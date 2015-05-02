@@ -1,6 +1,6 @@
 int weatherForecast() {
 	static int minuteCount = 0;
-	static boolean firstRound = true;
+	static bool firstRound = true;
 	static float pressureAvg[7];
 	static float dP_dt;
 	// Algorithm found here

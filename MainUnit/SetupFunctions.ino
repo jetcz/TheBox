@@ -233,6 +233,7 @@ void setupAlarms() {
 	}
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
+//	Alarm.timerRepeat(10, printDebug);
 #endif
 }
 
