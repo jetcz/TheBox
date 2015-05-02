@@ -1,4 +1,4 @@
-int weatherForecast() {
+void weatherForecast() {
 	static int minuteCount = 0;
 	static bool firstRound = true;
 	static float pressureAvg[7];
@@ -73,17 +73,17 @@ int weatherForecast() {
 	}
 
 	if (minuteCount < 35 && firstRound) //if time is less than 35 min on the first 3 hour interval.
-		return 5; // Unknown, more time needed
+		forecast = 5; // Unknown, more time needed
 	else if (dP_dt < (-0.25))
-		return 4; // Quickly falling LP, Thunderstorm, not stable
+		forecast = 4; // Quickly falling LP, Thunderstorm, not stable
 	else if (dP_dt > 0.25)
-		return 3; // Quickly rising HP, not stable weather
-	else if ((dP_dt >(-0.25)) && (dP_dt < (-0.05)))
-		return 2; // Slowly falling Low Pressure System, stable rainy weather
+		forecast = 3; // Quickly rising HP, not stable weather
+	else if ((dP_dt > (-0.25)) && (dP_dt < (-0.05)))
+		forecast = 2; // Slowly falling Low Pressure System, stable rainy weather
 	else if ((dP_dt > 0.05) && (dP_dt < 0.25))
-		return 1; // Slowly rising HP stable good weather
+		forecast = 1; // Slowly rising HP stable good weather
 	else if ((dP_dt >(-0.05)) && (dP_dt < 0.05))
-		return 0; // Stable weather
+		forecast = 0; // Stable weather
 	else
-		return 5; // Unknown
+		forecast = 5; // Unknown
 }

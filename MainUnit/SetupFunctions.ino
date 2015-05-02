@@ -220,12 +220,13 @@ void setupLCD(){
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
 	Alarm.timerOnce(180, syncRTCwithNTP);
+	Alarm.timerOnce(65, getFailedRadioMessages);  //repeats itself after first run
 	systemAlarm = Alarm.timerRepeat(1, system);
+	printLcdAlarm = Alarm.timerRepeat(1, printLcd);
 	prepareDatasetAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
 	//printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	updateTSAlarm = Alarm.timerRepeat(iUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
-	weatherAlarm = Alarm.timerRepeat(60, weatherForecastTimer); //update weather forecast every minute - this MUST be interval 60s
-	printLcdAlarm = Alarm.timerRepeat(1, printLcd); //refresh sensor data to lcd every second
+	weatherAlarm = Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	syncRTCAlarm = Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC every 24h
 	if (bDhcp)
 	{
@@ -233,7 +234,8 @@ void setupAlarms() {
 	}
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
-//	Alarm.timerRepeat(10, printDebug);
+
 #endif
+	//	Alarm.timerRepeat(10, printDebug);
 }
 

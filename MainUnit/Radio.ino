@@ -25,6 +25,7 @@ void receiveData() {
 //this needs to be called once per second
 void getFailedRadioMessages(){
 	static unsigned long counter = 0;
+	static bool repeat = false;
 	counter++;
 
 	//this is to find out how many radio transmissions failed
@@ -32,5 +33,11 @@ void getFailedRadioMessages(){
 	{
 		iFailedCntRadioTotal++;
 		counter = 0;
+	}
+
+	if (!repeat)
+	{
+		repeat = true;
+		Alarm.timerRepeat(1, getFailedRadioMessages);
 	}
 }

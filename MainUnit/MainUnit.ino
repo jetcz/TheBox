@@ -22,7 +22,7 @@
 
 //////////////////////USER CONFIGURABLE///////////////////////////////////
 
-#define DEBUG false //enable disable all serial.print messages
+#define DEBUG true //enable disable all serial.print messages
 
 /* pins */
 const int RESET_ETH_SHIELD_PIN = 14;
@@ -152,9 +152,9 @@ bool bDhcp;
 int systemAlarm;
 int prepareDatasetAlarm;
 int printSerialAlarm;
+int printLcdAlarm;
 int updateTSAlarm;
 int weatherAlarm;
-int printLcdAlarm;
 int dhcpAlarm;
 int syncRTCAlarm;
 int writeSDAlarm;

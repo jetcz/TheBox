@@ -22,7 +22,7 @@ void system() {
 	sMainUptime = getUptimeString(getUptime());
 	enableDisableAlarms();
 	lcdBacklight();
-	getFailedRadioMessages();
+
 	//scheduler part
 	for (int i = 0; i < 4; i++)
 	{
@@ -273,10 +273,6 @@ void enableDisableAlarms() {
 	{
 		byLcdMsgTimeoutCnt++;
 	}
-}
-
-void weatherForecastTimer() {
-	forecast = weatherForecast();
 }
 
 void syncRTCwithNTP() {
