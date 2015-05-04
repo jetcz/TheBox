@@ -45,7 +45,7 @@ void updateThingSpeak(DataSet ds){
 		}
 		else
 		{
-			if (iFailedCounter > iRestartEthernetThreshold) {
+			if (iFailedCounter > byRestartEthernetThreshold) {
 				ledLight(3, 'r');
 			}
 			else
@@ -71,7 +71,7 @@ void updateThingSpeak(DataSet ds){
 	else
 	{
 
-		if (iFailedCounter > iRestartEthernetThreshold) {
+		if (iFailedCounter > byRestartEthernetThreshold) {
 			ledLight(3, 'r');
 		}
 		else

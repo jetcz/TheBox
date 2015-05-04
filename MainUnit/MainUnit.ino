@@ -22,7 +22,7 @@
 
 //////////////////////USER CONFIGURABLE///////////////////////////////////
 
-#define DEBUG true //enable disable all serial.print messages
+#define DEBUG false //enable disable all serial.print messages
 
 /* pins */
 const int RESET_ETH_SHIELD_PIN = 14;
@@ -42,10 +42,10 @@ const int RADIO_CTRL_PIN = 18;
 /* ThingSpeak settings */
 const char cThingSpeakAddress[] = "api.thingspeak.com";
 //const char cThingSpeakAddress[] = "184.106.153.149";
-const byte iUpdateThingSpeakInterval = 20;
-const byte iRemoteDataSetTimeout = 180;		//for how long is dataset valid and send to thingspeak (sec)
-const byte iRestartEthernetThreshold = 10;	//if thingspeak update fails x times -> ethernet shield reset
-const byte iRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
+const byte byUpdateThingSpeakInterval = 20;
+const byte byRemoteDataSetTimeout = 180;		//for how long is dataset valid and send to thingspeak (sec)
+const byte byRestartEthernetThreshold = 10;	//if thingspeak update fails x times -> ethernet shield reset
+const byte byRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
 
 /* ntp server */
 const char cTimeServer[] = "tik.cesnet.cz";
@@ -113,7 +113,7 @@ String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
 bool bConnectivityCheck = true;
-bool bReceivedRadioMsg = false;
+bool bReceivedRadioMsg = false;				//receivet at least one remote ds
 
 /* weather */
 const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -158,9 +158,26 @@ int weatherAlarm;
 int dhcpAlarm;
 int syncRTCAlarm;
 int writeSDAlarm;
+int failedMsgsAlarm;
 
 /* reset arduino function (must be here)*/
 void(*resetFunc) (void) = 0;
+
+#pragma region webduino
+P(messageSDFail) =
+"<!DOCTYPE html><html><head>"
+"<meta http-equiv=\"refresh\" content=\"2\">"
+"<script language=\"javascript\">"
+"setTimeout(function(){ location.reload(); }, 2000);"
+"</script>"
+"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+"</head>"
+"<body>"
+"<div class=\"content\" style=\"color:red;font-weight:bold\">"
+"SD Card failed! Reloading..."
+"</div>"
+"</body>"
+"</html>";
 
 /* commands for webserver */
 void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -177,7 +194,7 @@ void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 			}
 			myFile.close();
 		}
-		else server.print(F("SD failed"));
+		else server.printP(messageSDFail);
 	}
 	ledLight(1, 'g');
 }
@@ -301,7 +318,7 @@ void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			}
 			myFile.close();
 		}
-		else server.print(F("SD failed"));
+		else server.printP(messageSDFail);
 	}
 	ledLight(1, 'g');
 }
@@ -319,7 +336,7 @@ void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			}
 			myFile.close();
 		}
-		else server.print(F("SD failed"));
+		else server.printP(messageSDFail);
 	}
 	ledLight(1, 'g');
 }
@@ -337,7 +354,7 @@ void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 			}
 			myFile.close();
 		}
-		else server.print(F("SD failed"));
+		else server.printP(messageSDFail);
 	}
 	ledLight(1, 'g');
 }
@@ -493,6 +510,32 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 
 	ledLight(1, 'g');
 }
+void schedDeleteCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	ledLight(1, 'b');
+	P(message) =
+		"<!DOCTYPE html><html><head>"
+		"<meta http-equiv=\"refresh\" content=\"1; url=sched.htm\">"
+		"<script language=\"javascript\">"
+		"setTimeout(function(){ location.href = \"sched.htm\" }, 1000);"
+		"</script>"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"</head>"
+		"<body>"
+		"<div class=\"content\" style=\"font-weight:bold\">"
+		"Deleting scheduler settings, please wait..."
+		"</div>"
+		"</body>"
+		"</html>";
+	server.printP(message);
+	server.flushBuf();
+	deleteSDSched();
+	for (int i = 0; i < 4; i++)
+	{
+		Sched[i].setDefault();
+	}
+	ledLight(1, 'g');
+}
 void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
@@ -507,7 +550,7 @@ void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 			}
 			myFile.close();
 		}
-		else server.print(F("SD failed"));
+		else server.printP(messageSDFail);
 	}
 	ledLight(1, 'g');
 };
@@ -732,6 +775,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	}
 	ledLight(1, 'g');
 }
+#pragma endregion webduino
 
 void setup()
 {
@@ -764,6 +808,7 @@ void setup()
 	webserver.addCommand("sched.htm", schedPageCmd); //get page
 	webserver.addCommand("sched.xml", schedXMLCmd); //get xml
 	webserver.addCommand("sched.data", schedDataCmd); //post data
+	webserver.addCommand("sched.delete", schedDeleteCmd); //delete sched data from sd
 	webserver.addCommand("system.htm", systemPageCmd); //get page
 	webserver.addCommand("stats.xml", statsXMLCmd); //get xml
 	webserver.addCommand("network.xml", networkXMLCmd); //get xml
@@ -797,7 +842,6 @@ void loop()
 }
 
 //TO DO
-//clean and organize project - commands for webduino shouldnt need to be in main sketch
 //handle connectivity check better without dhcp
 //ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
 

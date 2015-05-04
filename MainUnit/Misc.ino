@@ -13,19 +13,19 @@ void resetEthShield(int pin) {
 bool isRemoteDataSetValid() {
 	bool v;
 
-	if (now() - RemoteDS.Timestamp.unixtime() < iRemoteDataSetTimeout / 2)
+	if (now() - RemoteDS.Timestamp.unixtime() < 65)
 	{
 		v = true;
 		ledLight(2, 'g');
 	}
 
-	if (now() - RemoteDS.Timestamp.unixtime() >= iRemoteDataSetTimeout / 2 && now() - RemoteDS.Timestamp.unixtime() <= iRemoteDataSetTimeout)
+	if (now() - RemoteDS.Timestamp.unixtime() >= 65 && now() - RemoteDS.Timestamp.unixtime() <= byRemoteDataSetTimeout)
 	{
 		v = true;
 		ledLight(2, 'y');
 	}
 
-	if (now() - RemoteDS.Timestamp.unixtime() > iRemoteDataSetTimeout)
+	if (now() - RemoteDS.Timestamp.unixtime() > byRemoteDataSetTimeout)
 	{
 		v = false;
 		ledLight(2, 'r');

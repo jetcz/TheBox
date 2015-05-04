@@ -83,3 +83,12 @@ boolean readSDSched() {
 	}
 	return true;
 }
+
+void deleteSDSched() {
+	for (int i = 0; i < 4; i++)
+	{
+		String fp = "/settings/sch_r" + intToString(i + 1) + ".ini";
+		fp.toCharArray(buffer, bufferLen);
+		SD.remove(buffer);
+	}
+}

@@ -664,13 +664,28 @@
                     </table>
                 </div>
             </div>
-            <div class="content">
-                <button type="submit" value="Submit">
-                    Save scheduler settings
-                </button>
-            </div>
         </form>
+        <div class="content">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <form action="sched.delete" method="post">
+                                <input type="hidden" value="" />
+                                <button type="submit" value="1" onclick="return confirm('Are you sure?')" style="color:#c90000;font-weight:bold">
+                                    Delete schedulers
+                                </button>
+                            </form>
+                        </td>
+                        <td style="width:70%">
+                            <button type="submit" value="Submit" form="schedForm" style="color:green;font-weight:bold">
+                                Save schedulers
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-
 </body>
 </html>

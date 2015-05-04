@@ -206,7 +206,7 @@ void thingSpeak(){
 		iCurrentDataSet++;
 	}
 	// Check if Ethernet needs to be restarted
-	if ((iFailedCounter % iRestartEthernetThreshold) == 0 && iFailedCounter != 0){
+	if ((iFailedCounter % byRestartEthernetThreshold) == 0 && iFailedCounter != 0){
 		ledLight(3, 'r');
 #if DEBUG
 		Serial.println(F("Ethernet Shield needs to be restarted!"));
@@ -221,7 +221,7 @@ void thingSpeak(){
 		setupEthernet();
 	}
 	// Check if Arduino needs to be restarted
-	if ((iFailedCounter % iRestartArduinoThreshold) == 0 && iFailedCounter != 0) {
+	if ((iFailedCounter % byRestartArduinoThreshold) == 0 && iFailedCounter != 0) {
 		ledLight(1, 'r');
 		ledLight(3, 'r');
 #if DEBUG

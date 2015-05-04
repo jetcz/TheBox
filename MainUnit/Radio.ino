@@ -38,6 +38,6 @@ void getFailedRadioMessages(){
 	if (!repeat)
 	{
 		repeat = true;
-		Alarm.timerRepeat(1, getFailedRadioMessages);
+		failedMsgsAlarm = Alarm.timerRepeat(1, getFailedRadioMessages);
 	}
 }

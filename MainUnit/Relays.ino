@@ -60,27 +60,34 @@ void serviceSchedulers(int relay){
 			}
 		}
 
-		if ((Sched[relay].Variable > 3 && RemoteDS.Valid) || (Sched[relay].Variable <= 3)) //if targer var is from remote unit, it must be valid to be processed
+		//control relays (all the magic goes here)
+		if ((Sched[relay].Variable > 3 && RemoteDS.Valid) || (Sched[relay].Variable <= 3)) //if targer var is from remote unit, remote ds must be valid to be processed
 		{
 			if (Sched[relay].Value[Sched[relay].CurrentInterval][0] < Sched[relay].Value[Sched[relay].CurrentInterval][1]) //normal mode (heating...)
 			{
-				//switch relays according to target var
-				if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {
-					digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
-				}
+				if (*TargetVarPtr[Sched[relay].Variable] != -255) //do something only if current value is valid
+				{
+					//switch relays according to target var
+					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {
+						digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
+					}
 
-				if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][1]) {
-					digitalWrite(RELAY_PIN[relay], HIGH);
+					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][1]) {
+						digitalWrite(RELAY_PIN[relay], HIGH);
+					}
 				}
 			}
 			else { //reversed mode (cooling...)			
-				//switch relays according to target var
-				if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {
-					digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
-				}
+				if (*TargetVarPtr[Sched[relay].Variable] != -255)
+				{
+					//switch relays according to target var
+					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {
+						digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
+					}
 
-				if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][1]) {
-					digitalWrite(RELAY_PIN[relay], HIGH);
+					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][1]) {
+						digitalWrite(RELAY_PIN[relay], HIGH);
+					}
 				}
 			}
 		}
