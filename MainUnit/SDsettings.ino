@@ -40,13 +40,15 @@ void printErrorMessage(uint8_t e, bool eol = true)
 #endif
 
 
-bool readSettings(char *path) {
+bool readSDSettings(char *path) {
 
 	IniFile ini(path);
 	if (!ini.open()) {
 		return false;
 	}
 	else {
+
+#pragma region ethernet
 
 		if (path == ethernet)
 		{
@@ -95,6 +97,11 @@ bool readSettings(char *path) {
 
 			return true;
 		}
+
+#pragma endregion ethernet
+
+#pragma region relays
+
 		if (path == relays) {
 			if (ini.getValue(NULL, "modes", buffer, bufferLen)) { //modes=0,1,1,0
 				chArrToByteArr(buffer, byRelayMode);
@@ -107,13 +114,61 @@ bool readSettings(char *path) {
 				return false;
 			}
 		}
+
+#pragma endregion relays
+
+#pragma region general
+
+		if (path == general) {
+			if (ini.getValue(NULL, "invalidDSAction", buffer, bufferLen)) {
+				bInvalidDSAction = buffer[0] != '0';
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'invalidDSaction', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+			if (ini.getValue(NULL, "thingspeakEnabled", buffer, bufferLen)) {
+				bTSenabled = buffer[0] != '0';
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'thingspeakEnabled', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+			if (ini.getValue(NULL, "thingspeakAddress", buffer, bufferLen)) {
+				memcpy(&cThingSpeakAddress, buffer, bufferLen);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'thingspeakAddress', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+			if (ini.getValue(NULL, "ntp", buffer, bufferLen)) {
+				memcpy(&cTimeServer, buffer, bufferLen);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'ntp', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+		}
+#pragma endregion general
+
 	}
 }
 
-// Writes A Configuration file
-bool writeSDRelaySettings(char *path) {
-	SD.remove(path);
-	myFile = SD.open(path, FILE_WRITE);
+bool writeSDRelaySettings() {
+	SD.remove(relays);
+	myFile = SD.open(relays, FILE_WRITE);
 	if (!myFile)
 	{
 		return false;
@@ -183,6 +238,30 @@ bool writeSDEthernetSettings() {
 			}
 		}
 		myFile.close();
+		return true;
+	}
+}
+
+bool writeSDGeneralSettings() {
+	SD.remove(general);
+	myFile = SD.open(general, FILE_WRITE);
+	if (!myFile)
+	{
+		return false;
+	}
+	else {
+		myFile.print(F("invalidDSAction="));
+		myFile.print(bInvalidDSAction);
+		myFile.println();
+		myFile.print(F("thingspeakEnabled="));
+		myFile.print(bTSenabled);
+		myFile.println();
+		myFile.print(F("thingspeakAddress="));
+		myFile.print(cThingSpeakAddress);
+		myFile.println();
+		myFile.print(F("ntp="));
+		myFile.print(cTimeServer);
+		myFile.println();
 		return true;
 	}
 }

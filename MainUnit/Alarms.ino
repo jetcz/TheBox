@@ -240,26 +240,17 @@ void thingSpeak(){
 	}
 }
 
-// disable thingspeak updating if we do not have ip address
-void enableDisableAlarms() {
 
-	// enable or disable thingspeak depending on obtained dhcp lease (its no necesary but if we dont have connectioon on startup, its good to disable thingspeak)
-	if (bConnectivityCheck && !Alarm.active(updateTSAlarm) && bDhcp)
+void enableDisableAlarms() {
+	//enable disable thingspeak accoring to system settings
+	if (bTSenabled && !Alarm.active(updateTSAlarm))
 	{
-#if DEBUG
-		Serial.println(F("Enabling ThingSpeak functionality"));
-#endif
 		Alarm.enable(updateTSAlarm);
 	}
-	else
-		if (!bConnectivityCheck && Alarm.active(updateTSAlarm) && bDhcp)
-		{
-#if DEBUG
-			Serial.print(F("Disabling ThingSpeak functionality"));
-#endif
-			Alarm.disable(updateTSAlarm);
-		}
-
+	if (!bTSenabled && Alarm.active(updateTSAlarm))
+	{
+		Alarm.disable(updateTSAlarm);
+	}
 
 	//enable lcd refreshing after some msg shows up for x sec
 	static byte byLcdMsgTimeoutCnt = 0;
@@ -296,7 +287,7 @@ void syncRTCwithNTP() {
 #if DEBUG
 		Serial.println(F("NTP time sync failed!"));
 #endif
-	}
+}
 }
 
 void dhcp() {
@@ -327,11 +318,11 @@ void dhcp() {
 		Serial.println(Ethernet.dnsServerIP());
 #endif
 		ledLight(1, 'g');
-	}
+}
 }
 
 void writeSD() {
-	bool succes = writeSDRelaySettings(relays);
+	bool succes = writeSDRelaySettings();
 	if (!succes)
 	{
 #if DEBUG
@@ -352,4 +343,4 @@ void writeSD() {
 		Serial.println(F("Writing relay settings to SD card ok"));
 #endif
 	}
-}
+	}

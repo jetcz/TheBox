@@ -88,6 +88,7 @@
                 <thead>
                     <tr>
                         <th>
+                            Stats
                         </th>
                         <th>
                             Main Unit
@@ -145,68 +146,151 @@
                 </tbody>
             </table>
         </div>
-        <form id="networkForm" method="post" action="network.data">
-            <div class="content">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>
-                            </th>
-                            <th>
-                                Network settings
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="leftHeader">IP Address</td>
-                            <td>
-                                <input class="Net" type="number" name="IP" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="IP" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="IP" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="IP" min="0" max="255" step="1" required>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="leftHeader">Subnet Mask</td>
-                            <td>
-                                <input class="Net" type="number" name="Mask" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="Mask" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="Mask" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="Mask" min="0" max="255" step="1" required>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="leftHeader">Gateway</td>
-                            <td>
-                                <input class="Net" type="number" name="GW" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="GW" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="GW" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="GW" min="0" max="255" step="1" required>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="leftHeader">DNS</td>
-                            <td>
-                                <input class="Net" type="number" name="DNS" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="DNS" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="DNS" min="0" max="255" step="1" required>
-                                <input class="Net" type="number" name="DNS" min="0" max="255" step="1" required>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align:left">
+                            Settings
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="settings">
+                <form id="settingsForm" method="post" action="settings.data">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    General settings
+                                </th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="leftHeader">
+                                    Invalid DS action
+                                </td>
+                                <td style="text-align:left">
+                                    <input type="radio" name="action" value="0">
+                                    Keep last state
+                                </td>
+                                <td style="text-align:left">
+                                    <input type="radio" name="action" value="1">
+                                    Turn relay OFF
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">Thingspeak</td>
+                                <td style="text-align:left">
+                                    <input type="radio" name="thingspeak" value="0">
+                                    OFF
+                                </td>
+                                <td style="text-align:left">
+                                    <input type="radio" name="thingspeak" value="1">
+                                    ON
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">
+                                    Thingspeak address
+                                </td>
+                                <td colspan="2">
+                                    <input type="text" name="tsaddr">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">
+                                    NTP address
+                                </td>
+                                <td colspan="2">
+                                    <input type="text" name="ntpaddr">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <form id="networkForm" method="post" action="network.data">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Network
+                                </th>
+                                <th colspan="2">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="leftHeader">
+                                    DHCP
+                                </td>
+                                <td>
+                                    <input type="radio" name="dhcp" value="0">
+                                    Static
+                                </td>
+                                <td>
+                                    <input type="radio" name="dhcp" value="1">
+                                    Dynamic
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">IP Address</td>
+                                <td colspan="2">
+                                    <input class="Net" type="number" name="IP" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="IP" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="IP" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="IP" min="0" max="255" step="1" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">Subnet Mask</td>
+                                <td colspan="2">
+                                    <input class="Net" type="number" name="Mask" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="Mask" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="Mask" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="Mask" min="0" max="255" step="1" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">Gateway</td>
+                                <td colspan="2">
+                                    <input class="Net" type="number" name="GW" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="GW" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="GW" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="GW" min="0" max="255" step="1" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">DNS</td>
+                                <td colspan="2">
+                                    <input class="Net" type="number" name="DNS" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="DNS" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="DNS" min="0" max="255" step="1" required>
+                                    <input class="Net" type="number" name="DNS" min="0" max="255" step="1" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader"></td>
+                                <td colspan="2">
+                                    <button type="submit" form="networkForm">
+                                        Save network settings
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
             </div>
-        </form>
+        </div>
+
         <div class="content">
             <table>
                 <tbody>
                     <tr>
-                        <td>
-                            <button type="submit" form="networkForm">
-                                Save network settings
-                            </button>
-                        </td>
                         <td>
                             <form action="reboot" method="post">
                                 <input type="hidden" value="" />

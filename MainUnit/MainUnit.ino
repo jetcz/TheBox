@@ -20,6 +20,12 @@
 #include "avr/pgmspace.h"
 #include "DataStructures.h"
 
+/* general buffer for various usages (datatypes conversion, reading ini settings)*/
+const size_t bufferLen = 30;
+char buffer[bufferLen];
+const size_t buffLen = 22;
+char buff[buffLen];
+
 //////////////////////USER CONFIGURABLE///////////////////////////////////
 
 #define DEBUG false //enable disable all serial.print messages
@@ -40,7 +46,7 @@ const int RADIO_RX_PIN = 17;
 const int RADIO_CTRL_PIN = 18;
 
 /* ThingSpeak settings */
-const char cThingSpeakAddress[] = "api.thingspeak.com";
+char cThingSpeakAddress[bufferLen] = "api.thingspeak.com";
 //const char cThingSpeakAddress[] = "184.106.153.149";
 const byte byUpdateThingSpeakInterval = 20;
 const byte byRemoteDataSetTimeout = 180;		//for how long is dataset valid and send to thingspeak (sec)
@@ -48,7 +54,7 @@ const byte byRestartEthernetThreshold = 10;	//if thingspeak update fails x times
 const byte byRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
 
 /* ntp server */
-const char cTimeServer[] = "tik.cesnet.cz";
+char cTimeServer[bufferLen] = "tik.cesnet.cz";
 
 /* timezone settings */
 TimeChangeRule CEST = { "CEST", Last, Sun, Mar, 2, 120 };    //summer time = UTC + 2 hours
@@ -76,6 +82,7 @@ modes = 0, 1, 1, 2 where 0 is off, 1 is on and 2 is auto */
 
 char *ethernet = "/settings/ethernet.ini";
 char *relays = "/settings/relays.ini";
+char *general = "/settings/general.ini";
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -96,11 +103,6 @@ DataSet SystemDS;
 
 RelayScheduler Sched[4];
 
-/* general buffer for various usages (datatypes conversion, reading ini settings)*/
-const size_t bufferLen = 30;
-char buffer[bufferLen];
-const size_t buffLen = 22;
-char buff[buffLen];
 
 /* variables */
 int iFailedCounter = 0;					//failed thingspeak uploads
@@ -112,8 +114,10 @@ byte iCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
 String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
-bool bConnectivityCheck = true;
-bool bReceivedRadioMsg = false;				//receivet at least one remote ds
+bool bConnectivityCheck = true;				//TODO
+bool bReceivedRadioMsg = false;				//received at least one remote ds
+bool bTSenabled = true;						//enable disable thingspeak
+bool bInvalidDSAction = true;				//what to do with relay if dataset is invalid true=turn off relay; false=do nothing
 
 /* weather */
 const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -782,10 +786,10 @@ void setup()
 	setupSerial();
 	setupPins();
 	setupSD();
-	readSettings(relays);
+	readSDSettings(relays);
 	readSDSched();
 	switchRelays();
-	if (!readSettings(ethernet)) //reading ethernet settings must for some reason take place much earlier that ethernet.begin
+	if (!readSDSettings(ethernet)) //reading ethernet settings must for some reason take place much earlier than ethernet.begin
 	{
 		bDhcp = true;
 	}
