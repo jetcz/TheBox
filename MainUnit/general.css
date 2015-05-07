@@ -15,6 +15,10 @@ body {
     box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);
 }
 
+.wrapContent {
+            width: 700px;
+        }
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     opacity: 1;

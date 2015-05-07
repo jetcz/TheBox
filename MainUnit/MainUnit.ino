@@ -20,7 +20,7 @@
 #include "avr/pgmspace.h"
 #include "DataStructures.h"
 
-#define DEBUG true //enable disable all serial.print messages
+#define DEBUG false //enable/disable all serial.print messages
 
 /* pins */
 const int RESET_ETH_SHIELD_PIN = 14;
@@ -37,7 +37,7 @@ const int LCD_SWITCH_PWR_PIN = 30;
 const int RADIO_RX_PIN = 17;
 const int RADIO_CTRL_PIN = 18;
 
-/* general buffer for various usages (datatypes conversion, reading ini settings)*/
+/* general buffers for various usages (datatypes conversion, reading ini settings)*/
 const int buffLen1 = 30;
 const int buffLen2 = 22;
 char buff1[buffLen1];

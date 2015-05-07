@@ -34,7 +34,7 @@
 @media screen and (min-width: 700px) {
     .nav li {
         text-transform: uppercase;
-        width: 120px;
+        width: 140px;
         border-bottom: none;
         height: 45px;
         line-height: 45px;
