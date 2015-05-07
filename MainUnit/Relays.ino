@@ -91,7 +91,14 @@ void serviceSchedulers(int relay){
 				}
 			}
 		}
-		else digitalWrite(RELAY_PIN[relay], HIGH); //remote ds is not valid
+		else if (bInvalidDSAction)//remote ds is not valid
+		{
+			digitalWrite(RELAY_PIN[relay], HIGH); //turn off relay
+		} 
+		else
+		{
+			// do nothing
+		}
 	}
 	else  { //target variable is pir
 		if (getMainPir()) digitalWrite(RELAY_PIN[relay], LOW);

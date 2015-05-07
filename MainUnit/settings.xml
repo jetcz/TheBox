@@ -1,0 +1,29 @@
+<?xml version = "1.0" ?>
+<Settings>
+  <General>
+    <RemoteDSTimeout>180</RemoteDSTimeout>
+    <InvalidDSAction>0</InvalidDSAction>
+    <TSEnabled>1</TSEnabled>
+    <TSAddr>api.thingspeak.com</TSAddr>
+    <NTPAddr>tik.cesnet.cz</NTPAddr>
+  </General>
+  <Net>
+    <DHCP>0</DHCP>
+    <V>10</V>
+    <V>1</V>
+    <V>2</V>
+    <V>6</V>
+    <V>255</V>
+    <V>255</V>
+    <V>254</V>
+    <V>0</V>
+    <V>10</V>
+    <V>1</V>
+    <V>2</V>
+    <V>1</V>
+    <V>10</V>
+    <V>1</V>
+    <V>2</V>
+    <V>1</V>
+  </Net>
+</Settings>

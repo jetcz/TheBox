@@ -100,9 +100,6 @@
     <Text Include="readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="network.xml">
-      <Filter>sample xml</Filter>
-    </Xml>
     <Xml Include="sensors.xml">
       <Filter>sample xml</Filter>
     </Xml>
@@ -110,6 +107,9 @@
       <Filter>sample xml</Filter>
     </Xml>
     <Xml Include="stats.xml">
+      <Filter>sample xml</Filter>
+    </Xml>
+    <Xml Include="settings.xml">
       <Filter>sample xml</Filter>
     </Xml>
   </ItemGroup>

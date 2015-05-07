@@ -19,13 +19,13 @@ bool isRemoteDataSetValid() {
 		ledLight(2, 'g');
 	}
 
-	if (now() - RemoteDS.Timestamp.unixtime() >= 65 && now() - RemoteDS.Timestamp.unixtime() <= byRemoteDataSetTimeout)
+	if (now() - RemoteDS.Timestamp.unixtime() >= 65 && now() - RemoteDS.Timestamp.unixtime() <= iRemoteDataSetTimeout)
 	{
 		v = true;
 		ledLight(2, 'y');
 	}
 
-	if (now() - RemoteDS.Timestamp.unixtime() > byRemoteDataSetTimeout)
+	if (now() - RemoteDS.Timestamp.unixtime() > iRemoteDataSetTimeout)
 	{
 		v = false;
 		ledLight(2, 'r');

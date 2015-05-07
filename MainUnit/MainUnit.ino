@@ -49,7 +49,7 @@ const int RADIO_CTRL_PIN = 18;
 char cThingSpeakAddress[bufferLen] = "api.thingspeak.com";
 //const char cThingSpeakAddress[] = "184.106.153.149";
 const byte byUpdateThingSpeakInterval = 20;
-const byte byRemoteDataSetTimeout = 180;		//for how long is dataset valid and send to thingspeak (sec)
+int iRemoteDataSetTimeout = 180;		//for how long is dataset valid and send to thingspeak (sec)
 const byte byRestartEthernetThreshold = 10;	//if thingspeak update fails x times -> ethernet shield reset
 const byte byRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
 
@@ -82,7 +82,7 @@ modes = 0, 1, 1, 2 where 0 is off, 1 is on and 2 is auto */
 
 char *ethernet = "/settings/ethernet.ini";
 char *relays = "/settings/relays.ini";
-char *general = "/settings/general.ini";
+char *settings = "/settings/settings.ini";
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -114,10 +114,9 @@ byte iCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
 String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
-bool bConnectivityCheck = true;				//TODO
 bool bReceivedRadioMsg = false;				//received at least one remote ds
 bool bTSenabled = true;						//enable disable thingspeak
-bool bInvalidDSAction = true;				//what to do with relay if dataset is invalid true=turn off relay; false=do nothing
+bool bInvalidDSAction = false;				//what to do with relay if dataset is invalid true=turn off relay; false=do nothing
 
 /* weather */
 const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -150,7 +149,7 @@ byte ip[4] = { 0 };
 byte gw[4] = { 0 };
 byte subnet[4] = { 0 };
 byte dns1[4] = { 0 };
-bool bDhcp;
+bool bDhcp = false;
 
 /* alarms */
 int systemAlarm;
@@ -624,7 +623,7 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 	};
 	ledLight(1, 'g');
 };
-void networkXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'c');
 	if (type == WebServer::POST)
@@ -641,8 +640,29 @@ void networkXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		P(tag_end_sensor) = "</V>";
 
 		server.print(F("<?xml version = \"1.0\" ?>"));
-		server.print(F("<Net>"));
+		server.print(F("<Settings>"));
+		server.print(F("<General>"));
+		server.print(F("<RemoteDSTimeout>"));
+		server.print(iRemoteDataSetTimeout);
+		server.print(F("</RemoteDSTimeout>"));
+		server.print(F("<InvalidDSAction>"));
+		server.print(bInvalidDSAction);
+		server.print(F("</InvalidDSAction>"));
+		server.print(F("<TSEnabled>"));
+		server.print(bTSenabled);
+		server.print(F("</TSEnabled>"));
+		server.print(F("<TSAddr>"));
+		server.print(cThingSpeakAddress);
+		server.print(F("</TSAddr>"));
+		server.print(F("<NTPAddr>"));
+		server.print(cTimeServer);
+		server.print(F("</NTPAddr>"));
+		server.print(F("</General>"));
 
+		server.print(F("<Net>"));
+		server.print(F("<DHCP>"));
+		server.print(bDhcp);
+		server.print(F("</DHCP>"));
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
@@ -668,8 +688,97 @@ void networkXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 			server.printP(tag_end_sensor);
 		}
 		server.print(F("</Net>"));
+		server.print(F("</Settings>"));
 	};
 	ledLight(1, 'g');
+}
+void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	ledLight(1, 'y');
+	server.httpSuccess();
+	if (type == WebServer::POST)
+	{
+		while (server.readPOSTparam(buffer, bufferLen, buff, buffLen)) //buffer = name, buff = value
+		{
+			if (strcmp(buffer, "remoteDStimeout") == 0)
+			{
+				iRemoteDataSetTimeout = atoi(buff);
+			}
+			if (strcmp(buffer, "action") == 0)
+			{
+				bInvalidDSAction = buff[0] != '0';
+			}
+			if (strcmp(buffer, "thingspeak") == 0)
+			{
+				bTSenabled = buff[0] != '0';
+			}
+			if (strcmp(buffer, "tsaddr") == 0)
+			{
+				memcpy(&cThingSpeakAddress, buff, buffLen);
+			}
+			if (strcmp(buffer, "ntpaddr") == 0)
+			{
+				memcpy(&cTimeServer, buff, buffLen);
+			}
+		}
+
+		P(messageSuccess) =
+			"<!DOCTYPE html><html><head>"
+			"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
+			"<script language=\"javascript\">"
+			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+			"</script>"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"</head>"
+			"<body>"
+			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
+			"General settings successfully saved"
+			"</div>"
+			"</body>"
+			"</html>";
+
+		P(messageFail) =
+			"<!DOCTYPE html><html><head>"
+			"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
+			"<script language=\"javascript\">"
+			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+			"</script>"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"</head>"
+			"<body>"
+			"<div class=\"content\" style=\"color:red;font-weight:bold\">"
+			"Failed to save general settings!"
+			"</div>"
+			"</body>"
+			"</html>";
+
+		if (writeSDSettings()) server.printP(messageSuccess);
+		else server.printP(messageFail);
+		server.flushBuf();
+		ledLight(1, 'g');
+	}
+}
+void settingsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	ledLight(1, 'b');
+	P(message) =
+		"<!DOCTYPE html><html><head>"
+		"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
+		"<script language=\"javascript\">"
+		"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+		"</script>"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"</head>"
+		"<body>"
+		"<div class=\"content\" style=\"font-weight:bold\">"
+		"Deleting settings, please wait..."
+		"</div>"
+		"</body>"
+		"</html>";
+	server.printP(message);
+	server.flushBuf();
+	SD.remove(settings);
+	resetFunc();
 }
 void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
@@ -702,6 +811,10 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	{
 		while (server.readPOSTparam(buffer, 10, value, 4))
 		{
+			if (strcmp(buffer, "DHCP") == 0)
+			{
+				bDhcp = value[0] != '0';
+			}
 			if (strcmp(buffer, "IP") == 0)
 			{
 				ip[counter[0]] = atoi(value);
@@ -722,6 +835,15 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 				dns1[counter[3]] = atoi(value);
 				counter[3]++;
 			}
+		}
+
+		if (!bDhcp && Alarm.active(dhcpAlarm))
+		{
+			Alarm.disable(dhcpAlarm);
+		}
+		if (bDhcp && !Alarm.active(dhcpAlarm))
+		{
+			Alarm.enable(dhcpAlarm);
 		}
 
 		//build new ip to string for future redirect
@@ -789,11 +911,8 @@ void setup()
 	readSDSettings(relays);
 	readSDSched();
 	switchRelays();
-	if (!readSDSettings(ethernet)) //reading ethernet settings must for some reason take place much earlier than ethernet.begin
-	{
-		bDhcp = true;
-	}
-	else bDhcp = false;
+	readSDSettings(settings);
+	if (!readSDSettings(ethernet)) bDhcp = true; //reading ethernet settings must for some reason take place much earlier than ethernet.begin
 	setupLCD();
 	setupWire();
 	setupDHT();
@@ -815,7 +934,9 @@ void setup()
 	webserver.addCommand("sched.delete", schedDeleteCmd); //delete sched data from sd
 	webserver.addCommand("system.htm", systemPageCmd); //get page
 	webserver.addCommand("stats.xml", statsXMLCmd); //get xml
-	webserver.addCommand("network.xml", networkXMLCmd); //get xml
+	webserver.addCommand("settings.xml", settingsXMLCmd); //get xml
+	webserver.addCommand("settings.data", settingsDataCmd); //post data
+	webserver.addCommand("settings.default", settingsDefaultCmd); //delete settings data from sd
 	webserver.addCommand("network.data", networkDataCmd); //post data
 	webserver.addCommand("reboot", rebootCmd);
 	webserver.begin();
@@ -846,6 +967,7 @@ void loop()
 }
 
 //TO DO
+//properlz test settings
 //handle connectivity check better without dhcp
 //ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
 

@@ -156,7 +156,7 @@
     <Text Include="readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="network.xml" />
+    <Xml Include="settings.xml" />
     <Xml Include="sched.xml" />
     <Xml Include="sensors.xml" />
     <Xml Include="stats.xml" />

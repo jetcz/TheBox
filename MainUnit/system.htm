@@ -9,24 +9,19 @@
 <html>
 <head>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="http://jet.php5.cz/thebox/js/collapsiblepanel/jquery.collapsiblepanel.js"></script>
     <script src="http://jet.php5.cz/thebox/js/system.js"></script>
     <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/menu.css">
     <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/general.css">
     <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/table.css">
     <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/loader.css">
-    <title>
-        The Box - System
+    <title>The Box - System
     </title>
     <style media="screen" type="text/css">
         button {
-            width: 15em;
+            width: 12em;
             height: 2em;
         }
-
-        input[type="number"] {
-            width: 3em;
-        }
-
         .wrapContent {
             width: 650px;
         }
@@ -58,26 +53,22 @@
         <div class="loader">
         </div>
     </div>
-    <div class="wrapContent data" style="visibility:hidden">
+    <div class="wrapContent data" style="visibility: hidden">
         <div class="content">
             <table>
                 <thead>
                     <tr>
-                        <th>
-                            Local Time
+                        <th>Local Time
                         </th>
                         <td class="remote">
-                            <span id="LocalTime">
-                            </span>
+                            <span id="LocalTime"></span>
                         </td>
                     </tr>
                     <tr>
-                        <th class="subtitle">
-                            Last NTP sync
+                        <th class="subtitle">Last NTP sync
                         </th>
                         <th class="subtitle">
-                            <span id="LastSync">
-                            </span>
+                            <span id="LastSync"></span>
                         </th>
                     </tr>
                 </thead>
@@ -87,14 +78,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th>
-                            Stats
+                        <th>Stats
                         </th>
-                        <th>
-                            Main Unit
+                        <th>Main Unit
                         </th>
-                        <th>
-                            Remote Unit
+                        <th>Remote Unit
                         </th>
                     </tr>
                 </thead>
@@ -102,67 +90,60 @@
                     <tr>
                         <td class="leftHeader">Uptime</td>
                         <td>
-                            <span class="Value">
-                            </span>
+                            <span class="Value"></span>
                         </td>
                         <td>
-                            <span class="Value">
-                            </span>
+                            <span class="Value"></span>
                         </td>
                     </tr>
                     <tr>
                         <td class="leftHeader">Voltage</td>
                         <td class="tdVal">
-                            <span class="Value">
-                            </span>mV
+                            <span class="Value"></span>mV
                         </td>
                         <td class="tdVal">
-                            <span class="Value">
-                            </span>mV
+                            <span class="Value"></span>mV
                         </td>
                     </tr>
                     <tr>
                         <td class="leftHeader">Last DS Age</td>
                         <td class="tdVal">
-                            <span class="Value">
-                            </span>s
+                            <span class="Value"></span>s
                         </td>
                         <td class="tdVal">
-                            <span class="Value">
-                            </span>s
+                            <span class="Value"></span>s
                         </td>
                     </tr>
                     <tr>
                         <td class="leftHeader">Failed Msg Cnt</td>
                         <td>
-                            <span class="Value">
-                            </span>
+                            <span class="Value"></span>
                         </td>
                         <td>
-                            <span class="Value">
-                            </span>
+                            <span class="Value"></span>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="content">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="text-align:left">
-                            Settings
-                        </th>
-                    </tr>
-                </thead>
-            </table>
-            <div class="settings">
+        <div class="content collapse">
+            <div class="ui-widget-header">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: left">+ Settings
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="settings ui-widget-content" style="display: none">
+                <br />
                 <form id="settingsForm" method="post" action="settings.data">
                     <table>
                         <thead>
                             <tr>
-                                <th>
-                                    General settings
+                                <th>General settings
                                 </th>
                                 <th></th>
                                 <th></th>
@@ -170,71 +151,88 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="leftHeader">
-                                    Invalid DS action
+                                <td class="leftHeader">Remote DS timeout
                                 </td>
-                                <td style="text-align:left">
+                                <td colspan="2">
+                                    <input type="number" id="timeout" min="0" max="5184000" step="1" name="remoteDStimeout" style="width: 7em" required> seconds
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">Invalid DS action
+                                </td>
+                                <td style="text-align: left">
                                     <input type="radio" name="action" value="0">
                                     Keep last state
                                 </td>
-                                <td style="text-align:left">
+                                <td style="text-align: left">
                                     <input type="radio" name="action" value="1">
                                     Turn relay OFF
                                 </td>
                             </tr>
                             <tr>
                                 <td class="leftHeader">Thingspeak</td>
-                                <td style="text-align:left">
+                                <td style="text-align: left">
                                     <input type="radio" name="thingspeak" value="0">
                                     OFF
                                 </td>
-                                <td style="text-align:left">
+                                <td style="text-align: left">
                                     <input type="radio" name="thingspeak" value="1">
                                     ON
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    Thingspeak address
+                                <td class="leftHeader">Thingspeak address
                                 </td>
                                 <td colspan="2">
-                                    <input type="text" name="tsaddr">
+                                    <input type="text" id="tsaddr" name="tsaddr" required>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    NTP address
+                                <td class="leftHeader">NTP address
                                 </td>
                                 <td colspan="2">
-                                    <input type="text" name="ntpaddr">
+                                    <input type="text" id="ntpaddr" name="ntpaddr" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader"></td>
+                                <td colspan="2">
+                                    <button type="submit" form="settingsDefaultForm" onclick="return confirm('Are you sure?')" style="color: #c90000; font-weight: bold; width: 25%">
+                                        Default                               
+                                    </button>
+                                    &nbsp;
+                                    <button type="submit" form="settingsForm" style="color: green; font-weight: bold">
+                                        Save & Apply                                   
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </form>
+                <form action="settings.default" id="settingsDefaultForm" method="post">
+                    <input type="hidden" value="" />
+                </form>
                 <form id="networkForm" method="post" action="network.data">
+                    <br />
                     <table>
                         <thead>
                             <tr>
-                                <th>
-                                    Network
+                                <th>Network
                                 </th>
-                                <th colspan="2">
-                                </th>
+                                <th colspan="2"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="leftHeader">
-                                    DHCP
+                                <td class="leftHeader">DHCP
                                 </td>
                                 <td>
-                                    <input type="radio" name="dhcp" value="0">
-                                    Static
+                                    <input type="radio" name="DHCP" value="1">
+                                    ON
                                 </td>
                                 <td>
-                                    <input type="radio" name="dhcp" value="1">
-                                    Dynamic
+                                    <input type="radio" name="DHCP" value="0">
+                                    OFF
                                 </td>
                             </tr>
                             <tr>
@@ -276,8 +274,8 @@
                             <tr>
                                 <td class="leftHeader"></td>
                                 <td colspan="2">
-                                    <button type="submit" form="networkForm">
-                                        Save network settings
+                                    <button type="submit" form="networkForm" style="color: green; font-weight: bold">
+                                        Save & Apply                                     
                                     </button>
                                 </td>
                             </tr>
@@ -286,7 +284,6 @@
                 </form>
             </div>
         </div>
-
         <div class="content">
             <table>
                 <tbody>
@@ -294,8 +291,8 @@
                         <td>
                             <form action="reboot" method="post">
                                 <input type="hidden" value="" />
-                                <button type="submit" name="reboot" value="1" onclick="return confirm('Are you sure?')" style="color:#c90000;font-weight:bold">
-                                    Reboot
+                                <button type="submit" name="reboot" value="1" onclick="return confirm('Are you sure?')" style="color: #c90000; font-weight: bold">
+                                    Reboot                               
                                 </button>
                             </form>
                         </td>
@@ -304,5 +301,10 @@
             </table>
         </div>
     </div>
+    <script type="text/javascript">
+        $().ready(function () {
+            $('.collapse').collapsiblePanel();
+        });
+</script>
 </body>
 </html>

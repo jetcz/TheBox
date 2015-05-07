@@ -291,8 +291,7 @@ void syncRTCwithNTP() {
 }
 
 void dhcp() {
-	if (Ethernet.maintain() % 2 == 1) {  //renew dhcp lease, if failed, set flag
-		bConnectivityCheck = false;
+	if (Ethernet.maintain() % 2 == 1) {  //renew dhcp lease
 		Alarm.disable(printLcdAlarm);
 #if DEBUG
 		Serial.println();
@@ -306,7 +305,6 @@ void dhcp() {
 		ledLight(1, 'm');
 	}
 	else {
-		bConnectivityCheck = true;
 #if DEBUG
 		Serial.println();
 		Serial.println(F("Obtained DHCP lease"));

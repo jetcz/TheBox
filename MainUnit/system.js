@@ -1,6 +1,20 @@
 $(document).ready(function () {
     getStats();
-    getNetwork();
+    getSettings();
+
+
+    //handler for dhcp radio
+    $("input[name=DHCP]:radio").change(function () {
+        if ($(this).val() == 1) {
+            $(document).find('.Net').each(function () {
+                $(this).attr('disabled', true);
+            })
+        } else {
+            $(document).find('.Net').each(function () {
+                $(this).removeAttr("disabled");
+            })
+        }
+    });
 });
 function getStats() {
     $.ajax({
@@ -15,15 +29,15 @@ function getStats() {
     }
     );
 }
-function getNetwork() {
+function getSettings() {
     $.ajax({
         type: "GET",
-        url: "network.xml",
+        url: "settings.xml",
         cache: false,
         dataType: "xml",
-        success: xmlParseNetwork,
+        success: xmlParseSettings,
         error: function () {
-            $("header").append("<div class=\"wrapContent\"><div class=\"content\" style=\"color:red\"><b>FAILED TO GET NETWORK SETTINGS, DO NOT CONTINUE!</b></div></div>");
+            $("header").append("<div class=\"wrapContent\"><div class=\"content\" style=\"color:red\"><b>FAILED TO GET SETTINGS, DO NOT CONTINUE!</b></div></div>");
         }
     });
 }
@@ -38,52 +52,79 @@ function xmlParseStats(xml) {
     $("#LocalTime").text(LocalTime);
     var LastSync = $(xml).find("Sync").text().trim();
     $("#LastSync").text(LastSync);
-    $(xml).find("Stats V").each(function () {
-        var i = $(this).index();
+    $(xml).find("Stats V").each(function (i) {
         var value = $(this).text().trim();
         $(".Value").eq(i).text(value);
 
         //preset voltage background color
         if (i == 2 || i == 3) {
             if (parseInt(value) > 4800) {
-                $('.tdVal').eq(i-2).css("background-color", "green");
+                $('.tdVal').eq(i - 2).css("background-color", "green");
             }
             if (parseInt(value) <= 4800 && parseInt(value) > 4000) {
-                $('.tdVal').eq(i-2).css("background-color", "#e97900");
+                $('.tdVal').eq(i - 2).css("background-color", "#e97900");
             }
             if (parseInt(value) <= 4000) {
-                $('.tdVal').eq(i-2).css("background-color", "#c70000");
+                $('.tdVal').eq(i - 2).css("background-color", "#c70000");
             }
         }
         //preset ds age  
         if (i == 4) {
             if (parseInt(value) < 12) {
-                $('.tdVal').eq(i-2).css("background-color", "green");
+                $('.tdVal').eq(i - 2).css("background-color", "green");
             }
 
             if (parseInt(value) >= 12) {
-                $('.tdVal').eq(i-2).css("background-color", "#c70000");
+                $('.tdVal').eq(i - 2).css("background-color", "#c70000");
             }
         }
 
         if (i == 5) {
             if (parseInt(value) < 63) {
-                $('.tdVal').eq(i-2).css("background-color", "green");
+                $('.tdVal').eq(i - 2).css("background-color", "green");
             }
 
             if (parseInt(value) >= 63 && parseInt(value) < 130) {
-                $('.tdVal').eq(i-2).css("background-color", "#e97900");
+                $('.tdVal').eq(i - 2).css("background-color", "#e97900");
             }
             if (parseInt(value) >= 130) {
-                $('.tdVal').eq(i-2).css("background-color", "#c70000");
+                $('.tdVal').eq(i - 2).css("background-color", "#c70000");
             }
         }
     })
 };
-function xmlParseNetwork(xml) {
-    $(xml).find("Net V").each(function () {
-        var i = $(this).index();
+function xmlParseSettings(xml) {
+    //settings
+    $("#timeout").val(parseInt($(xml).find("RemoteDSTimeout").text().trim()));
+    var InvalidDSAction = parseInt($(xml).find("InvalidDSAction").text().trim());
+    var TSEnabled = parseInt($(xml).find("TSEnabled").text().trim());
+
+    var radios = $("input[name=action]:radio");
+    if (InvalidDSAction == 0) radios[0].checked = true;
+    if (InvalidDSAction == 1) radios[1].checked = true;
+
+    radios = $("input[name=thingspeak]:radio");
+    if (TSEnabled == 0) radios[0].checked = true;
+    if (TSEnabled == 1) radios[1].checked = true;
+
+    $("#tsaddr").val($(xml).find("TSAddr").text().trim());
+    $("#ntpaddr").val($(xml).find("NTPAddr").text().trim());
+
+    //network
+    $(xml).find("Net V").each(function (i) {
         var value = $(this).text().trim();
         $(".Net").eq(i).val(parseInt(value));
     })
+
+    var dhcp = parseInt($(xml).find("DHCP").text().trim());
+    var radios = $("input[name=DHCP]:radio");
+    if (dhcp == 1) {
+        radios[0].checked = true;
+        $(document).find('.Net').each(function () {
+            $(this).attr('disabled', true);
+        })
+    }
+    if (dhcp == 0) {
+        radios[1].checked = true;
+    }
 }

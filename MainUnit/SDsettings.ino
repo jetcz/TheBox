@@ -52,6 +52,18 @@ bool readSDSettings(char *path) {
 
 		if (path == ethernet)
 		{
+			if (ini.getValue(NULL, "dhcp", buffer, bufferLen)) {
+				bDhcp = buffer[0] != '0';
+
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'dhcp', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+
 			if (ini.getValue(NULL, "ip", buffer, bufferLen)) {
 				chArrToByteArr(buffer, ip);
 
@@ -119,7 +131,17 @@ bool readSDSettings(char *path) {
 
 #pragma region general
 
-		if (path == general) {
+		if (path == settings) {
+			if (ini.getValue(NULL, "RDSTimeout", buffer, bufferLen)) {
+				iRemoteDataSetTimeout = atoi(buffer);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'RDSTimeout', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
 			if (ini.getValue(NULL, "invalidDSAction", buffer, bufferLen)) {
 				bInvalidDSAction = buffer[0] != '0';
 			}
@@ -130,22 +152,22 @@ bool readSDSettings(char *path) {
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "thingspeakEnabled", buffer, bufferLen)) {
+			if (ini.getValue(NULL, "TSEnabled", buffer, bufferLen)) {
 				bTSenabled = buffer[0] != '0';
 			}
 			else {
 #if DEBUG
-				Serial.print(F("Could not read 'thingspeakEnabled', error was "));
+				Serial.print(F("Could not read 'TSEnabled', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "thingspeakAddress", buffer, bufferLen)) {
+			if (ini.getValue(NULL, "TSAddress", buffer, bufferLen)) {
 				memcpy(&cThingSpeakAddress, buffer, bufferLen);
 			}
 			else {
 #if DEBUG
-				Serial.print(F("Could not read 'thingspeakAddress', error was "));
+				Serial.print(F("Could not read 'TSAddress', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
@@ -195,6 +217,8 @@ bool writeSDEthernetSettings() {
 		return false;
 	}
 	else {
+		myFile.print(F("dhcp="));
+		myFile.println(bDhcp);
 		myFile.print(F("ip="));
 		for (int i = 0; i < 4; i++)
 		{
@@ -242,26 +266,25 @@ bool writeSDEthernetSettings() {
 	}
 }
 
-bool writeSDGeneralSettings() {
-	SD.remove(general);
-	myFile = SD.open(general, FILE_WRITE);
+bool writeSDSettings() {
+	SD.remove(settings);
+	myFile = SD.open(settings, FILE_WRITE);
 	if (!myFile)
 	{
 		return false;
 	}
 	else {
+		myFile.print(F("RDSTimeout="));
+		myFile.println(iRemoteDataSetTimeout);
 		myFile.print(F("invalidDSAction="));
-		myFile.print(bInvalidDSAction);
-		myFile.println();
-		myFile.print(F("thingspeakEnabled="));
-		myFile.print(bTSenabled);
-		myFile.println();
-		myFile.print(F("thingspeakAddress="));
-		myFile.print(cThingSpeakAddress);
-		myFile.println();
+		myFile.println(bInvalidDSAction);
+		myFile.print(F("TSEnabled="));
+		myFile.println(bTSenabled);
+		myFile.print(F("TSAddress="));
+		myFile.println(cThingSpeakAddress);
 		myFile.print(F("ntp="));
-		myFile.print(cTimeServer);
-		myFile.println();
+		myFile.println(cTimeServer);
+		myFile.close();
 		return true;
 	}
 }
