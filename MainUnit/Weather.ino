@@ -73,17 +73,17 @@ void weatherForecast() {
 	}
 
 	if (minuteCount < 35 && firstRound) //if time is less than 35 min on the first 3 hour interval.
-		forecast = 5; // Unknown, more time needed
+		byForecast = 5; // Unknown, more time needed
 	else if (dP_dt < (-0.25))
-		forecast = 4; // Quickly falling LP, Thunderstorm, not stable
+		byForecast = 4; // Quickly falling LP, Thunderstorm, not stable
 	else if (dP_dt > 0.25)
-		forecast = 3; // Quickly rising HP, not stable weather
+		byForecast = 3; // Quickly rising HP, not stable weather
 	else if ((dP_dt > (-0.25)) && (dP_dt < (-0.05)))
-		forecast = 2; // Slowly falling Low Pressure System, stable rainy weather
+		byForecast = 2; // Slowly falling Low Pressure System, stable rainy weather
 	else if ((dP_dt > 0.05) && (dP_dt < 0.25))
-		forecast = 1; // Slowly rising HP stable good weather
+		byForecast = 1; // Slowly rising HP stable good weather
 	else if ((dP_dt >(-0.05)) && (dP_dt < 0.05))
-		forecast = 0; // Stable weather
+		byForecast = 0; // Stable weather
 	else
-		forecast = 5; // Unknown
+		byForecast = 5; // Unknown
 }

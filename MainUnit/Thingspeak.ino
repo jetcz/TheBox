@@ -18,7 +18,7 @@ void updateThingSpeak(DataSet ds){
 	Serial.print(F("Connecting to ThingSpeak..."));
 #endif
 	ledLight(3, 'b');
-	if (client.connect(cThingSpeakAddress, 80)) //string, int
+	if (client.connect(Settings.ThingSpeakAddress, 80)) //string, int
 	{
 		ledLight(3, 'g');
 #if DEBUG
@@ -41,28 +41,28 @@ void updateThingSpeak(DataSet ds){
 			Serial.println(F("Sending data... "));
 			Serial.println(s);
 #endif
-			iFailedCounter = 0;
+			nFailedCounter = 0;
 		}
 		else
 		{
-			if (iFailedCounter > byRestartEthernetThreshold) {
+			if (nFailedCounter > Settings.RestartEthernetThreshold) {
 				ledLight(3, 'r');
 			}
 			else
 				ledLight(3, 'y');
-			iFailedCounter++;
-			iFailedCntTSTotal++;
+			nFailedCounter++;
+			nFailedCntTSTotal++;
 			Alarm.disable(printLcdAlarm);
 			lcd.clear();
 			lcd.setCursor(0, 0);
 			lcd.print(F("client.connected()"));
 			lcd.setCursor(0, 1);
 			lcd.print(F("failed "));
-			lcd.print(intToString(iFailedCounter));
+			lcd.print(intToString(nFailedCounter));
 			lcd.print(F(" times"));
 #if DEBUG
 			Serial.print(F("client.connected() failed "));
-			Serial.print(intToString(iFailedCounter));
+			Serial.print(intToString(nFailedCounter));
 			Serial.println(F(" times"));
 			Serial.println();
 #endif
@@ -71,13 +71,13 @@ void updateThingSpeak(DataSet ds){
 	else
 	{
 
-		if (iFailedCounter > byRestartEthernetThreshold) {
+		if (nFailedCounter > Settings.RestartEthernetThreshold) {
 			ledLight(3, 'r');
 		}
 		else
 			ledLight(3, 'y');
-		iFailedCounter++;
-		iFailedCntTSTotal++;
+		nFailedCounter++;
+		nFailedCntTSTotal++;
 
 		Alarm.disable(printLcdAlarm);
 		lcd.clear();
@@ -85,11 +85,11 @@ void updateThingSpeak(DataSet ds){
 		lcd.print(F("client.connect()"));
 		lcd.setCursor(0, 1);
 		lcd.print(F("failed "));
-		lcd.print(intToString(iFailedCounter));
+		lcd.print(intToString(nFailedCounter));
 		lcd.print(F(" times"));
 #if DEBUG
 		Serial.print(F("client.connect() failed "));
-		Serial.print(intToString(iFailedCounter));
+		Serial.print(intToString(nFailedCounter));
 		Serial.println(F(" times"));
 		Serial.println();
 #endif

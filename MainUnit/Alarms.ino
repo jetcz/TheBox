@@ -26,7 +26,7 @@ void system() {
 	//scheduler part
 	for (int i = 0; i < 4; i++)
 	{
-		if (byRelayMode[i] > 1)
+		if (Settings.RelayMode[i] > 1)
 		{
 			serviceSchedulers(i);
 		}
@@ -74,7 +74,7 @@ void printSensorDataSerial(){
 		Serial.print(MainDS.Data[2], 1);
 		Serial.println(F("C"));
 		Serial.print(F("Weather forecast: "));
-		Serial.println(weather[forecast]);
+		Serial.println(cWeather[byForecast]);
 		Serial.print(F("SysTemperature "));
 		Serial.print(SystemDS.Data[0], 1);
 		Serial.println(F("C"));
@@ -153,14 +153,14 @@ void printLcd() {
 
 void thingSpeak(){
 	//before we update thingspeak, check if the dataset is valid 
-	if (!DataSetPtr[iCurrentDataSet]->Valid)
+	if (!DataSetPtr[byCurrentDataSet]->Valid)
 	{
 
 #if DEBUG
 		Serial.println();
 		Serial.println(F("DataSet not valid, aborting upload!"));
 #endif
-		iCurrentDataSet++;
+		byCurrentDataSet++;
 		return; //cancel thingspeak update
 	}
 
@@ -195,18 +195,18 @@ void thingSpeak(){
 	// Update ThingSpeak
 	if (!client.connected())
 	{ // iterate through our array of pointers to our dataset arrays 
-		if (iCurrentDataSet > 2) {
-			iCurrentDataSet = 0;
+		if (byCurrentDataSet > 2) {
+			byCurrentDataSet = 0;
 		}
 #if DEBUG
 		Serial.print(F("Update ThingSpeak with dataset "));
-		Serial.println(intToString(iCurrentDataSet));
+		Serial.println(intToString(byCurrentDataSet));
 #endif
-		updateThingSpeak(*DataSetPtr[iCurrentDataSet]);
-		iCurrentDataSet++;
+		updateThingSpeak(*DataSetPtr[byCurrentDataSet]);
+		byCurrentDataSet++;
 	}
 	// Check if Ethernet needs to be restarted
-	if ((iFailedCounter % byRestartEthernetThreshold) == 0 && iFailedCounter != 0){
+	if ((nFailedCounter % Settings.RestartEthernetThreshold) == 0 && nFailedCounter != 0){
 		ledLight(3, 'r');
 #if DEBUG
 		Serial.println(F("Ethernet Shield needs to be restarted!"));
@@ -221,7 +221,7 @@ void thingSpeak(){
 		setupEthernet();
 	}
 	// Check if Arduino needs to be restarted
-	if ((iFailedCounter % byRestartArduinoThreshold) == 0 && iFailedCounter != 0) {
+	if ((nFailedCounter % Settings.RestartArduinoThreshold) == 0 && nFailedCounter != 0) {
 		ledLight(1, 'r');
 		ledLight(3, 'r');
 #if DEBUG
@@ -254,13 +254,13 @@ void enableDisableAlarms() {
 
 	//enable lcd refreshing after some msg shows up for x sec
 	static byte byLcdMsgTimeoutCnt = 0;
-	if (!Alarm.active(printLcdAlarm) && byLcdMsgTimeoutCnt > byLcdMsgTimeout)
+	if (!Alarm.active(printLcdAlarm) && byLcdMsgTimeoutCnt > Settings.LcdMsgTimeout)
 	{
 		lcd.clear();
 		Alarm.enable(printLcdAlarm);
 		byLcdMsgTimeoutCnt = 0;
 	}
-	else if (!Alarm.active(printLcdAlarm) && byLcdMsgTimeoutCnt <= byLcdMsgTimeout)
+	else if (!Alarm.active(printLcdAlarm) && byLcdMsgTimeoutCnt <= Settings.LcdMsgTimeout)
 	{
 		byLcdMsgTimeoutCnt++;
 	}
@@ -274,7 +274,7 @@ void syncRTCwithNTP() {
 	unsigned long ntp = ntpUnixTime(udp);
 	if (ntp != 0)
 	{
-		lastNTPsync = DateTime(now());
+		dtLastNTPsync = DateTime(now());
 		rtc.adjust(DateTime(ntp));
 		lcd.print(F("NTP timesync success"));
 #if DEBUG

@@ -20,15 +20,7 @@
 #include "avr/pgmspace.h"
 #include "DataStructures.h"
 
-/* general buffer for various usages (datatypes conversion, reading ini settings)*/
-const size_t bufferLen = 30;
-char buffer[bufferLen];
-const size_t buffLen = 22;
-char buff[buffLen];
-
-//////////////////////USER CONFIGURABLE///////////////////////////////////
-
-#define DEBUG false //enable disable all serial.print messages
+#define DEBUG true //enable disable all serial.print messages
 
 /* pins */
 const int RESET_ETH_SHIELD_PIN = 14;
@@ -45,46 +37,17 @@ const int LCD_SWITCH_PWR_PIN = 30;
 const int RADIO_RX_PIN = 17;
 const int RADIO_CTRL_PIN = 18;
 
-/* ThingSpeak settings */
-char cThingSpeakAddress[bufferLen] = "api.thingspeak.com";
-//const char cThingSpeakAddress[] = "184.106.153.149";
-const byte byUpdateThingSpeakInterval = 20;
-int iRemoteDataSetTimeout = 180;		//for how long is dataset valid and send to thingspeak (sec)
-const byte byRestartEthernetThreshold = 10;	//if thingspeak update fails x times -> ethernet shield reset
-const byte byRestartArduinoThreshold = 42;	//if thingspeak update fails x times -> arduino reset
-
-/* ntp server */
-char cTimeServer[bufferLen] = "tik.cesnet.cz";
+/* general buffer for various usages (datatypes conversion, reading ini settings)*/
+const int buffLen1 = 30;
+const int buffLen2 = 22;
+char buff1[buffLen1];
+char buff2[buffLen2];
 
 /* timezone settings */
 TimeChangeRule CEST = { "CEST", Last, Sun, Mar, 2, 120 };    //summer time = UTC + 2 hours
 TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };     //winter time = UTC + 1 hours
 Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
-
-/* lcd settings */
-const byte byLcdMsgTimeout = 4;
-
-/* led settings R, G, B*/
-const byte lightIntensity[] = { 6, 1, 2 }; //0-255, these led are very bright so we need low values
-
-/* sensor polling settings */
-const byte iUpdateSensorsInterval = 10;
-
-/* sensor offsets */
-const float fSysTempOffset = -0.2;
-const byte iPressureOffset = 24;
-const float fMainTempOffset = -1.2;
-
-/* ini files settings
-relay config must be in following format:
-modes = 0, 1, 1, 2 where 0 is off, 1 is on and 2 is auto */
-
-char *ethernet = "/settings/ethernet.ini";
-char *relays = "/settings/relays.ini";
-char *settings = "/settings/settings.ini";
-
-//////////////////////////////////////////////////////////////////////////
 
 /* reference variables */
 RTC_DS1307 rtc;
@@ -97,20 +60,21 @@ RH_ASK driver(2000, RADIO_RX_PIN, 0);
 WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
+//initialize custom structs
+SystemSettings Settings; //her are all user configurables
 DataSet MainDS;
 DataSet RemoteDS;
 DataSet SystemDS;
-
 RelayScheduler Sched[4];
-
+EthernetSettings Eth;
 
 /* variables */
-int iFailedCounter = 0;					//failed thingspeak uploads
-unsigned int iFailedCntTSTotal = 0;		//total failed thing speak messages
-unsigned int iFailedCntRadioTotal = 0;
-DateTime sysStart;							//time of system start for uptime 
-DateTime lastNTPsync = 0;
-byte iCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
+int nFailedCounter = 0;					//failed thingspeak uploads
+unsigned int nFailedCntTSTotal = 0;		//total failed thing speak messages
+unsigned int nFailedCntRadioTotal = 0;
+DateTime dtSysStart;							//time of system start for uptime 
+DateTime dtLastNTPsync = 0;
+byte byCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
 String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
@@ -119,8 +83,8 @@ bool bTSenabled = true;						//enable disable thingspeak
 bool bInvalidDSAction = false;				//what to do with relay if dataset is invalid true=turn off relay; false=do nothing
 
 /* weather */
-const char* weather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
-byte forecast = 5;
+const char* cWeather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
+byte byForecast = 5;
 
 /* array of pointers to iterate through when updating thingspeak channels */
 DataSet *DataSetPtr[] = { (DataSet*)&MainDS, (DataSet*)&RemoteDS, (DataSet*)&SystemDS };
@@ -139,17 +103,6 @@ DataSet *DataSetPtr[] = { (DataSet*)&MainDS, (DataSet*)&RemoteDS, (DataSet*)&Sys
 10 Rain
 */
 float *TargetVarPtr[] = { &MainDS.Data[3], &MainDS.Data[0], &MainDS.Data[1], &MainDS.Data[2], &RemoteDS.Data[0], &RemoteDS.Data[1], &RemoteDS.Data[2], &RemoteDS.Data[3], &RemoteDS.Data[4], &RemoteDS.Data[5], &RemoteDS.Data[6] };
-
-/* relay modes*/
-byte byRelayMode[4] = { 0 };
-
-/* network settings */
-byte mac[] = { 0xB0, 0x0B, 0x5B, 0x00, 0xB5, 0x00 };
-byte ip[4] = { 0 };
-byte gw[4] = { 0 };
-byte subnet[4] = { 0 };
-byte dns1[4] = { 0 };
-bool bDhcp = false;
 
 /* alarms */
 int systemAlarm;
@@ -253,7 +206,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(weather[forecast]); //weather
+		server.print(cWeather[byForecast]); //weather
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
@@ -271,7 +224,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		for (int i = 0; i < 4; i++)
 		{
 			server.print(F("<M>"));
-			server.print(byRelayMode[i]);
+			server.print(Settings.RelayMode[i]);
 			server.print(F("</M>"));
 		}
 		server.print(F("</Mod>"));
@@ -299,7 +252,7 @@ void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *url_p
 	{
 		while (server.readPOSTparam(name, 3, value, 3))
 		{
-			byRelayMode[atoi(name) - 1] = atoi(value);
+			Settings.RelayMode[atoi(name) - 1] = atoi(value);
 		}
 		switchRelays();
 		Alarm.disable(writeSDAlarm);
@@ -420,36 +373,36 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 
 	if (type == WebServer::POST)
 	{
-		while (server.readPOSTparam(buffer, bufferLen, buff, buffLen)) //buffer = name, buff = value
+		while (server.readPOSTparam(buff1, buffLen1, buff2, buffLen2)) //buffer = name, buff = value
 		{
-			if (buffer[0] == 'R')
+			if (buff1[0] == 'R')
 			{
-				int _relay = buffer[1] - '1';
-				int _interval = buffer[3] - '1';
+				int _relay = buff1[1] - '1';
+				int _interval = buff1[3] - '1';
 
-				if (buffer[2] == 'V') {
-					Sched[_relay].Variable = atoi(buff);
-				}
-
-				if (buffer[2] == 'I') {
-					Sched[_relay].Enabled[_interval] = buff[0] != '0';
+				if (buff1[2] == 'V') {
+					Sched[_relay].Variable = atoi(buff2);
 				}
 
-				if (buffer[2] == 'H')
-				{
-					Sched[_relay].Time[_interval][0] = atoi(buff);
+				if (buff1[2] == 'I') {
+					Sched[_relay].Enabled[_interval] = buff2[0] != '0';
 				}
-				if (buffer[2] == 'M')
+
+				if (buff1[2] == 'H')
 				{
-					Sched[_relay].Time[_interval][1] = atoi(buff);
+					Sched[_relay].Time[_interval][0] = atoi(buff2);
 				}
-				if (buffer[2] == 'F')
+				if (buff1[2] == 'M')
 				{
-					Sched[_relay].Value[_interval][0] = atof(buff);
+					Sched[_relay].Time[_interval][1] = atoi(buff2);
 				}
-				if (buffer[2] == 'T')
+				if (buff1[2] == 'F')
 				{
-					Sched[_relay].Value[_interval][1] = atof(buff);
+					Sched[_relay].Value[_interval][0] = atof(buff2);
+				}
+				if (buff1[2] == 'T')
+				{
+					Sched[_relay].Value[_interval][1] = atof(buff2);
 				}
 
 			}
@@ -579,8 +532,8 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.print(sNow + " " + tcr->abbrev);
 		server.print(F("</Loc>"));
 		server.print(F("<Sync>"));
-		if (now() - lastNTPsync.unixtime() > 1000000000) server.print("never");
-		else server.print(getUptimeString(DateTime(now()) - lastNTPsync) + " ago");
+		if (now() - dtLastNTPsync.unixtime() > 1000000000) server.print("never");
+		else server.print(getUptimeString(DateTime(now()) - dtLastNTPsync) + " ago");
 		server.print(F("</Sync>"));
 		server.print(F("</Time>"));
 		server.print(F("<Stats>"));
@@ -611,11 +564,11 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(iFailedCntTSTotal);
+		server.print(nFailedCntTSTotal);
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(iFailedCntRadioTotal);
+		server.print(nFailedCntRadioTotal);
 		server.printP(tag_end_sensor);
 
 		server.print(F("</Stats>"));
@@ -643,7 +596,7 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.print(F("<Settings>"));
 		server.print(F("<General>"));
 		server.print(F("<RemoteDSTimeout>"));
-		server.print(iRemoteDataSetTimeout);
+		server.print(Settings.RemoteDataSetTimeout);
 		server.print(F("</RemoteDSTimeout>"));
 		server.print(F("<InvalidDSAction>"));
 		server.print(bInvalidDSAction);
@@ -652,39 +605,39 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.print(bTSenabled);
 		server.print(F("</TSEnabled>"));
 		server.print(F("<TSAddr>"));
-		server.print(cThingSpeakAddress);
+		server.print(Settings.ThingSpeakAddress);
 		server.print(F("</TSAddr>"));
 		server.print(F("<NTPAddr>"));
-		server.print(cTimeServer);
+		server.print(Settings.NTPServer);
 		server.print(F("</NTPAddr>"));
 		server.print(F("</General>"));
 
 		server.print(F("<Net>"));
 		server.print(F("<DHCP>"));
-		server.print(bDhcp);
+		server.print(Eth.DHCP);
 		server.print(F("</DHCP>"));
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(ip[i]);
+			server.print(Eth.IP[i]);
 			server.printP(tag_end_sensor);
 		}
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(subnet[i]);
+			server.print(Eth.Mask[i]);
 			server.printP(tag_end_sensor);
 		}
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(gw[i]);
+			server.print(Eth.GW[i]);
 			server.printP(tag_end_sensor);
 		}
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(dns1[i]);
+			server.print(Eth.DNS[i]);
 			server.printP(tag_end_sensor);
 		}
 		server.print(F("</Net>"));
@@ -698,27 +651,27 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 	server.httpSuccess();
 	if (type == WebServer::POST)
 	{
-		while (server.readPOSTparam(buffer, bufferLen, buff, buffLen)) //buffer = name, buff = value
+		while (server.readPOSTparam(buff1, buffLen1, buff2, buffLen2)) //buffer = name, buff = value
 		{
-			if (strcmp(buffer, "remoteDStimeout") == 0)
+			if (strcmp(buff1, "remoteDStimeout") == 0)
 			{
-				iRemoteDataSetTimeout = atoi(buff);
+				Settings.RemoteDataSetTimeout = atoi(buff2);
 			}
-			if (strcmp(buffer, "action") == 0)
+			if (strcmp(buff1, "action") == 0)
 			{
-				bInvalidDSAction = buff[0] != '0';
+				bInvalidDSAction = buff2[0] != '0';
 			}
-			if (strcmp(buffer, "thingspeak") == 0)
+			if (strcmp(buff1, "thingspeak") == 0)
 			{
-				bTSenabled = buff[0] != '0';
+				bTSenabled = buff2[0] != '0';
 			}
-			if (strcmp(buffer, "tsaddr") == 0)
+			if (strcmp(buff1, "tsaddr") == 0)
 			{
-				memcpy(&cThingSpeakAddress, buff, buffLen);
+				memcpy(&Settings.ThingSpeakAddress, buff2, buffLen2);
 			}
-			if (strcmp(buffer, "ntpaddr") == 0)
+			if (strcmp(buff1, "ntpaddr") == 0)
 			{
-				memcpy(&cTimeServer, buff, buffLen);
+				memcpy(&Settings.NTPServer, buff2, buffLen2);
 			}
 		}
 
@@ -777,8 +730,8 @@ void settingsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char 
 		"</html>";
 	server.printP(message);
 	server.flushBuf();
-	SD.remove(settings);
-	resetFunc();
+	SD.remove(Settings.SettingsPath);
+	Settings.setDefault();
 }
 void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
@@ -809,39 +762,39 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	byte counter[4] = { 0 };
 	if (type == WebServer::POST)
 	{
-		while (server.readPOSTparam(buffer, 10, value, 4))
+		while (server.readPOSTparam(buff1, 10, value, 4))
 		{
-			if (strcmp(buffer, "DHCP") == 0)
+			if (strcmp(buff1, "DHCP") == 0)
 			{
-				bDhcp = value[0] != '0';
+				Eth.DHCP = value[0] != '0';
 			}
-			if (strcmp(buffer, "IP") == 0)
+			if (strcmp(buff1, "IP") == 0)
 			{
-				ip[counter[0]] = atoi(value);
+				Eth.IP[counter[0]] = atoi(value);
 				counter[0]++;
 			}
-			if (strcmp(buffer, "Mask") == 0)
+			if (strcmp(buff1, "Mask") == 0)
 			{
-				subnet[counter[1]] = atoi(value);
+				Eth.Mask[counter[1]] = atoi(value);
 				counter[1]++;
 			}
-			if (strcmp(buffer, "GW") == 0)
+			if (strcmp(buff1, "GW") == 0)
 			{
-				gw[counter[2]] = atoi(value);
+				Eth.GW[counter[2]] = atoi(value);
 				counter[2]++;
 			}
-			if (strcmp(buffer, "DNS") == 0)
+			if (strcmp(buff1, "DNS") == 0)
 			{
-				dns1[counter[3]] = atoi(value);
+				Eth.DNS[counter[3]] = atoi(value);
 				counter[3]++;
 			}
 		}
 
-		if (!bDhcp && Alarm.active(dhcpAlarm))
+		if (!Eth.DHCP && Alarm.active(dhcpAlarm))
 		{
 			Alarm.disable(dhcpAlarm);
 		}
-		if (bDhcp && !Alarm.active(dhcpAlarm))
+		if (Eth.DHCP && !Alarm.active(dhcpAlarm))
 		{
 			Alarm.enable(dhcpAlarm);
 		}
@@ -850,7 +803,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		String sNewIP = "";
 		for (int i = 0; i < 4; i++)
 		{
-			sNewIP += String(ip[i]);
+			sNewIP += String(Eth.IP[i]);
 			if (i < 3)
 			{
 				sNewIP += ".";
@@ -908,11 +861,11 @@ void setup()
 	setupSerial();
 	setupPins();
 	setupSD();
-	readSDSettings(relays);
+	readSDSettings(Settings.RelaysPath);
 	readSDSched();
 	switchRelays();
-	readSDSettings(settings);
-	if (!readSDSettings(ethernet)) bDhcp = true; //reading ethernet settings must for some reason take place much earlier than ethernet.begin
+	readSDSettings(Settings.SettingsPath);
+	if (!readSDSettings(Settings.EthernetPath)) Eth.DHCP = true; //reading ethernet settings must for some reason take place much earlier than ethernet.begin
 	setupLCD();
 	setupWire();
 	setupDHT();
@@ -944,7 +897,7 @@ void setup()
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
 	MainDS.Size = 5;
 	MainDS.Valid = true;
-	MainDS.Timestamp = sysStart.unixtime();
+	MainDS.Timestamp = dtSysStart.unixtime();
 
 	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
 	RemoteDS.Size = 7;
@@ -967,7 +920,6 @@ void loop()
 }
 
 //TO DO
-//properlz test settings
 //handle connectivity check better without dhcp
 //ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
 

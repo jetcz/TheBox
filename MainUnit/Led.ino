@@ -4,38 +4,38 @@ void ledLight(int led, char color) {
 		switch (color)
 		{
 		case 'r':
-			analogWrite(LED1[0], lightIntensity[0]);
+			analogWrite(LED1[0], Settings.LightIntensity[0]);
 			analogWrite(LED1[1], 0);
 			analogWrite(LED1[2], 0);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'g':
 			analogWrite(LED1[0], 0);
-			analogWrite(LED1[1], lightIntensity[1]);
+			analogWrite(LED1[1], Settings.LightIntensity[1]);
 			analogWrite(LED1[2], 0);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'b':
 			analogWrite(LED1[0], 0);
 			analogWrite(LED1[1], 0);
-			analogWrite(LED1[2], lightIntensity[2]);
+			analogWrite(LED1[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'c':
 			analogWrite(LED1[0], 0);
-			analogWrite(LED1[1], lightIntensity[1]);
-			analogWrite(LED1[2], lightIntensity[2]);
+			analogWrite(LED1[1], Settings.LightIntensity[1]);
+			analogWrite(LED1[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'm':
-			analogWrite(LED1[0], lightIntensity[0]);
+			analogWrite(LED1[0], Settings.LightIntensity[0]);
 			analogWrite(LED1[1], 0);
-			analogWrite(LED1[2], lightIntensity[2]);
+			analogWrite(LED1[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'y':
-			analogWrite(LED1[0], lightIntensity[0]);
-			analogWrite(LED1[1], lightIntensity[1]);
+			analogWrite(LED1[0], Settings.LightIntensity[0]);
+			analogWrite(LED1[1], Settings.LightIntensity[1]);
 			analogWrite(LED1[2], 0);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
@@ -46,9 +46,9 @@ void ledLight(int led, char color) {
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'w':
-			analogWrite(LED1[0], lightIntensity[0]);
-			analogWrite(LED1[1], lightIntensity[1]);
-			analogWrite(LED1[2], lightIntensity[2]);
+			analogWrite(LED1[0], Settings.LightIntensity[0]);
+			analogWrite(LED1[1], Settings.LightIntensity[1]);
+			analogWrite(LED1[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		default:
@@ -60,7 +60,7 @@ void ledLight(int led, char color) {
 		switch (color)
 		{
 		case 'r':
-			analogWrite(LED2[0], lightIntensity[0]);
+			analogWrite(LED2[0], Settings.LightIntensity[0]);
 			analogWrite(LED2[1], 0);
 			analogWrite(LED2[2], 0);
 			//Serial.println("LED " + String(led) + " color " + color);
@@ -68,31 +68,31 @@ void ledLight(int led, char color) {
 		case 'g':
 
 			analogWrite(LED2[0], 0);
-			analogWrite(LED2[1], lightIntensity[1]);
+			analogWrite(LED2[1], Settings.LightIntensity[1]);
 			analogWrite(LED2[2], 0);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'b':
 			analogWrite(LED2[0], 0);
 			analogWrite(LED2[1], 0);
-			analogWrite(LED2[2], lightIntensity[2]);
+			analogWrite(LED2[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'c':
 			analogWrite(LED2[0], 0);
-			analogWrite(LED2[1], lightIntensity[1]);
-			analogWrite(LED2[2], lightIntensity[2]);
+			analogWrite(LED2[1], Settings.LightIntensity[1]);
+			analogWrite(LED2[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'm':
-			analogWrite(LED2[0], lightIntensity[0]);
+			analogWrite(LED2[0], Settings.LightIntensity[0]);
 			analogWrite(LED2[1], 0);
-			analogWrite(LED2[2], lightIntensity[2]);
+			analogWrite(LED2[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'y':
-			analogWrite(LED2[0], lightIntensity[0]);
-			analogWrite(LED2[1], lightIntensity[1]);
+			analogWrite(LED2[0], Settings.LightIntensity[0]);
+			analogWrite(LED2[1], Settings.LightIntensity[1]);
 			analogWrite(LED2[2], 0);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
@@ -103,9 +103,9 @@ void ledLight(int led, char color) {
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'w':
-			analogWrite(LED2[0], lightIntensity[0]);
-			analogWrite(LED2[1], lightIntensity[1]);
-			analogWrite(LED2[2], lightIntensity[2]);
+			analogWrite(LED2[0], Settings.LightIntensity[0]);
+			analogWrite(LED2[1], Settings.LightIntensity[1]);
+			analogWrite(LED2[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		default:
@@ -118,7 +118,7 @@ void ledLight(int led, char color) {
 		switch (color)
 		{
 		case 'r':
-			analogWrite(LED3[0], lightIntensity[0]);
+			analogWrite(LED3[0], Settings.LightIntensity[0]);
 			analogWrite(LED3[1], 0);
 			analogWrite(LED3[2], 0);
 			//Serial.println("LED " + String(led) + " color " + color);
@@ -126,7 +126,7 @@ void ledLight(int led, char color) {
 		case 'g':
 
 			analogWrite(LED3[0], 0);
-			analogWrite(LED3[1], lightIntensity[1]);
+			analogWrite(LED3[1], Settings.LightIntensity[1]);
 			analogWrite(LED3[2], 0);
 			//Serial.println("LED " + String(led) + " color " + color);
 
@@ -134,24 +134,24 @@ void ledLight(int led, char color) {
 		case 'b':
 			analogWrite(LED3[0], 0);
 			analogWrite(LED3[1], 0);
-			analogWrite(LED3[2], lightIntensity[2]);
+			analogWrite(LED3[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'c':
 			analogWrite(LED3[0], 0);
-			analogWrite(LED3[1], lightIntensity[1]);
-			analogWrite(LED3[2], lightIntensity[2]);
+			analogWrite(LED3[1], Settings.LightIntensity[1]);
+			analogWrite(LED3[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'm':
-			analogWrite(LED3[0], lightIntensity[0]);
+			analogWrite(LED3[0], Settings.LightIntensity[0]);
 			analogWrite(LED3[1], 0);
-			analogWrite(LED3[2], lightIntensity[2]);
+			analogWrite(LED3[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'y':
-			analogWrite(LED3[0], lightIntensity[0]);
-			analogWrite(LED3[1], lightIntensity[1]);
+			analogWrite(LED3[0], Settings.LightIntensity[0]);
+			analogWrite(LED3[1], Settings.LightIntensity[1]);
 			analogWrite(LED3[2], 0);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
@@ -162,9 +162,9 @@ void ledLight(int led, char color) {
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		case 'w':
-			analogWrite(LED3[0], lightIntensity[0]);
-			analogWrite(LED3[1], lightIntensity[1]);
-			analogWrite(LED3[2], lightIntensity[2]);
+			analogWrite(LED3[0], Settings.LightIntensity[0]);
+			analogWrite(LED3[1], Settings.LightIntensity[1]);
+			analogWrite(LED3[2], Settings.LightIntensity[2]);
 			//Serial.println("LED " + String(led) + " color " + color);
 			break;
 		default:

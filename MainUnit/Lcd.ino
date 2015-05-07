@@ -45,8 +45,8 @@ void printLcdScreen1() {
 	//line 3
 	lcd.setCursor(0, 2);
 	lcd.print(F("Weather:"));
-	lcd.setCursor(20 - (strlen(weather[forecast])), 2);
-	lcd.print(weather[forecast]);
+	lcd.setCursor(20 - (strlen(cWeather[byForecast])), 2);
+	lcd.print(cWeather[byForecast]);
 	//line 4
 	lcd.setCursor(0, 3);
 	lcd.print(sNow);

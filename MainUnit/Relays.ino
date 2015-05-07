@@ -5,7 +5,7 @@ void switchRelays() {
 	for (int i = 0; i < 4; i++)
 	{
 
-		switch (byRelayMode[i])
+		switch (Settings.RelayMode[i])
 		{
 		case 0:
 #if DEBUG

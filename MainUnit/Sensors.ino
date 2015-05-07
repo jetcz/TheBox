@@ -5,14 +5,14 @@ float getSysTemperature(sensors_event_t event) {
 	bmp.getEvent(&event);
 	bmp.getTemperature(&sysTemp);
 	if (sysTemp == 85) return -255;
-	rmSysTemp.addValue(sysTemp += fSysTempOffset);
+	rmSysTemp.addValue(sysTemp += Settings.SysTempOffset);
 	return rmSysTemp.getAverage();
 }
 
 float getPressure(sensors_event_t event) {
 	static RunningAverage rmPressure(6);
 	bmp.getEvent(&event);
-	rmPressure.addValue(event.pressure + iPressureOffset);
+	rmPressure.addValue(event.pressure + Settings.PressureOffset);
 	return rmPressure.getAverage();
 }
 
@@ -25,7 +25,7 @@ float getMainTemperature() {
 		return -255;
 	}
 	else
-		rmMainTemp.addValue(t + fMainTempOffset);
+		rmMainTemp.addValue(t + Settings.MainTempOffset);
 	return rmMainTemp.getAverage();
 }
 

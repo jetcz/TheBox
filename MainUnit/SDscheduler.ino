@@ -2,10 +2,10 @@ boolean writeSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
 		String fp = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		fp.toCharArray(buffer, bufferLen);
+		fp.toCharArray(buff1, buffLen1);
 
-		SD.remove(buffer);
-		myFile = SD.open(buffer, FILE_WRITE);
+		SD.remove(buff1);
+		myFile = SD.open(buff1, FILE_WRITE);
 		if (!myFile)
 		{
 			return false;
@@ -42,40 +42,40 @@ boolean readSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
 		String fp = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		fp.toCharArray(buff, buffLen);
+		fp.toCharArray(buff2, buffLen2);
 
-		IniFile ini(buff);
+		IniFile ini(buff2);
 		if (!ini.open()) {
 			return false;
 		}
 		else {
-			if (ini.getValue(NULL, "variable", buffer, bufferLen)) {
-				Sched[i].Variable = atoi(buffer);
+			if (ini.getValue(NULL, "variable", buff1, buffLen1)) {
+				Sched[i].Variable = atoi(buff1);
 			}
 			else return false;
 
 			for (int j = 0; j < 5; j++)
 			{
 				String sec = "int" + intToString(j);
-				sec.toCharArray(buff, buffLen);
+				sec.toCharArray(buff2, buffLen2);
 
-				if (ini.getValue(buff, "enabled", buffer, bufferLen)) {
-					Sched[i].Enabled[j] = buffer[0] != '0';
+				if (ini.getValue(buff2, "enabled", buff1, buffLen1)) {
+					Sched[i].Enabled[j] = buff1[0] != '0';
 				}
 				else return false;
 
-				if (ini.getValue(buff, "time", buffer, bufferLen)) {
-					chArrToByteArr(buffer, Sched[i].Time[j]);
+				if (ini.getValue(buff2, "time", buff1, buffLen1)) {
+					chArrToByteArr(buff1, Sched[i].Time[j]);
 				}
 				else return false;
 
-				if (ini.getValue(buff, "from", buffer, bufferLen)) {
-					Sched[i].Value[j][0] = atof(buffer);
+				if (ini.getValue(buff2, "from", buff1, buffLen1)) {
+					Sched[i].Value[j][0] = atof(buff1);
 				}
 				else return false;
 
-				if (ini.getValue(buff, "to", buffer, bufferLen)) {
-					Sched[i].Value[j][1] = atof(buffer);
+				if (ini.getValue(buff2, "to", buff1, buffLen1)) {
+					Sched[i].Value[j][1] = atof(buff1);
 				}
 				else return false;
 			}
@@ -88,7 +88,7 @@ void deleteSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
 		String fp = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		fp.toCharArray(buffer, bufferLen);
-		SD.remove(buffer);
+		fp.toCharArray(buff1, buffLen1);
+		SD.remove(buff1);
 	}
 }

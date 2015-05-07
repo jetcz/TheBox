@@ -134,7 +134,7 @@ void setupRTC(){
 		setSyncInterval(60);
 		ledLight(1, 'g');
 	} //sync interval for system clock from RTC module
-	sysStart = now();
+	dtSysStart = now();
 }
 
 void setupRadio(){
@@ -152,13 +152,13 @@ void setupEthernet() {
 	ledLight(1, 'y');
 	resetEthShield(RESET_ETH_SHIELD_PIN);	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
 
-	if (bDhcp)
+	if (Eth.DHCP)
 	{
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Obtaining DHCP lease"));
 
-		if (Ethernet.begin(mac) == 0) {
+		if (Ethernet.begin(Eth.MAC) == 0) {
 #if DEBUG
 			Serial.println(F("Failed to initialize ethernet using DHCP"));
 #endif
@@ -186,17 +186,17 @@ void setupEthernet() {
 
 			for (int i = 0; i < 4; i++)
 			{
-				ip[i] = Ethernet.localIP()[i];
-				subnet[i] = Ethernet.subnetMask()[i];
-				gw[i] = Ethernet.gatewayIP()[i];
-				dns1[i] = Ethernet.dnsServerIP()[i];
+				Eth.IP[i] = Ethernet.localIP()[i];
+				Eth.Mask[i] = Ethernet.subnetMask()[i];
+				Eth.GW[i] = Ethernet.gatewayIP()[i];
+				Eth.DNS[i] = Ethernet.dnsServerIP()[i];
 			}
 
 
 		}
 	}
 	else {
-		Ethernet.begin(mac, ip, dns1, gw, subnet);
+		Ethernet.begin(Eth.MAC, Eth.IP, Eth.DNS, Eth.GW, Eth.Mask);
 		ledLight(1, 'g');
 		lcd.clear();
 #if DEBUG
@@ -230,14 +230,14 @@ void setupAlarms() {
 	Alarm.timerOnce(65, getFailedRadioMessages);  //repeats itself after first run
 	systemAlarm = Alarm.timerRepeat(1, system);
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd);
-	prepareDatasetAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
-	printSerialAlarm = Alarm.timerRepeat(iUpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
-	updateTSAlarm = Alarm.timerRepeat(byUpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
+	prepareDatasetAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
+	printSerialAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+	updateTSAlarm = Alarm.timerRepeat(Settings.UpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
 	weatherAlarm = Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	syncRTCAlarm = Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC every 24h
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 
-	if (!bDhcp)		Alarm.disable(dhcpAlarm);
+	if (!Eth.DHCP)		Alarm.disable(dhcpAlarm);
 	if (!bTSenabled) Alarm.disable(updateTSAlarm);
 	if (!DEBUG) Alarm.disable(printSerialAlarm);
 

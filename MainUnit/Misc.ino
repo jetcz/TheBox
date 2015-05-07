@@ -19,13 +19,13 @@ bool isRemoteDataSetValid() {
 		ledLight(2, 'g');
 	}
 
-	if (now() - RemoteDS.Timestamp.unixtime() >= 65 && now() - RemoteDS.Timestamp.unixtime() <= iRemoteDataSetTimeout)
+	if (now() - RemoteDS.Timestamp.unixtime() >= 65 && now() - RemoteDS.Timestamp.unixtime() <= Settings.RemoteDataSetTimeout)
 	{
 		v = true;
 		ledLight(2, 'y');
 	}
 
-	if (now() - RemoteDS.Timestamp.unixtime() > iRemoteDataSetTimeout)
+	if (now() - RemoteDS.Timestamp.unixtime() > Settings.RemoteDataSetTimeout)
 	{
 		v = false;
 		ledLight(2, 'r');
@@ -64,17 +64,17 @@ long readVcc() {
 
 String getDateTimeString(DateTime t)
 {
-	sprintf(buffer, "%02d.%02d.%04d  %02d:%02d:%02d", t.day(), t.month(), t.year(), t.hour(), t.minute(), t.second());
-	return buffer;
+	sprintf(buff1, "%02d.%02d.%04d  %02d:%02d:%02d", t.day(), t.month(), t.year(), t.hour(), t.minute(), t.second());
+	return buff1;
 }
 
 TimeSpan getUptime(){
-	return DateTime(now()) - sysStart;
+	return DateTime(now()) - dtSysStart;
 }
 
 String getUptimeString(TimeSpan ts) {
-	sprintf(buffer, "%dd %02d:%02d:%02d", ts.days(), ts.hours(), ts.minutes(), ts.seconds());
-	return buffer;
+	sprintf(buff1, "%dd %02d:%02d:%02d", ts.days(), ts.hours(), ts.minutes(), ts.seconds());
+	return buff1;
 }
 
 time_t syncProvider()     //this does the same thing as RTC_DS1307::get() + gets the local time (respecting timezone and dalylight saving time)
