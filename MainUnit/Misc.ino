@@ -64,8 +64,8 @@ long readVcc() {
 
 String getDateTimeString(DateTime t)
 {
-	sprintf(buff1, "%02d.%02d.%04d  %02d:%02d:%02d", t.day(), t.month(), t.year(), t.hour(), t.minute(), t.second());
-	return buff1;
+	sprintf(cBuff1, "%02d.%02d.%04d  %02d:%02d:%02d", t.day(), t.month(), t.year(), t.hour(), t.minute(), t.second());
+	return cBuff1;
 }
 
 TimeSpan getUptime(){
@@ -73,8 +73,8 @@ TimeSpan getUptime(){
 }
 
 String getUptimeString(TimeSpan ts) {
-	sprintf(buff1, "%dd %02d:%02d:%02d", ts.days(), ts.hours(), ts.minutes(), ts.seconds());
-	return buff1;
+	sprintf(cBuff1, "%dd %02d:%02d:%02d", ts.days(), ts.hours(), ts.minutes(), ts.seconds());
+	return cBuff1;
 }
 
 time_t syncProvider()     //this does the same thing as RTC_DS1307::get() + gets the local time (respecting timezone and dalylight saving time)

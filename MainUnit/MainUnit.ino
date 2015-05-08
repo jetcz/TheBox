@@ -37,17 +37,15 @@ const int LCD_SWITCH_PWR_PIN = 30;
 const int RADIO_RX_PIN = 17;
 const int RADIO_CTRL_PIN = 18;
 
-//general buffers for various usages (datatypes conversion, reading ini settings)
-const int buffLen1 = 30;
-const int buffLen2 = 22;
-char buff1[buffLen1];
-char buff2[buffLen2];
+//general buffers for various usages (datatypes conversion, reading ini settings etc)
+const int nBuffLen1 = 30;
+const int nBuffLen2 = 22;
+char cBuff1[nBuffLen1];
+char cBuff2[nBuffLen2];
 
 //timezone settings
 TimeChangeRule CEST = { "CEST", Last, Sun, Mar, 2, 120 };    //summer time = UTC + 2 hours
 TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };		 //winter time = UTC + 1 hours
-Timezone myTZ(CEST, CET);
-TimeChangeRule *tcr;
 
 //global reference variables
 RTC_DS1307 rtc;
@@ -55,10 +53,12 @@ Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 DHT dht(DHT22_PIN, DHT22);
 EthernetClient client;
 EthernetUDP udp;
-File myFile;
+File file;
 RH_ASK driver(2000, RADIO_RX_PIN, 0);
 WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
+Timezone myTZ(CEST, CET);
+TimeChangeRule *tcr;
 
 //initialize custom structs
 SystemSettings Settings;			//her are all user configurables
@@ -128,6 +128,7 @@ int failedMsgsAlarm;
 //reboot arduino
 void(*resetFunc) (void) = 0;
 
+//webduino commands implementation
 #pragma region webduino
 P(messageSDFail) =
 "<!DOCTYPE html><html><head>"
@@ -151,13 +152,13 @@ void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 	server.httpSuccess("text/html", "Connection: keep-alive"CRLF);
 	if (type == WebServer::GET)
 	{
-		myFile = SD.open("/www/index.htm");        // open web page file
-		if (myFile)   {
+		file = SD.open("/www/index.htm");        // open web page file
+		if (file)   {
 			int16_t c;
-			while ((c = myFile.read()) >= 0) {
+			while ((c = file.read()) >= 0) {
 				server.print((char)c);
 			}
-			myFile.close();
+			file.close();
 		}
 		else server.printP(messageSDFail);
 	}
@@ -251,7 +252,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 	}
 	ledLight(1, 'g');
 }
-void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *url_param, bool param_complete)
+void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'y');
 	server.httpSuccess();
@@ -275,13 +276,13 @@ void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
 	{
-		myFile = SD.open("/www/graphs1.htm");        // open web page file
-		if (myFile)   {
+		file = SD.open("/www/graphs1.htm");        // open web page file
+		if (file)   {
 			int16_t c;
-			while ((c = myFile.read()) >= 0) {
+			while ((c = file.read()) >= 0) {
 				server.print((char)c);
 			}
-			myFile.close();
+			file.close();
 		}
 		else server.printP(messageSDFail);
 	}
@@ -293,13 +294,13 @@ void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
 	{
-		myFile = SD.open("/www/graphs2.htm");        // open web page file
-		if (myFile)   {
+		file = SD.open("/www/graphs2.htm");        // open web page file
+		if (file)   {
 			int16_t c;
-			while ((c = myFile.read()) >= 0) {
+			while ((c = file.read()) >= 0) {
 				server.print((char)c);
 			}
-			myFile.close();
+			file.close();
 		}
 		else server.printP(messageSDFail);
 	}
@@ -311,13 +312,13 @@ void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
 	{
-		myFile = SD.open("/www/sched.htm");        // open web page file
-		if (myFile)   {
+		file = SD.open("/www/sched.htm");        // open web page file
+		if (file)   {
 			int16_t c;
-			while ((c = myFile.read()) >= 0) {
+			while ((c = file.read()) >= 0) {
 				server.print((char)c);
 			}
-			myFile.close();
+			file.close();
 		}
 		else server.printP(messageSDFail);
 	}
@@ -382,36 +383,36 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 
 	if (type == WebServer::POST)
 	{
-		while (server.readPOSTparam(buff1, buffLen1, buff2, buffLen2)) //buffer = name, buff = value
+		while (server.readPOSTparam(cBuff1, nBuffLen1, cBuff2, nBuffLen2)) //buffer = name, buff = value
 		{
-			if (buff1[0] == 'R')
+			if (cBuff1[0] == 'R')
 			{
-				int _relay = buff1[1] - '1';
-				int _interval = buff1[3] - '1';
+				int _relay = cBuff1[1] - '1';
+				int _interval = cBuff1[3] - '1';
 
-				if (buff1[2] == 'V') {
-					Sched[_relay].Variable = atoi(buff2);
-				}
-
-				if (buff1[2] == 'I') {
-					Sched[_relay].Enabled[_interval] = buff2[0] != '0';
+				if (cBuff1[2] == 'V') {
+					Sched[_relay].Variable = atoi(cBuff2);
 				}
 
-				if (buff1[2] == 'H')
-				{
-					Sched[_relay].Time[_interval][0] = atoi(buff2);
+				if (cBuff1[2] == 'I') {
+					Sched[_relay].Enabled[_interval] = cBuff2[0] != '0';
 				}
-				if (buff1[2] == 'M')
+
+				if (cBuff1[2] == 'H')
 				{
-					Sched[_relay].Time[_interval][1] = atoi(buff2);
+					Sched[_relay].Time[_interval][0] = atoi(cBuff2);
 				}
-				if (buff1[2] == 'F')
+				if (cBuff1[2] == 'M')
 				{
-					Sched[_relay].Value[_interval][0] = atof(buff2);
+					Sched[_relay].Time[_interval][1] = atoi(cBuff2);
 				}
-				if (buff1[2] == 'T')
+				if (cBuff1[2] == 'F')
 				{
-					Sched[_relay].Value[_interval][1] = atof(buff2);
+					Sched[_relay].Value[_interval][0] = atof(cBuff2);
+				}
+				if (cBuff1[2] == 'T')
+				{
+					Sched[_relay].Value[_interval][1] = atof(cBuff2);
 				}
 
 			}
@@ -507,13 +508,13 @@ void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 	server.httpSuccess("text/html"CRLF);
 	if (type == WebServer::GET)
 	{
-		myFile = SD.open("/www/system.htm");        // open web page file
-		if (myFile)   {
+		file = SD.open("/www/system.htm");        // open web page file
+		if (file)   {
 			int16_t c;
-			while ((c = myFile.read()) >= 0) {
+			while ((c = file.read()) >= 0) {
 				server.print((char)c);
 			}
-			myFile.close();
+			file.close();
 		}
 		else server.printP(messageSDFail);
 	}
@@ -660,27 +661,27 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 	server.httpSuccess();
 	if (type == WebServer::POST)
 	{
-		while (server.readPOSTparam(buff1, buffLen1, buff2, buffLen2)) //buffer = name, buff = value
+		while (server.readPOSTparam(cBuff1, nBuffLen1, cBuff2, nBuffLen2)) //buffer = name, buff = value
 		{
-			if (strcmp(buff1, "remoteDStimeout") == 0)
+			if (strcmp(cBuff1, "remoteDStimeout") == 0)
 			{
-				Settings.RemoteDataSetTimeout = atoi(buff2);
+				Settings.RemoteDataSetTimeout = atoi(cBuff2);
 			}
-			if (strcmp(buff1, "action") == 0)
+			if (strcmp(cBuff1, "action") == 0)
 			{
-				Settings.InvalidDSAction = buff2[0] != '0';
+				Settings.InvalidDSAction = cBuff2[0] != '0';
 			}
-			if (strcmp(buff1, "thingspeak") == 0)
+			if (strcmp(cBuff1, "thingspeak") == 0)
 			{
-				Settings.TSenabled = buff2[0] != '0';
+				Settings.TSenabled = cBuff2[0] != '0';
 			}
-			if (strcmp(buff1, "tsaddr") == 0)
+			if (strcmp(cBuff1, "tsaddr") == 0)
 			{
-				memcpy(&Settings.ThingSpeakAddress, buff2, buffLen2);
+				memcpy(&Settings.ThingSpeakAddress, cBuff2, nBuffLen2);
 			}
-			if (strcmp(buff1, "ntpaddr") == 0)
+			if (strcmp(cBuff1, "ntpaddr") == 0)
 			{
-				memcpy(&Settings.NTPServer, buff2, buffLen2);
+				memcpy(&Settings.NTPServer, cBuff2, nBuffLen2);
 			}
 		}
 
@@ -771,28 +772,28 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	byte counter[4] = { 0 };
 	if (type == WebServer::POST)
 	{
-		while (server.readPOSTparam(buff1, 10, value, 4))
+		while (server.readPOSTparam(cBuff1, 10, value, 4))
 		{
-			if (strcmp(buff1, "DHCP") == 0)
+			if (strcmp(cBuff1, "DHCP") == 0)
 			{
 				Eth.DHCP = value[0] != '0';
 			}
-			if (strcmp(buff1, "IP") == 0)
+			if (strcmp(cBuff1, "IP") == 0)
 			{
 				Eth.IP[counter[0]] = atoi(value);
 				counter[0]++;
 			}
-			if (strcmp(buff1, "Mask") == 0)
+			if (strcmp(cBuff1, "Mask") == 0)
 			{
 				Eth.Mask[counter[1]] = atoi(value);
 				counter[1]++;
 			}
-			if (strcmp(buff1, "GW") == 0)
+			if (strcmp(cBuff1, "GW") == 0)
 			{
 				Eth.GW[counter[2]] = atoi(value);
 				counter[2]++;
 			}
-			if (strcmp(buff1, "DNS") == 0)
+			if (strcmp(cBuff1, "DNS") == 0)
 			{
 				Eth.DNS[counter[3]] = atoi(value);
 				counter[3]++;
@@ -909,9 +910,11 @@ void setup()
 	MainDS.Size = 5;
 	MainDS.Valid = true;
 	MainDS.Timestamp = dtSysStart.unixtime();
+
 	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
 	RemoteDS.Size = 7;
 	RemoteDS.Valid = false;
+
 	SystemDS.APIkey = "GNQST00GBW05EYGC";
 	SystemDS.Size = 8;
 	SystemDS.Valid = true;

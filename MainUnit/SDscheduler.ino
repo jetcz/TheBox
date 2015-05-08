@@ -2,34 +2,34 @@ boolean writeSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
 		String _sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		_sPath.toCharArray(buff1, buffLen1);
+		_sPath.toCharArray(cBuff1, nBuffLen1);
 
-		SD.remove(buff1);
-		myFile = SD.open(buff1, FILE_WRITE);
-		if (!myFile)
+		SD.remove(cBuff1);
+		file = SD.open(cBuff1, FILE_WRITE);
+		if (!file)
 		{
 			return false;
 		}
 		else {
-			myFile.print(F("variable="));
-			myFile.println(Sched[i].Variable);
+			file.print(F("variable="));
+			file.println(Sched[i].Variable);
 
 			for (int j = 0; j < 5; j++)
 			{
-				myFile.println();
-				myFile.println("[int" + intToString(j) + "]");
-				myFile.print("enabled=");
-				myFile.println(Sched[i].Enabled[j]);
-				myFile.print("time=");
-				myFile.print(Sched[i].Time[j][0]);
-				myFile.print(":");
-				myFile.println(Sched[i].Time[j][1]);
-				myFile.print("from=");
-				myFile.println(Sched[i].Value[j][0]);
-				myFile.print("to=");
-				myFile.println(Sched[i].Value[j][1]);
+				file.println();
+				file.println("[int" + intToString(j) + "]");
+				file.print("enabled=");
+				file.println(Sched[i].Enabled[j]);
+				file.print("time=");
+				file.print(Sched[i].Time[j][0]);
+				file.print(":");
+				file.println(Sched[i].Time[j][1]);
+				file.print("from=");
+				file.println(Sched[i].Value[j][0]);
+				file.print("to=");
+				file.println(Sched[i].Value[j][1]);
 			}
-			myFile.close();
+			file.close();
 		}
 
 	}
@@ -42,40 +42,40 @@ boolean readSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
 		String _sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		_sPath.toCharArray(buff2, buffLen2);
+		_sPath.toCharArray(cBuff2, nBuffLen2);
 
-		IniFile ini(buff2);
+		IniFile ini(cBuff2);
 		if (!ini.open()) {
 			return false;
 		}
 		else {
-			if (ini.getValue(NULL, "variable", buff1, buffLen1)) {
-				Sched[i].Variable = atoi(buff1);
+			if (ini.getValue(NULL, "variable", cBuff1, nBuffLen1)) {
+				Sched[i].Variable = atoi(cBuff1);
 			}
 			else return false;
 
 			for (int j = 0; j < 5; j++)
 			{
 				String sec = "int" + intToString(j);
-				sec.toCharArray(buff2, buffLen2);
+				sec.toCharArray(cBuff2, nBuffLen2);
 
-				if (ini.getValue(buff2, "enabled", buff1, buffLen1)) {
-					Sched[i].Enabled[j] = buff1[0] != '0';
+				if (ini.getValue(cBuff2, "enabled", cBuff1, nBuffLen1)) {
+					Sched[i].Enabled[j] = cBuff1[0] != '0';
 				}
 				else return false;
 
-				if (ini.getValue(buff2, "time", buff1, buffLen1)) {
-					chArrToByteArr(buff1, Sched[i].Time[j]);
+				if (ini.getValue(cBuff2, "time", cBuff1, nBuffLen1)) {
+					chArrToByteArr(cBuff1, Sched[i].Time[j]);
 				}
 				else return false;
 
-				if (ini.getValue(buff2, "from", buff1, buffLen1)) {
-					Sched[i].Value[j][0] = atof(buff1);
+				if (ini.getValue(cBuff2, "from", cBuff1, nBuffLen1)) {
+					Sched[i].Value[j][0] = atof(cBuff1);
 				}
 				else return false;
 
-				if (ini.getValue(buff2, "to", buff1, buffLen1)) {
-					Sched[i].Value[j][1] = atof(buff1);
+				if (ini.getValue(cBuff2, "to", cBuff1, nBuffLen1)) {
+					Sched[i].Value[j][1] = atof(cBuff1);
 				}
 				else return false;
 			}
@@ -88,7 +88,7 @@ void deleteSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
 		String _sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		_sPath.toCharArray(buff1, buffLen1);
-		SD.remove(buff1);
+		_sPath.toCharArray(cBuff1, nBuffLen1);
+		SD.remove(cBuff1);
 	}
 }

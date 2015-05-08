@@ -52,8 +52,8 @@ bool readSDSettings(char *path) {
 
 		if (path == Settings.EthernetPath)
 		{
-			if (ini.getValue(NULL, "dhcp", buff1, buffLen1)) {
-				Eth.DHCP = buff1[0] != '0';
+			if (ini.getValue(NULL, "dhcp", cBuff1, nBuffLen1)) {
+				Eth.DHCP = cBuff1[0] != '0';
 
 			}
 			else {
@@ -64,8 +64,8 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 
-			if (ini.getValue(NULL, "ip", buff1, buffLen1)) {
-				chArrToByteArr(buff1, Eth.IP);
+			if (ini.getValue(NULL, "ip", cBuff1, nBuffLen1)) {
+				chArrToByteArr(cBuff1, Eth.IP);
 
 			}
 			else {
@@ -76,8 +76,8 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 
-			if (ini.getValue(NULL, "subnet", buff1, buffLen1)) {
-				chArrToByteArr(buff1, Eth.Mask);
+			if (ini.getValue(NULL, "subnet", cBuff1, nBuffLen1)) {
+				chArrToByteArr(cBuff1, Eth.Mask);
 			}
 			else {
 #if DEBUG
@@ -86,8 +86,8 @@ bool readSDSettings(char *path) {
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "gw", buff1, buffLen1)) {
-				chArrToByteArr(buff1, Eth.GW);
+			if (ini.getValue(NULL, "gw", cBuff1, nBuffLen1)) {
+				chArrToByteArr(cBuff1, Eth.GW);
 			}
 			else {
 #if DEBUG
@@ -96,8 +96,8 @@ bool readSDSettings(char *path) {
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "dns", buff1, buffLen1)) {
-				chArrToByteArr(buff1, Eth.DNS);
+			if (ini.getValue(NULL, "dns", cBuff1, nBuffLen1)) {
+				chArrToByteArr(cBuff1, Eth.DNS);
 			}
 			else {
 #if DEBUG
@@ -115,8 +115,8 @@ bool readSDSettings(char *path) {
 #pragma region relays
 
 		if (path == Settings.RelaysPath) {
-			if (ini.getValue(NULL, "modes", buff1, buffLen1)) { //modes=0,1,1,0
-				chArrToByteArr(buff1, Settings.RelayMode);
+			if (ini.getValue(NULL, "modes", cBuff1, nBuffLen1)) { //modes=0,1,1,0
+				chArrToByteArr(cBuff1, Settings.RelayMode);
 			}
 			else {
 #if DEBUG
@@ -132,8 +132,8 @@ bool readSDSettings(char *path) {
 #pragma region general
 
 		if (path == Settings.SettingsPath) {
-			if (ini.getValue(NULL, "RDSTimeout", buff1, buffLen1)) {
-				Settings.RemoteDataSetTimeout = atoi(buff1);
+			if (ini.getValue(NULL, "RDSTimeout", cBuff1, nBuffLen1)) {
+				Settings.RemoteDataSetTimeout = atoi(cBuff1);
 			}
 			else {
 #if DEBUG
@@ -142,8 +142,8 @@ bool readSDSettings(char *path) {
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "invalidDSAction", buff1, buffLen1)) {
-				Settings.InvalidDSAction = buff1[0] != '0';
+			if (ini.getValue(NULL, "invalidDSAction", cBuff1, nBuffLen1)) {
+				Settings.InvalidDSAction = cBuff1[0] != '0';
 			}
 			else {
 #if DEBUG
@@ -152,8 +152,8 @@ bool readSDSettings(char *path) {
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "TSEnabled", buff1, buffLen1)) {
-				Settings.TSenabled = buff1[0] != '0';
+			if (ini.getValue(NULL, "TSEnabled", cBuff1, nBuffLen1)) {
+				Settings.TSenabled = cBuff1[0] != '0';
 			}
 			else {
 #if DEBUG
@@ -162,8 +162,8 @@ bool readSDSettings(char *path) {
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "TSAddress", buff1, buffLen1)) {
-				memcpy(&Settings.ThingSpeakAddress, buff1, buffLen1);
+			if (ini.getValue(NULL, "TSAddress", cBuff1, nBuffLen1)) {
+				memcpy(&Settings.ThingSpeakAddress, cBuff1, nBuffLen1);
 			}
 			else {
 #if DEBUG
@@ -172,8 +172,8 @@ bool readSDSettings(char *path) {
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "ntp", buff1, buffLen1)) {
-				memcpy(&Settings.NTPServer, buff1, buffLen1);
+			if (ini.getValue(NULL, "ntp", cBuff1, nBuffLen1)) {
+				memcpy(&Settings.NTPServer, cBuff1, nBuffLen1);
 			}
 			else {
 #if DEBUG
@@ -190,101 +190,101 @@ bool readSDSettings(char *path) {
 
 bool writeSDRelaySettings() {
 	SD.remove(Settings.RelaysPath);
-	myFile = SD.open(Settings.RelaysPath, FILE_WRITE);
-	if (!myFile)
+	file = SD.open(Settings.RelaysPath, FILE_WRITE);
+	if (!file)
 	{
 		return false;
 	}
 	else {
-		myFile.print(F("modes="));
-		myFile.print(Settings.RelayMode[0]);
-		myFile.print(",");
-		myFile.print(Settings.RelayMode[1]);
-		myFile.print(",");
-		myFile.print(Settings.RelayMode[2]);
-		myFile.print(",");
-		myFile.print(Settings.RelayMode[3]);
-		myFile.close();
+		file.print(F("modes="));
+		file.print(Settings.RelayMode[0]);
+		file.print(",");
+		file.print(Settings.RelayMode[1]);
+		file.print(",");
+		file.print(Settings.RelayMode[2]);
+		file.print(",");
+		file.print(Settings.RelayMode[3]);
+		file.close();
 		return true;
 	}
 }
 
 bool writeSDEthernetSettings() {
 	SD.remove(Settings.EthernetPath);
-	myFile = SD.open(Settings.EthernetPath, FILE_WRITE);
-	if (!myFile)
+	file = SD.open(Settings.EthernetPath, FILE_WRITE);
+	if (!file)
 	{
 		return false;
 	}
 	else {
-		myFile.print(F("dhcp="));
-		myFile.println(Eth.DHCP);
-		myFile.print(F("ip="));
+		file.print(F("dhcp="));
+		file.println(Eth.DHCP);
+		file.print(F("ip="));
 		for (int i = 0; i < 4; i++)
 		{
-			myFile.print(Eth.IP[i]);
+			file.print(Eth.IP[i]);
 			if (i < 3)
 			{
-				myFile.print(F("."));
+				file.print(F("."));
 			}
 		}
-		myFile.println();
+		file.println();
 
-		myFile.print(F("subnet="));
+		file.print(F("subnet="));
 		for (int i = 0; i < 4; i++)
 		{
-			myFile.print(Eth.Mask[i]);
+			file.print(Eth.Mask[i]);
 			if (i < 3)
 			{
-				myFile.print(F("."));
+				file.print(F("."));
 			}
 		}
-		myFile.println();
+		file.println();
 
-		myFile.print(F("gw="));
+		file.print(F("gw="));
 		for (int i = 0; i < 4; i++)
 		{
-			myFile.print(Eth.GW[i]);
+			file.print(Eth.GW[i]);
 			if (i < 3)
 			{
-				myFile.print(F("."));
+				file.print(F("."));
 			}
 		}
-		myFile.println();
+		file.println();
 
-		myFile.print(F("dns="));
+		file.print(F("dns="));
 		for (int i = 0; i < 4; i++)
 		{
-			myFile.print(Eth.DNS[i]);
+			file.print(Eth.DNS[i]);
 			if (i < 3)
 			{
-				myFile.print(F("."));
+				file.print(F("."));
 			}
 		}
-		myFile.close();
+		file.close();
 		return true;
 	}
 }
 
 bool writeSDSettings() {
 	SD.remove(Settings.SettingsPath);
-	myFile = SD.open(Settings.SettingsPath, FILE_WRITE);
-	if (!myFile)
+	file = SD.open(Settings.SettingsPath, FILE_WRITE);
+	if (!file)
 	{
 		return false;
 	}
 	else {
-		myFile.print(F("RDSTimeout="));
-		myFile.println(Settings.RemoteDataSetTimeout);
-		myFile.print(F("invalidDSAction="));
-		myFile.println(Settings.InvalidDSAction);
-		myFile.print(F("TSEnabled="));
-		myFile.println(Settings.TSenabled);
-		myFile.print(F("TSAddress="));
-		myFile.println(Settings.ThingSpeakAddress);
-		myFile.print(F("ntp="));
-		myFile.println(Settings.NTPServer);
-		myFile.close();
+		file.print(F("RDSTimeout="));
+		file.println(Settings.RemoteDataSetTimeout);
+		file.print(F("invalidDSAction="));
+		file.println(Settings.InvalidDSAction);
+		file.print(F("TSEnabled="));
+		file.println(Settings.TSenabled);
+		file.print(F("TSAddress="));
+		file.println(Settings.ThingSpeakAddress);
+		file.print(F("ntp="));
+		file.println(Settings.NTPServer);
+		file.close();
 		return true;
 	}
 }
