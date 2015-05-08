@@ -11,32 +11,32 @@ void resetEthShield(int pin) {
 }
 
 bool isRemoteDataSetValid() {
-	bool v;
+	bool _bValid;
 
 	if (now() - RemoteDS.Timestamp.unixtime() < 65)
 	{
-		v = true;
+		_bValid = true;
 		ledLight(2, 'g');
 	}
 
 	if (now() - RemoteDS.Timestamp.unixtime() >= 65 && now() - RemoteDS.Timestamp.unixtime() <= Settings.RemoteDataSetTimeout)
 	{
-		v = true;
+		_bValid = true;
 		ledLight(2, 'y');
 	}
 
 	if (now() - RemoteDS.Timestamp.unixtime() > Settings.RemoteDataSetTimeout)
 	{
-		v = false;
+		_bValid = false;
 		ledLight(2, 'r');
 	}
-	return v;
+	return _bValid;
 }
 
 int freeRam() {
 	extern int __heap_start, *__brkval;
-	int v;
-	return (int)&v - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
+	int _nVal;
+	return (int)&_nVal - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
 }
 
 long readVcc() {

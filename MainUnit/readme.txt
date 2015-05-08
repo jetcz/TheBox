@@ -1,3 +1,5 @@
+Either use these libs https://github.com/jetcz/ArduinoLibraries OR make following changes:
+
 RadioHead library - RH_ASK.cpp:
 Arduino ethernet library probably uses timer 1 somehow therefore you MUST add this to RH_ASK.cpp:
 #define RH_ASK_ARDUINO_USE_TIMER2

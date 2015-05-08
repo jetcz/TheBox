@@ -1,39 +1,40 @@
 
 float getSysTemperature(sensors_event_t event) {
-	static RunningAverage rmSysTemp(6);
-	float sysTemp;
+	static RunningAverage _raSysTemp(6);
+	float _fSysTemp;
 	bmp.getEvent(&event);
-	bmp.getTemperature(&sysTemp);
-	if (sysTemp == 85) return -255;
-	rmSysTemp.addValue(sysTemp += Settings.SysTempOffset);
-	return rmSysTemp.getAverage();
+	bmp.getTemperature(&_fSysTemp);
+	if (_fSysTemp == 85) return -255;
+	_raSysTemp.addValue(_fSysTemp += Settings.SysTempOffset);
+	return _raSysTemp.getAverage();
 }
 
 float getPressure(sensors_event_t event) {
-	static RunningAverage rmPressure(6);
+	if (SystemDS.Data[0] == -255) return -255;
+	static RunningAverage _raPressure(6);
 	bmp.getEvent(&event);
-	rmPressure.addValue(event.pressure + Settings.PressureOffset);
-	return rmPressure.getAverage();
+	_raPressure.addValue(event.pressure + Settings.PressureOffset);
+	return _raPressure.getAverage();
 }
 
 
 float getMainTemperature() {
-	static RunningAverage rmMainTemp(6);
-	float t;
-	t = dht.readTemperature();
-	if (isnan(t)) {
+	static RunningAverage _raMainTemp(6);
+	float _fTemp;
+	_fTemp = dht.readTemperature();
+	if (isnan(_fTemp)) {
 		return -255;
 	}
 	else
-		rmMainTemp.addValue(t + Settings.MainTempOffset);
-	return rmMainTemp.getAverage();
+		_raMainTemp.addValue(_fTemp + Settings.MainTempOffset);
+	return _raMainTemp.getAverage();
 }
 
 float getMainHumidity() {
-	static RunningAverage rmMainHumidity(6);
-	float h;
-	h = dht.readHumidity();
-	if (isnan(h)) {
+	static RunningAverage _raMainHumidity(6);
+	float _fHum;
+	_fHum = dht.readHumidity();
+	if (isnan(_fHum)) {
 		return -255;
 	}
 	else if (MainDS.Data[0] == -255)
@@ -41,12 +42,12 @@ float getMainHumidity() {
 		return -255;
 	}
 	else
-		rmMainHumidity.addValue(h);;
-	return rmMainHumidity.getAverage();
+		_raMainHumidity.addValue(_fHum);;
+	return _raMainHumidity.getAverage();
 }
 
 float getMainHumidex() {
-	if ((MainDS.Data[0] == -255  ) || (MainDS.Data[1] == -255))
+	if ((MainDS.Data[0] == -255) || (MainDS.Data[1] == -255))
 	{
 		return -255;
 	}

@@ -9,16 +9,16 @@
 * memory segment, and the received packet is read one byte at a time.
 * The Unix time is returned, that is, seconds from 1970-01-01T00:00.
 */
-unsigned long inline ntpUnixTime(UDP &udp)
+unsigned long ntpUnixTime(UDP &udp)
 {
-	static int udpInited = udp.begin(123); // open socket on arbitrary port
+	static int _nUDPInited = udp.begin(123); // open socket on arbitrary port
 
 	// Only the first four bytes of an outgoing NTP packet need to be set
 	// appropriately, the rest can be whatever.
-	const long ntpFirstFourBytes = 0xEC0600E3; // NTP request header
+	const long _lNTPFirstFourBytes = 0xEC0600E3; // NTP request header
 
 	// Fail if WiFiUdp.begin() could not init a socket
-	if (!udpInited)
+	if (!_nUDPInited)
 		return 0;
 
 	// Clear received data from possible stray received packets
@@ -26,7 +26,7 @@ unsigned long inline ntpUnixTime(UDP &udp)
 
 	// Send an NTP request
 	if (!(udp.beginPacket(Settings.NTPServer, 123) // 123 is the NTP port
-		&& udp.write((byte *)&ntpFirstFourBytes, 48) == 48
+		&& udp.write((byte *)&_lNTPFirstFourBytes, 48) == 48
 		&& udp.endPacket()))
 		return 0;				// sending request failed
 

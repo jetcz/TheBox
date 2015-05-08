@@ -143,7 +143,7 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 			if (ini.getValue(NULL, "invalidDSAction", buff1, buffLen1)) {
-				bInvalidDSAction = buff1[0] != '0';
+				Settings.InvalidDSAction = buff1[0] != '0';
 			}
 			else {
 #if DEBUG
@@ -153,7 +153,7 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 			if (ini.getValue(NULL, "TSEnabled", buff1, buffLen1)) {
-				bTSenabled = buff1[0] != '0';
+				Settings.TSenabled = buff1[0] != '0';
 			}
 			else {
 #if DEBUG
@@ -277,9 +277,9 @@ bool writeSDSettings() {
 		myFile.print(F("RDSTimeout="));
 		myFile.println(Settings.RemoteDataSetTimeout);
 		myFile.print(F("invalidDSAction="));
-		myFile.println(bInvalidDSAction);
+		myFile.println(Settings.InvalidDSAction);
 		myFile.print(F("TSEnabled="));
-		myFile.println(bTSenabled);
+		myFile.println(Settings.TSenabled);
 		myFile.print(F("TSAddress="));
 		myFile.println(Settings.ThingSpeakAddress);
 		myFile.print(F("ntp="));

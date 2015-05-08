@@ -19,6 +19,8 @@ struct SystemSettings
 		SysTempOffset = -0.2;
 		PressureOffset = 24;
 		MainTempOffset = -1.2;
+		TSenabled = true;
+		InvalidDSAction = false;
 	}
 	/* ThingSpeak settings */
 	char ThingSpeakAddress[30];
@@ -43,6 +45,8 @@ struct SystemSettings
 	float SysTempOffset;
 	byte PressureOffset;
 	float MainTempOffset;
+	bool TSenabled;						//enable disable thingspeak
+	bool InvalidDSAction;				//what to do with relay if dataset is invalid true=turn off relay; false=do nothing
 
 	//relay modes
 	byte RelayMode[4] = { 0 };

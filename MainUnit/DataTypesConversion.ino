@@ -3,7 +3,7 @@ String floatToString(float val) {
 	return buff1;
 }
 
-
+//convert int to string using registers, supposed to be fast and memory friendly
 String intToString(register int i) {
 	register unsigned char L = 1;
 	register char c;

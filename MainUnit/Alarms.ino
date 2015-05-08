@@ -49,11 +49,7 @@ void prepareDataSetArrays() {
 	MainDS.Data[1] = getMainHumidity();
 	MainDS.Data[2] = getMainHumidex();
 	MainDS.Data[3] = getMainPir();
-	if (SystemDS.Data[0] == -255)
-	{
-		MainDS.Data[4] = -255; //pressure
-	}
-	else MainDS.Data[4] = getPressure(event);
+	MainDS.Data[4] = getPressure(event);
 
 	MainDS.Timestamp = now();
 
@@ -124,30 +120,30 @@ void printSensorDataSerial(){
 }
 
 void printLcd() {
-	static byte byLastScreen;
+	static byte _byLastScreen;
 	if (digitalRead(LCD_SWITCH[0]) == 0)
 	{
-		if (byLastScreen != 1) {
+		if (_byLastScreen != 1) {
 			lcd.clear();
 		}
 		printLcdScreen1();
-		byLastScreen = 1;
+		_byLastScreen = 1;
 	}
 	else if (digitalRead(LCD_SWITCH[1]) == 0)
 	{
-		if (byLastScreen != 2) {
+		if (_byLastScreen != 2) {
 			lcd.clear();
 		}
 		printLcdScreen2();
-		byLastScreen = 2;
+		_byLastScreen = 2;
 	}
 	else if (digitalRead(LCD_SWITCH[2]) == 0)
 	{
-		if (byLastScreen != 3) {
+		if (_byLastScreen != 3) {
 			lcd.clear();
 		}
 		printLcdScreen3();
-		byLastScreen = 3;
+		_byLastScreen = 3;
 	}
 }
 
@@ -238,31 +234,31 @@ void thingSpeak(){
 		Alarm.delay(3000);
 		resetFunc(); //reboot arduino
 	}
-}
+	}
 
 
 void enableDisableAlarms() {
 	//enable disable thingspeak accoring to system settings
-	if (bTSenabled && !Alarm.active(updateTSAlarm))
+	if (Settings.TSenabled && !Alarm.active(updateTSAlarm))
 	{
 		Alarm.enable(updateTSAlarm);
 	}
-	if (!bTSenabled && Alarm.active(updateTSAlarm))
+	if (!Settings.TSenabled && Alarm.active(updateTSAlarm))
 	{
 		Alarm.disable(updateTSAlarm);
 	}
 
 	//enable lcd refreshing after some msg shows up for x sec
-	static byte byLcdMsgTimeoutCnt = 0;
-	if (!Alarm.active(printLcdAlarm) && byLcdMsgTimeoutCnt > Settings.LcdMsgTimeout)
+	static byte _bySecCnt = 0;
+	if (!Alarm.active(printLcdAlarm) && _bySecCnt > Settings.LcdMsgTimeout)
 	{
 		lcd.clear();
 		Alarm.enable(printLcdAlarm);
-		byLcdMsgTimeoutCnt = 0;
+		_bySecCnt = 0;
 	}
-	else if (!Alarm.active(printLcdAlarm) && byLcdMsgTimeoutCnt <= Settings.LcdMsgTimeout)
+	else if (!Alarm.active(printLcdAlarm) && _bySecCnt <= Settings.LcdMsgTimeout)
 	{
-		byLcdMsgTimeoutCnt++;
+		_bySecCnt++;
 	}
 }
 
@@ -316,12 +312,12 @@ void dhcp() {
 		Serial.println(Ethernet.dnsServerIP());
 #endif
 		ledLight(1, 'g');
-}
+	}
 }
 
 void writeSD() {
-	bool succes = writeSDRelaySettings();
-	if (!succes)
+	bool _bSucces = writeSDRelaySettings();
+	if (!_bSucces)
 	{
 #if DEBUG
 		Serial.println(F("Writing relay settings to SD card failed!"));
@@ -341,4 +337,4 @@ void writeSD() {
 		Serial.println(F("Writing relay settings to SD card ok"));
 #endif
 	}
-	}
+}

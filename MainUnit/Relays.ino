@@ -33,9 +33,9 @@ void switchRelays() {
 }
 
 float getRelayState(int relay){
-	bool state = digitalRead(RELAY_PIN[relay]);
-	if (state == HIGH) return 0;
-	if (state == LOW) return 1;
+	bool _bState = digitalRead(RELAY_PIN[relay]);
+	if (_bState == HIGH) return 0;
+	if (_bState == LOW) return 1;
 }
 
 void serviceSchedulers(int relay){
@@ -44,18 +44,18 @@ void serviceSchedulers(int relay){
 	{
 		time_t t = now();
 		//set current interval
-		unsigned long lCurrSec = long(hour(t)) * 60 * 60 + long(minute(t)) * 60 + long(second(t));
-		bool set = false;
+		unsigned long _lCurrSec = long(hour(t)) * 60 * 60 + long(minute(t)) * 60 + long(second(t));
+		bool _bSet = false; //in case we use all 5 intervals we need to have this aux variable
 		for (int i = 0; i < 5; i++)
 		{
 			if (Sched[relay].Enabled[i])
 			{
 				unsigned long lSchedSec = long(Sched[relay].Time[i][0]) * 60 * 60 + long(Sched[relay].Time[i][1]) * 60;
 
-				if ((lCurrSec >= lSchedSec) || (i == 4 && !set))
+				if ((_lCurrSec >= lSchedSec) || (i == 4 && !_bSet))
 				{
 					Sched[relay].CurrentInterval = i;
-					set = true;
+					_bSet = true;
 				}
 			}
 		}
@@ -91,11 +91,11 @@ void serviceSchedulers(int relay){
 				}
 			}
 		}
-		else if (bInvalidDSAction)//remote ds is not valid
+		else if (Settings.InvalidDSAction)//remote ds is not valid and we have in settings that we need to turn opff relay when ds invalid
 		{
 			digitalWrite(RELAY_PIN[relay], HIGH); //turn off relay
 		} 
-		else
+		else //when we do nothing when ds invalid
 		{
 			// do nothing
 		}

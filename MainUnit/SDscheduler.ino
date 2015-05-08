@@ -1,8 +1,8 @@
 boolean writeSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
-		String fp = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		fp.toCharArray(buff1, buffLen1);
+		String _sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
+		_sPath.toCharArray(buff1, buffLen1);
 
 		SD.remove(buff1);
 		myFile = SD.open(buff1, FILE_WRITE);
@@ -41,8 +41,8 @@ boolean readSDSched() {
 
 	for (int i = 0; i < 4; i++)
 	{
-		String fp = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		fp.toCharArray(buff2, buffLen2);
+		String _sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
+		_sPath.toCharArray(buff2, buffLen2);
 
 		IniFile ini(buff2);
 		if (!ini.open()) {
@@ -87,8 +87,8 @@ boolean readSDSched() {
 void deleteSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
-		String fp = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		fp.toCharArray(buff1, buffLen1);
+		String _sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
+		_sPath.toCharArray(buff1, buffLen1);
 		SD.remove(buff1);
 	}
 }

@@ -237,8 +237,8 @@ void setupAlarms() {
 	syncRTCAlarm = Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC every 24h
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 
-	if (!Eth.DHCP)		Alarm.disable(dhcpAlarm);
-	if (!bTSenabled) Alarm.disable(updateTSAlarm);
+	if (!Eth.DHCP) Alarm.disable(dhcpAlarm);
+	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
 	if (!DEBUG) Alarm.disable(printSerialAlarm);
 
 #if DEBUG

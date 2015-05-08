@@ -1,4 +1,3 @@
-/* libraries */
 #include <Wire.h>
 #include <RTClib.h>
 #include <Adafruit_Sensor.h>
@@ -20,9 +19,10 @@
 #include "avr/pgmspace.h"
 #include "DataStructures.h"
 
-#define DEBUG false //enable/disable all serial.print messages
+//enable/disable all serial.print messages
+#define DEBUG false
 
-/* pins */
+//setup pins
 const int RESET_ETH_SHIELD_PIN = 14;
 const int DHT22_PIN = 9;
 const int PIR_PIN = 19;
@@ -37,19 +37,19 @@ const int LCD_SWITCH_PWR_PIN = 30;
 const int RADIO_RX_PIN = 17;
 const int RADIO_CTRL_PIN = 18;
 
-/* general buffers for various usages (datatypes conversion, reading ini settings)*/
+//general buffers for various usages (datatypes conversion, reading ini settings)
 const int buffLen1 = 30;
 const int buffLen2 = 22;
 char buff1[buffLen1];
 char buff2[buffLen2];
 
-/* timezone settings */
+//timezone settings
 TimeChangeRule CEST = { "CEST", Last, Sun, Mar, 2, 120 };    //summer time = UTC + 2 hours
-TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };     //winter time = UTC + 1 hours
+TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };		 //winter time = UTC + 1 hours
 Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
 
-/* reference variables */
+//global reference variables
 RTC_DS1307 rtc;
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 DHT dht(DHT22_PIN, DHT22);
@@ -61,32 +61,30 @@ WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
 //initialize custom structs
-SystemSettings Settings; //her are all user configurables
-DataSet MainDS;
-DataSet RemoteDS;
-DataSet SystemDS;
-RelayScheduler Sched[4];
-EthernetSettings Eth;
+SystemSettings Settings;			//her are all user configurables
+DataSet MainDS;						//main dataset
+DataSet RemoteDS;					//remote dataset
+DataSet SystemDS;					//system dataset (warning, system dataset contains values from both main and remote unit)
+RelayScheduler Sched[4];			//scheduler settings
+EthernetSettings Eth;				//ethernet settings
 
-/* variables */
-int nFailedCounter = 0;					//failed thingspeak uploads
-unsigned int nFailedCntTSTotal = 0;		//total failed thing speak messages
-unsigned int nFailedCntRadioTotal = 0;
-DateTime dtSysStart;							//time of system start for uptime 
-DateTime dtLastNTPsync = 0;
+//global variables
+int nFailedCounter = 0;						//failed thingspeak uploads
+unsigned int nFailedCntTSTotal = 0;			//total failed thing speak messages
+unsigned int nFailedCntRadioTotal = 0;		//total failed radio messages
+DateTime dtSysStart;						//time of system start for uptime 
+DateTime dtLastNTPsync = 0;					//time of last ntp sync
 byte byCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
 String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
 bool bReceivedRadioMsg = false;				//received at least one remote ds
-bool bTSenabled = true;						//enable disable thingspeak
-bool bInvalidDSAction = false;				//what to do with relay if dataset is invalid true=turn off relay; false=do nothing
 
-/* weather */
+//weather variables
 const char* cWeather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
 byte byForecast = 5;
 
-/* array of pointers to iterate through when updating thingspeak channels */
+//array of pointers to iterate through when updating thingspeak channels
 DataSet *DataSetPtr[] = { (DataSet*)&MainDS, (DataSet*)&RemoteDS, (DataSet*)&SystemDS };
 
 /*Target variables are :
@@ -102,9 +100,20 @@ DataSet *DataSetPtr[] = { (DataSet*)&MainDS, (DataSet*)&RemoteDS, (DataSet*)&Sys
 9 Light
 10 Rain
 */
-float *TargetVarPtr[] = { &MainDS.Data[3], &MainDS.Data[0], &MainDS.Data[1], &MainDS.Data[2], &RemoteDS.Data[0], &RemoteDS.Data[1], &RemoteDS.Data[2], &RemoteDS.Data[3], &RemoteDS.Data[4], &RemoteDS.Data[5], &RemoteDS.Data[6] };
+float *TargetVarPtr[] = {
+	&MainDS.Data[3]
+	, &MainDS.Data[0]
+	, &MainDS.Data[1]
+	, &MainDS.Data[2]
+	, &RemoteDS.Data[0]
+	, &RemoteDS.Data[1]
+	, &RemoteDS.Data[2]
+	, &RemoteDS.Data[3]
+	, &RemoteDS.Data[4]
+	, &RemoteDS.Data[5]
+	, &RemoteDS.Data[6] };
 
-/* alarms */
+//Alarm variables
 int systemAlarm;
 int prepareDatasetAlarm;
 int printSerialAlarm;
@@ -116,7 +125,7 @@ int syncRTCAlarm;
 int writeSDAlarm;
 int failedMsgsAlarm;
 
-/* reset arduino function (must be here)*/
+//reboot arduino
 void(*resetFunc) (void) = 0;
 
 #pragma region webduino
@@ -599,10 +608,10 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.print(Settings.RemoteDataSetTimeout);
 		server.print(F("</RemoteDSTimeout>"));
 		server.print(F("<InvalidDSAction>"));
-		server.print(bInvalidDSAction);
+		server.print(Settings.InvalidDSAction);
 		server.print(F("</InvalidDSAction>"));
 		server.print(F("<TSEnabled>"));
-		server.print(bTSenabled);
+		server.print(Settings.TSenabled);
 		server.print(F("</TSEnabled>"));
 		server.print(F("<TSAddr>"));
 		server.print(Settings.ThingSpeakAddress);
@@ -659,11 +668,11 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 			}
 			if (strcmp(buff1, "action") == 0)
 			{
-				bInvalidDSAction = buff2[0] != '0';
+				Settings.InvalidDSAction = buff2[0] != '0';
 			}
 			if (strcmp(buff1, "thingspeak") == 0)
 			{
-				bTSenabled = buff2[0] != '0';
+				Settings.TSenabled = buff2[0] != '0';
 			}
 			if (strcmp(buff1, "tsaddr") == 0)
 			{
@@ -724,7 +733,7 @@ void settingsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char 
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
-		"Deleting settings, please wait..."
+		"Applying default settings, please wait..."
 		"</div>"
 		"</body>"
 		"</html>";
@@ -875,34 +884,34 @@ void setup()
 	setupEthernet();
 	setupAlarms();
 
-	webserver.setDefaultCommand(&homePageCmd); //get page
-	webserver.addCommand("index.htm", homePageCmd); //get page
-	webserver.addCommand("sensors.xml", sensorsXMLCmd); //get xml
-	webserver.addCommand("relays.data", relayDataCmd); //post data
-	webserver.addCommand("graphs1.htm", graphs1PageCmd); //get page
-	webserver.addCommand("graphs2.htm", graphs2PageCmd); //get page
-	webserver.addCommand("sched.htm", schedPageCmd); //get page
-	webserver.addCommand("sched.xml", schedXMLCmd); //get xml
-	webserver.addCommand("sched.data", schedDataCmd); //post data
-	webserver.addCommand("sched.delete", schedDeleteCmd); //delete sched data from sd
-	webserver.addCommand("system.htm", systemPageCmd); //get page
-	webserver.addCommand("stats.xml", statsXMLCmd); //get xml
-	webserver.addCommand("settings.xml", settingsXMLCmd); //get xml
-	webserver.addCommand("settings.data", settingsDataCmd); //post data
-	webserver.addCommand("settings.default", settingsDefaultCmd); //delete settings data from sd
-	webserver.addCommand("network.data", networkDataCmd); //post data
-	webserver.addCommand("reboot", rebootCmd);
+	//webduino commands
+	webserver.setDefaultCommand(&homePageCmd);						//get page
+	webserver.addCommand("index.htm", homePageCmd);					//get page
+	webserver.addCommand("sensors.xml", sensorsXMLCmd);				//get xml
+	webserver.addCommand("relays.data", relayDataCmd);				//post data
+	webserver.addCommand("graphs1.htm", graphs1PageCmd);			//get page
+	webserver.addCommand("graphs2.htm", graphs2PageCmd);			//get page
+	webserver.addCommand("sched.htm", schedPageCmd);				//get page
+	webserver.addCommand("sched.xml", schedXMLCmd);					//get xml
+	webserver.addCommand("sched.data", schedDataCmd);				//post data
+	webserver.addCommand("sched.delete", schedDeleteCmd);			//delete sched data from sd
+	webserver.addCommand("system.htm", systemPageCmd);				//get page
+	webserver.addCommand("stats.xml", statsXMLCmd);					//get xml
+	webserver.addCommand("settings.xml", settingsXMLCmd);			//get xml
+	webserver.addCommand("settings.data", settingsDataCmd);			//post data
+	webserver.addCommand("settings.default", settingsDefaultCmd);	//delete settings data from sd
+	webserver.addCommand("network.data", networkDataCmd);			//post data
+	webserver.addCommand("reboot", rebootCmd);						//reboot arduino
 	webserver.begin();
 
+	//datasets setup
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
 	MainDS.Size = 5;
 	MainDS.Valid = true;
 	MainDS.Timestamp = dtSysStart.unixtime();
-
 	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
 	RemoteDS.Size = 7;
 	RemoteDS.Valid = false;
-
 	SystemDS.APIkey = "GNQST00GBW05EYGC";
 	SystemDS.Size = 8;
 	SystemDS.Valid = true;
@@ -912,11 +921,11 @@ void setup()
 #endif	
 }
 
-/* control everything by timer alarms */
+//control everything by timer alarms
 void loop()
 {
-	Alarm.delay(0); //run alarms without any delay so the loop isn't slowed down
-	webserver.processConnection();
+	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
+	webserver.processConnection();	//process webserver request as soon as possible
 }
 
 //TO DO

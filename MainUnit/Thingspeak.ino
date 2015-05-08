@@ -4,7 +4,7 @@ void updateThingSpeak(DataSet ds){
 	String s;
 	for (int i = 0; i < ds.Size; i++)
 	{
-		if (ds.Data[i] > -100) //in case we get some broken values which are usualy -255 or something like that
+		if (ds.Data[i] > -100) //in case we get some broken values which are -255
 		{
 			s += intToString(i + 1) + "=" + floatToString(ds.Data[i]);
 

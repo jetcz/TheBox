@@ -24,20 +24,20 @@ void receiveData() {
 
 //this needs to be called once per second
 void getFailedRadioMessages(){
-	static unsigned long counter = 0;
-	static bool repeat = false;
-	counter++;
+	static unsigned long _lCnt = 0;
+	static bool _bRepeat = false;
+	_lCnt++;
 
 	//this is to find out how many radio transmissions failed
-	if (now() - RemoteDS.Timestamp.unixtime() > 63 && counter > 63)
+	if (now() - RemoteDS.Timestamp.unixtime() > 63 && _lCnt > 63)
 	{
 		nFailedCntRadioTotal++;
-		counter = 0;
+		_lCnt = 0;
 	}
 
-	if (!repeat)
+	if (!_bRepeat)
 	{
-		repeat = true;
+		_bRepeat = true;
 		failedMsgsAlarm = Alarm.timerRepeat(1, getFailedRadioMessages);
 	}
 }
