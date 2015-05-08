@@ -228,13 +228,16 @@ void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
 	Alarm.timerOnce(180, syncRTCwithNTP);
 	Alarm.timerOnce(65, getFailedRadioMessages);  //repeats itself after first run
-	systemAlarm = Alarm.timerRepeat(1, system);
+	Alarm.timerRepeat(1, system);
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd);
-	prepareDatasetAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
+	Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
 	printSerialAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	updateTSAlarm = Alarm.timerRepeat(Settings.UpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
-	weatherAlarm = Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
-	syncRTCAlarm = Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC every 24h
+	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
+	Alarm.timerRepeat(60, getRainPerHour);
+	getInitialTipCntAlarm = Alarm.timerRepeat(60, getRainPerDay);
+	Alarm.timerRepeat(3600, getRainPerDay);
+	Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC every 24h
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 
 	if (!Eth.DHCP) Alarm.disable(dhcpAlarm);

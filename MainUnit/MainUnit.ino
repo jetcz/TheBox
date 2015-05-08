@@ -16,6 +16,7 @@
 #include <RH_ASK.h>
 #include <LiquidCrystal_I2C.h>
 #include <IniFile.h>
+#include <QueueArray.h>
 #include "avr/pgmspace.h"
 #include "DataStructures.h"
 
@@ -114,16 +115,13 @@ float *TargetVarPtr[] = {
 	, &RemoteDS.Data[6] };
 
 //Alarm variables
-int systemAlarm;
-int prepareDatasetAlarm;
 int printSerialAlarm;
 int printLcdAlarm;
 int updateTSAlarm;
-int weatherAlarm;
 int dhcpAlarm;
-int syncRTCAlarm;
 int writeSDAlarm;
-int failedMsgsAlarm;
+int getInitialTipCntAlarm;
+
 
 //reboot arduino
 void(*resetFunc) (void) = 0;
@@ -224,7 +222,11 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(RemoteDS.Data[6], 1); //rain
+		server.print(RemoteDS.Data[6], 1); //rain /hour
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(RemoteDS.Data[7], 1); //rain /day
 		server.printP(tag_end_sensor);
 
 		server.print(F("</Sen>"));
@@ -865,7 +867,6 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	ledLight(1, 'g');
 }
 #pragma endregion webduino
-
 void setup()
 {
 	setupSerial();

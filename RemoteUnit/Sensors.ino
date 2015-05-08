@@ -12,9 +12,11 @@ void prepareDataSetArrays() {
 	fRemoteUnitDataSet[4] = getSoilHumidity();					//remoteSoilHumidity
 	fRemoteUnitDataSet[5] = getLight();							//remoteLight
 	powerSensors(false);
-
-	fRemoteUnitDataSet[6] = getRainPerHour();					//rain
+	noInterrupts();
+	fRemoteUnitDataSet[6] = fRainTips;							//rain tips
+	interrupts();
 	fRemoteUnitDataSet[8] = getUptime();						//uptime
+
 
 }
 
@@ -136,21 +138,6 @@ byte getSoilHumidity() {
 	return SoilHum.getAverage();
 }
 
-float getRainPerHour() {
-
-	if (getUptime() - previousSec > interval) {
-		previousSec = getUptime();
-		noInterrupts();
-		nRainTips = 0;
-		interrupts();
-	}
-	noInterrupts();
-	float fRainPerHour = float(nRainTips) * 0.3;
-	interrupts();
-
-	return fRainPerHour;
-}
-
 void ISRTipCnt() {
-	nRainTips++;
+	fRainTips++;
 }

@@ -48,15 +48,15 @@ RunningAverage Humidex(3);
 RunningAverage SoilTemp(3);
 RunningAverage SoilHum(3);
 
-float fRemoteUnitDataSet[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-volatile int nRainTips = 0;
+float fRemoteUnitDataSet[9] = { 0 };
+volatile float fRainTips = 0;
 float *Vcc = &fRemoteUnitDataSet[7];
 
 const float fAirTemperatureOffset = -0.7;
 const float fSoilTemperatureOffset = -0.2;
 
-unsigned int previousSec = 0; // last time update
-unsigned int interval = 3600; // interval at which to do something (rain mm/h)
+
+
 
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
@@ -75,8 +75,7 @@ void setup() {
 		Serial.println("radio init failed");
 		ledLightDigital('r');
 	}
-
-	nRainTips = 0;
+	fRainTips = 0;
 	interrupts();
 
 	digitalWrite(DHT22_PWR_PIN, HIGH);

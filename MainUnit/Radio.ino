@@ -9,13 +9,15 @@ void receiveData() {
 		float temp[9];
 		memcpy(&temp, buf, buflen);
 
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 6; i++)
 		{
 			RemoteDS.Data[i] = temp[i];
 		}
 
-		SystemDS.Data[6] = temp[7];
-		SystemDS.Data[7] = temp[8];
+		RemoteDS.Data[8] = temp[6]; //total ticks (hidden field)
+
+		SystemDS.Data[6] = temp[7]; //vcc
+		SystemDS.Data[7] = temp[8];	//uptime
 		RemoteDS.Timestamp = now();
 		sRemoteUptime = getUptimeString(TimeSpan(SystemDS.Data[7]));
 		bReceivedRadioMsg = true;
@@ -38,6 +40,6 @@ void getFailedRadioMessages(){
 	if (!_bRepeat)
 	{
 		_bRepeat = true;
-		failedMsgsAlarm = Alarm.timerRepeat(1, getFailedRadioMessages);
+		Alarm.timerRepeat(1, getFailedRadioMessages);
 	}
 }
