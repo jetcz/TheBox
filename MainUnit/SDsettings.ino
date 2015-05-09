@@ -53,7 +53,7 @@ bool readSDSettings(char *path) {
 		if (path == Settings.EthernetPath)
 		{
 			if (ini.getValue(NULL, "dhcp", cBuff1, nBuffLen1)) {
-				Eth.DHCP = cBuff1[0] != '0';
+				Settings.DHCP = cBuff1[0] != '0';
 
 			}
 			else {
@@ -65,7 +65,7 @@ bool readSDSettings(char *path) {
 			}
 
 			if (ini.getValue(NULL, "ip", cBuff1, nBuffLen1)) {
-				chArrToByteArr(cBuff1, Eth.IP);
+				chArrToByteArr(cBuff1, Settings.IP);
 
 			}
 			else {
@@ -77,7 +77,7 @@ bool readSDSettings(char *path) {
 			}
 
 			if (ini.getValue(NULL, "subnet", cBuff1, nBuffLen1)) {
-				chArrToByteArr(cBuff1, Eth.Mask);
+				chArrToByteArr(cBuff1, Settings.Mask);
 			}
 			else {
 #if DEBUG
@@ -87,7 +87,7 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 			if (ini.getValue(NULL, "gw", cBuff1, nBuffLen1)) {
-				chArrToByteArr(cBuff1, Eth.GW);
+				chArrToByteArr(cBuff1, Settings.GW);
 			}
 			else {
 #if DEBUG
@@ -97,7 +97,7 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 			if (ini.getValue(NULL, "dns", cBuff1, nBuffLen1)) {
-				chArrToByteArr(cBuff1, Eth.DNS);
+				chArrToByteArr(cBuff1, Settings.DNS);
 			}
 			else {
 #if DEBUG
@@ -128,6 +128,62 @@ bool readSDSettings(char *path) {
 		}
 
 #pragma endregion relays
+
+#pragma region offsets
+
+		if (path == Settings.OffsetsPath) {
+			if (ini.getValue(NULL, "SysTempOffset", cBuff1, nBuffLen1)) {
+				Settings.SysTempOffset = atof(cBuff1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'SysTempOffset', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+			if (ini.getValue(NULL, "PressureOffset", cBuff1, nBuffLen1)) {
+				Settings.PressureOffset = atof(cBuff1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'PressureOffset', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+			if (ini.getValue(NULL, "MainTempOffset", cBuff1, nBuffLen1)) {
+				Settings.MainTempOffset = atof(cBuff1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'MainTempOffset', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+			if (ini.getValue(NULL, "RemoteTempOffset", cBuff1, nBuffLen1)) {
+				Settings.RemoteTempOffset = atof(cBuff1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'RemoteTempOffset', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+			if (ini.getValue(NULL, "SoilTempOffset", cBuff1, nBuffLen1)) {
+				Settings.SoilTempOffset = atof(cBuff1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'SoilTempOffset', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+		}
+#pragma endregion offsets
 
 #pragma region general
 
@@ -218,11 +274,11 @@ bool writeSDEthernetSettings() {
 	}
 	else {
 		file.print(F("dhcp="));
-		file.println(Eth.DHCP);
+		file.println(Settings.DHCP);
 		file.print(F("ip="));
 		for (int i = 0; i < 4; i++)
 		{
-			file.print(Eth.IP[i]);
+			file.print(Settings.IP[i]);
 			if (i < 3)
 			{
 				file.print(F("."));
@@ -233,7 +289,7 @@ bool writeSDEthernetSettings() {
 		file.print(F("subnet="));
 		for (int i = 0; i < 4; i++)
 		{
-			file.print(Eth.Mask[i]);
+			file.print(Settings.Mask[i]);
 			if (i < 3)
 			{
 				file.print(F("."));
@@ -244,7 +300,7 @@ bool writeSDEthernetSettings() {
 		file.print(F("gw="));
 		for (int i = 0; i < 4; i++)
 		{
-			file.print(Eth.GW[i]);
+			file.print(Settings.GW[i]);
 			if (i < 3)
 			{
 				file.print(F("."));
@@ -255,7 +311,7 @@ bool writeSDEthernetSettings() {
 		file.print(F("dns="));
 		for (int i = 0; i < 4; i++)
 		{
-			file.print(Eth.DNS[i]);
+			file.print(Settings.DNS[i]);
 			if (i < 3)
 			{
 				file.print(F("."));
@@ -273,7 +329,7 @@ bool writeSDSettings() {
 	{
 		return false;
 	}
-	else {
+	else {		
 		file.print(F("RDSTimeout="));
 		file.println(Settings.RemoteDataSetTimeout);
 		file.print(F("invalidDSAction="));
@@ -284,6 +340,29 @@ bool writeSDSettings() {
 		file.println(Settings.ThingSpeakAddress);
 		file.print(F("ntp="));
 		file.println(Settings.NTPServer);
+		file.close();
+		return true;
+	}
+}
+
+bool writeSDOffsets() {
+	SD.remove(Settings.OffsetsPath);
+	file = SD.open(Settings.OffsetsPath, FILE_WRITE);
+	if (!file)
+	{
+		return false;
+	}
+	else {
+		file.print(F("SysTempOffset="));
+		file.println(Settings.SysTempOffset);
+		file.print(F("PressureOffset="));
+		file.println(Settings.PressureOffset);
+		file.print(F("MainTempOffset="));
+		file.println(Settings.MainTempOffset);
+		file.print(F("RemoteTempOffset="));
+		file.println(Settings.RemoteTempOffset);
+		file.print(F("SoilTempOffset="));
+		file.println(Settings.SoilTempOffset);
 		file.close();
 		return true;
 	}

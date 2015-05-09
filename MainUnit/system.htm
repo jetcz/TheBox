@@ -100,6 +100,16 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="leftHeader">Sys Temperature</td>
+                        <td>
+                            <span class="Value"></span>&deg;C
+                        </td>
+                        <td>
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+<tr>
                         <td class="leftHeader">Voltage</td>
                         <td class="tdVal">
                             <span class="Value"></span>mV
@@ -232,8 +242,78 @@
                 <form action="settings.default" id="settingsDefaultForm" method="post">
                     <input type="hidden" value="" />
                 </form>
+                <br />
+                <form id="offsetsForm" method="post" action="offsets.data">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Sensor offsets
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="leftHeader">
+                                    System Temperature
+                                </td>
+                                <td>
+                                    <input type="number" id="SysTempOffset" min="-100" max="100" step="0.1" name="SysTempOffset" style="width: 7em" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">
+                                    Pressure
+                                </td>
+                                <td>
+                                    <input type="number" id="PressureOffset" min="-1000" max="1000" step="0.1" name="PressureOffset" style="width: 7em" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">
+                                    Main Air Temperature
+                                </td>
+                                <td>
+                                    <input type="number" id="MainTempOffset" min="-100" max="100" step="0.1" name="MainTempOffset" style="width: 7em" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">
+                                    Remote Air Temperature
+                                </td>
+                                <td>
+                                    <input type="number" id="RemoteTempOffset" min="-100" max="100" step="0.1" name="RemoteTempOffset" style="width: 7em" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">
+                                    Remote Soil Temperature
+                                </td>
+                                <td>
+                                    <input type="number" id="SoilTempOffset" min="-100" max="100" step="0.1" name="SoilTempOffset" style="width: 7em" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader"></td>
+                                <td>
+                                    <button type="submit" form="offsetsDefaultForm" onclick="return confirm('Are you sure?')" style="color: #c90000; font-weight: bold">
+                                        Default
+                                    </button>
+                                    &nbsp;
+                                    <button type="submit" form="offsetsForm" style="color: green; font-weight: bold">
+                                        Save & Apply
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <form action="offsets.default" id="offsetsDefaultForm" method="post">
+                    <input type="hidden" value="" />
+                </form>
+                <br />
                 <form id="networkForm" method="post" action="network.data">
-                    <br />
                     <table>
                         <thead>
                             <tr>

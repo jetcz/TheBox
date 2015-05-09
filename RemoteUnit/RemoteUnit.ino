@@ -52,11 +52,9 @@ float fRemoteUnitDataSet[9] = { 0 };
 volatile float fRainTips = 0;
 float *Vcc = &fRemoteUnitDataSet[7];
 
-const float fAirTemperatureOffset = -0.7;
-const float fSoilTemperatureOffset = -0.2;
-
-
-
+//handle offsets in main unit
+//const float fAirTemperatureOffset = -0.7;
+//onst float fSoilTemperatureOffset = -0.2;
 
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 

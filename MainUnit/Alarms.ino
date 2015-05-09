@@ -33,25 +33,34 @@ void system() {
 	}
 }
 
+//fill datasets and apply offsets (apply offsets to some elements of system and  remoty ds aswell)
 void prepareDataSetArrays() {
 
 	sensors_event_t event;	//event for bmp180
-
-	SystemDS.Data[0] = getSysTemperature(event);
+	float _fVal;
+	_fVal = getSysTemperature(event);
+	SystemDS.Data[0] = (_fVal == -255) ? _fVal : _fVal + Settings.SysTempOffset;
 	SystemDS.Data[1] = getUptime().totalseconds();
 
 	for (int i = 0; i < 4; i++)
 	{
 		SystemDS.Data[i + 2] = getRelayState(i);
 	}
-
-	MainDS.Data[0] = getMainTemperature();
+	_fVal = getMainTemperature();
+	MainDS.Data[0] = (_fVal == -255) ? _fVal : _fVal + Settings.MainTempOffset;
 	MainDS.Data[1] = getMainHumidity();
 	MainDS.Data[2] = getMainHumidex();
 	MainDS.Data[3] = getMainPir();
-	MainDS.Data[4] = getPressure(event);
+	_fVal = getPressure(event);
+	MainDS.Data[4] = (_fVal == -255) ? _fVal : _fVal + Settings.PressureOffset;
 
 	MainDS.Timestamp = now();
+
+	if (bReceivedRadioMsg)
+	{
+		RemoteDS.Data[0] += Settings.RemoteTempOffset;		//remoteTemperature
+		RemoteDS.Data[3] += Settings.SoilTempOffset;		//remoteSoilTemperature
+	}
 
 }
 
@@ -234,7 +243,7 @@ void thingSpeak(){
 		Alarm.delay(3000);
 		resetFunc(); //reboot arduino
 	}
-	}
+}
 
 
 void enableDisableAlarms() {
@@ -283,7 +292,7 @@ void syncRTCwithNTP() {
 #if DEBUG
 		Serial.println(F("NTP time sync failed!"));
 #endif
-}
+	}
 }
 
 void dhcp() {

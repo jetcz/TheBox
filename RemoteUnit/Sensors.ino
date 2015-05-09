@@ -45,9 +45,8 @@ void printSensorData() {
 	Serial.print(fRemoteUnitDataSet[5], 0);
 	Serial.println(F("%"));
 
-	Serial.print(F("Rain: "));
-	Serial.print(fRemoteUnitDataSet[6], 1);
-	Serial.println(F("mm/h"));
+	Serial.print(F("RainTicks: "));
+	Serial.println(fRemoteUnitDataSet[6], 0);
 
 	Serial.print(F("Vcc: "));
 	Serial.print(fRemoteUnitDataSet[7], 0);
@@ -78,30 +77,30 @@ void powerSensors(bool state) {
 }
 
 float getAirTemperature() {
-	float t = dht.readTemperature();
-	if (isnan(t)) {
+	float _fTemp = dht.readTemperature();
+	if (isnan(_fTemp)) {
 #if debug
 		Serial.print(F("Failed to read from DHT sensor! "));
 #endif
 		return -255;
 	}
 	else {
-		AirTemp.addValue(t + fAirTemperatureOffset);
+		AirTemp.addValue(_fTemp);
 		return AirTemp.getAverage();
 	}
 
 }
 
 float getAirHumidity(){
-	float h = dht.readHumidity();
-	if (isnan(h) || (fRemoteUnitDataSet[0] == -255)) {
+	float _fHum = dht.readHumidity();
+	if (isnan(_fHum) || (fRemoteUnitDataSet[0] == -255)) {
 #if debug
 		Serial.print(F("Failed to read from DHT sensor! "));
 #endif
 		return -255;
 	}
 	else {
-		AirHum.addValue(h);
+		AirHum.addValue(_fHum);
 		return AirHum.getAverage();
 	};
 }
@@ -116,24 +115,24 @@ float getAirHumidex() {
 }
 
 byte getLight() {
-	float l = analogRead(PHOTORESISTOR_DATA_PIN)*(*Vcc) / 1023;
-	byte light = ((l / *Vcc) * 100);
-	Light.addValue(light);
+	float _fLight = analogRead(PHOTORESISTOR_DATA_PIN)*(*Vcc) / 1023;
+	byte _byLight = ((_fLight / *Vcc) * 100);
+	Light.addValue(_byLight);
 	return Light.getAverage();
 }
 
 float getSoilTemperature() {
 	ds.requestTemperatures();
-	float t = ds.getTempCByIndex(0);
-	if (t == 85) return -255;
-	SoilTemp.addValue(t + fSoilTemperatureOffset);
+	float _fTemp = ds.getTempCByIndex(0);
+	if (_fTemp == 85) return -255;
+	SoilTemp.addValue(_fTemp);
 	return SoilTemp.getAverage();
 }
 
 //returns soil humidity percentage 0 = air, 100 = salt water
 byte getSoilHumidity() {
-	float h = analogRead(HUMIDITY_DATA_PIN)*(*Vcc) / 1023;
-	byte hum = ((h / *Vcc - 1)*-115);
+	float _fHum = analogRead(HUMIDITY_DATA_PIN)*(*Vcc) / 1023;
+	byte hum = ((_fHum / *Vcc - 1)*-115);
 	SoilHum.addValue(hum);
 	return SoilHum.getAverage();
 }

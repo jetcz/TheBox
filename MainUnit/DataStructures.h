@@ -1,10 +1,11 @@
 struct SystemSettings
 {
 	SystemSettings() {
-		setDefault();
+		setDefaultSystemSettings();
+		setDefaultOffsetsSettings();
 	}
 
-	void setDefault(){
+	void setDefaultSystemSettings(){
 		strncpy(ThingSpeakAddress, "api.thingspeak.com", 30);
 		UpdateThingSpeakInterval = 20;
 		RemoteDataSetTimeout = 180;
@@ -16,12 +17,17 @@ struct SystemSettings
 		LightIntensity[1] = 1; //G
 		LightIntensity[2] = 2; //B
 		UpdateSensorsInterval = 10;
-		SysTempOffset = -0.2;
-		PressureOffset = 24;
-		MainTempOffset = -1.2;
 		TSenabled = true;
 		InvalidDSAction = false;
 		UpdateRainPerDayInterval = 600; //10 min interval
+	}
+
+	void setDefaultOffsetsSettings(){
+		SysTempOffset = -0.2;
+		PressureOffset = 24;
+		MainTempOffset = -1.2;
+		RemoteTempOffset = -0.7;
+		SoilTempOffset = -0.2;
 	}
 	/* ThingSpeak settings */
 	char ThingSpeakAddress[30];
@@ -46,8 +52,19 @@ struct SystemSettings
 
 	/* sensor offsets */
 	float SysTempOffset;
-	byte PressureOffset;
+	float PressureOffset;
 	float MainTempOffset;
+	float RemoteTempOffset;
+	float SoilTempOffset;
+
+	//ethernet settings
+	byte MAC[6] = { 0xB0, 0x0B, 0x5B, 0x00, 0xB5, 0x00 };
+	byte IP[4] = { 0 };
+	byte GW[4] = { 0 };
+	byte Mask[4] = { 0 };
+	byte DNS[4] = { 0 };
+	bool DHCP = false;
+
 	bool TSenabled;						//enable disable thingspeak
 	bool InvalidDSAction;				//what to do with relay if dataset is invalid true=turn off relay; false=do nothing
 
@@ -60,18 +77,9 @@ struct SystemSettings
 	char* EthernetPath = "/settings/ethernet.ini";
 	char* RelaysPath = "/settings/relays.ini";
 	char* SettingsPath = "/settings/settings.ini";
+	char* OffsetsPath = "/settings/offsets.ini";
 
 }; typedef struct SystemSettings SystemSettings;
-
-struct EthernetSettings
-{
-	byte MAC[6] = { 0xB0, 0x0B, 0x5B, 0x00, 0xB5, 0x00 };
-	byte IP[4] = { 0 };
-	byte GW[4] = { 0 };
-	byte Mask[4] = { 0 };
-	byte DNS[4] = { 0 };
-	bool DHCP = false;
-}; typedef struct EthernetSettings EthernetSettings;
 
 struct DataSet
 {

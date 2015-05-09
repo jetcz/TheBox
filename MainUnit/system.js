@@ -56,39 +56,41 @@ function xmlParseStats(xml) {
         var value = $(this).text().trim();
         $(".Value").eq(i).text(value);
 
+        //color td starting offset
+        var offset = 3
         //preset voltage background color
-        if (i == 2 || i == 3) {
+        if (i == offset || i == offset + 1) {
             if (parseInt(value) > 4800) {
-                $('.tdVal').eq(i - 2).css("background-color", "green");
+                $('.tdVal').eq(i - offset).css("background-color", "green");
             }
             if (parseInt(value) <= 4800 && parseInt(value) > 4000) {
-                $('.tdVal').eq(i - 2).css("background-color", "#e97900");
+                $('.tdVal').eq(i - offset).css("background-color", "#e97900");
             }
             if (parseInt(value) <= 4000) {
-                $('.tdVal').eq(i - 2).css("background-color", "#c70000");
+                $('.tdVal').eq(i - offset).css("background-color", "#c70000");
             }
         }
         //preset ds age  
-        if (i == 4) {
+        if (i == offset + 2) {
             if (parseInt(value) < 12) {
-                $('.tdVal').eq(i - 2).css("background-color", "green");
+                $('.tdVal').eq(i - offset).css("background-color", "green");
             }
 
             if (parseInt(value) >= 12) {
-                $('.tdVal').eq(i - 2).css("background-color", "#c70000");
+                $('.tdVal').eq(i - offset).css("background-color", "#c70000");
             }
         }
 
-        if (i == 5) {
+        if (i == offset + 3) {
             if (parseInt(value) < 63) {
-                $('.tdVal').eq(i - 2).css("background-color", "green");
+                $('.tdVal').eq(i - offset).css("background-color", "green");
             }
 
             if (parseInt(value) >= 63 && parseInt(value) < 130) {
-                $('.tdVal').eq(i - 2).css("background-color", "#e97900");
+                $('.tdVal').eq(i - offset).css("background-color", "#e97900");
             }
             if (parseInt(value) >= 130) {
-                $('.tdVal').eq(i - 2).css("background-color", "#c70000");
+                $('.tdVal').eq(i - offset).css("background-color", "#c70000");
             }
         }
     })
@@ -109,6 +111,13 @@ function xmlParseSettings(xml) {
 
     $("#tsaddr").val($(xml).find("TSAddr").text().trim());
     $("#ntpaddr").val($(xml).find("NTPAddr").text().trim());
+
+    //offsets
+    $("#SysTempOffset").val(parseFloat($(xml).find("SysTempOffset").text().trim()));
+    $("#PressureOffset").val(parseFloat($(xml).find("PressureOffset").text().trim()));
+    $("#MainTempOffset").val(parseFloat($(xml).find("MainTempOffset").text().trim()));
+    $("#RemoteTempOffset").val(parseFloat($(xml).find("RemoteTempOffset").text().trim()));
+    $("#SoilTempOffset").val(parseFloat($(xml).find("SoilTempOffset").text().trim()));
 
     //network
     $(xml).find("Net V").each(function (i) {

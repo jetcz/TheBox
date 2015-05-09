@@ -152,13 +152,13 @@ void setupEthernet() {
 	ledLight(1, 'y');
 	resetEthShield(RESET_ETH_SHIELD_PIN);	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
 
-	if (Eth.DHCP)
+	if (Settings.DHCP)
 	{
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Obtaining DHCP lease"));
 
-		if (Ethernet.begin(Eth.MAC) == 0) {
+		if (Ethernet.begin(Settings.MAC) == 0) {
 #if DEBUG
 			Serial.println(F("Failed to initialize ethernet using DHCP"));
 #endif
@@ -186,17 +186,17 @@ void setupEthernet() {
 
 			for (int i = 0; i < 4; i++)
 			{
-				Eth.IP[i] = Ethernet.localIP()[i];
-				Eth.Mask[i] = Ethernet.subnetMask()[i];
-				Eth.GW[i] = Ethernet.gatewayIP()[i];
-				Eth.DNS[i] = Ethernet.dnsServerIP()[i];
+				Settings.IP[i] = Ethernet.localIP()[i];
+				Settings.Mask[i] = Ethernet.subnetMask()[i];
+				Settings.GW[i] = Ethernet.gatewayIP()[i];
+				Settings.DNS[i] = Ethernet.dnsServerIP()[i];
 			}
 
 
 		}
 	}
 	else {
-		Ethernet.begin(Eth.MAC, Eth.IP, Eth.DNS, Eth.GW, Eth.Mask);
+		Ethernet.begin(Settings.MAC, Settings.IP, Settings.DNS, Settings.GW, Settings.Mask);
 		ledLight(1, 'g');
 		lcd.clear();
 #if DEBUG
@@ -240,7 +240,7 @@ void setupAlarms() {
 	Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC every 24h
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 
-	if (!Eth.DHCP) Alarm.disable(dhcpAlarm);
+	if (!Settings.DHCP) Alarm.disable(dhcpAlarm);
 	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
 	if (!DEBUG) Alarm.disable(printSerialAlarm);
 

@@ -67,7 +67,7 @@ DataSet MainDS;						//main dataset
 DataSet RemoteDS;					//remote dataset
 DataSet SystemDS;					//system dataset (warning, system dataset contains values from both main and remote unit)
 RelayScheduler Sched[4];			//scheduler settings
-EthernetSettings Eth;				//ethernet settings
+//EthernetSettings Settings;				//ethernet settings
 
 //global variables
 int nFailedCounter = 0;						//failed thingspeak uploads
@@ -559,6 +559,10 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
+		server.print(SystemDS.Data[0], 1); //systemp
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
 		server.print(readVcc());
 		server.printP(tag_end_sensor);
 
@@ -590,6 +594,7 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 };
 void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	Serial.println("///////////////////////////settings xml");
 	ledLight(1, 'c');
 	if (type == WebServer::POST)
 	{
@@ -624,32 +629,50 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.print(F("</NTPAddr>"));
 		server.print(F("</General>"));
 
+		server.print(F("<Offsets>"));
+		server.print(F("<SysTempOffset>"));
+		server.print(Settings.SysTempOffset);
+		server.print(F("</SysTempOffset>"));
+		server.print(F("<PressureOffset>"));
+		server.print(Settings.PressureOffset);
+		server.print(F("</PressureOffset>"));
+		server.print(F("<MainTempOffset>"));
+		server.print(Settings.MainTempOffset);
+		server.print(F("</MainTempOffset>"));
+		server.print(F("<RemoteTempOffset>"));
+		server.print(Settings.RemoteTempOffset);
+		server.print(F("</RemoteTempOffset>"));
+		server.print(F("<SoilTempOffset>"));
+		server.print(Settings.SoilTempOffset);
+		server.print(F("</SoilTempOffset>"));
+		server.print(F("</Offsets>"));
+
 		server.print(F("<Net>"));
 		server.print(F("<DHCP>"));
-		server.print(Eth.DHCP);
+		server.print(Settings.DHCP);
 		server.print(F("</DHCP>"));
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(Eth.IP[i]);
+			server.print(Settings.IP[i]);
 			server.printP(tag_end_sensor);
 		}
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(Eth.Mask[i]);
+			server.print(Settings.Mask[i]);
 			server.printP(tag_end_sensor);
 		}
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(Eth.GW[i]);
+			server.print(Settings.GW[i]);
 			server.printP(tag_end_sensor);
 		}
 		for (int i = 0; i < 4; i++)
 		{
 			server.printP(tag_start_sensor);
-			server.print(Eth.DNS[i]);
+			server.print(Settings.DNS[i]);
 			server.printP(tag_end_sensor);
 		}
 		server.print(F("</Net>"));
@@ -723,6 +746,94 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 		ledLight(1, 'g');
 	}
 }
+void offsetsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	ledLight(1, 'y');
+	server.httpSuccess();
+	if (type == WebServer::POST)
+	{
+		while (server.readPOSTparam(cBuff1, nBuffLen1, cBuff2, nBuffLen2)) //buffer = name, buff = value
+		{
+			if (strcmp(cBuff1, "SysTempOffset") == 0)
+			{
+				Settings.SysTempOffset = atof(cBuff2);
+			}
+			if (strcmp(cBuff1, "PressureOffset") == 0)
+			{
+				Settings.PressureOffset = atof(cBuff2);
+			}
+			if (strcmp(cBuff1, "MainTempOffset") == 0)
+			{
+				Settings.MainTempOffset = atof(cBuff2);
+			}
+			if (strcmp(cBuff1, "RemoteTempOffset") == 0)
+			{
+				Settings.RemoteTempOffset = atof(cBuff2);
+			}
+			if (strcmp(cBuff1, "SoilTempOffset") == 0)
+			{
+				Settings.SoilTempOffset = atof(cBuff2);
+			}
+		}
+
+		P(messageSuccess) =
+			"<!DOCTYPE html><html><head>"
+			"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
+			"<script language=\"javascript\">"
+			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+			"</script>"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"</head>"
+			"<body>"
+			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
+			"Sensor offsets settings successfully saved"
+			"</div>"
+			"</body>"
+			"</html>";
+
+		P(messageFail) =
+			"<!DOCTYPE html><html><head>"
+			"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
+			"<script language=\"javascript\">"
+			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+			"</script>"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"</head>"
+			"<body>"
+			"<div class=\"content\" style=\"color:red;font-weight:bold\">"
+			"Failed to save sensor offsets settings!"
+			"</div>"
+			"</body>"
+			"</html>";
+
+		if (writeSDOffsets()) server.printP(messageSuccess);
+		else server.printP(messageFail);
+		server.flushBuf();
+		ledLight(1, 'g');
+	}
+}
+void offsetsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	ledLight(1, 'b');
+	P(message) =
+		"<!DOCTYPE html><html><head>"
+		"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
+		"<script language=\"javascript\">"
+		"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+		"</script>"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"</head>"
+		"<body>"
+		"<div class=\"content\" style=\"font-weight:bold\">"
+		"Applying default settings, please wait..."
+		"</div>"
+		"</body>"
+		"</html>";
+	server.printP(message);
+	server.flushBuf();
+	SD.remove(Settings.OffsetsPath);
+	Settings.setDefaultOffsetsSettings();
+}
 void settingsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
@@ -743,7 +854,7 @@ void settingsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char 
 	server.printP(message);
 	server.flushBuf();
 	SD.remove(Settings.SettingsPath);
-	Settings.setDefault();
+	Settings.setDefaultSystemSettings();
 }
 void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
@@ -778,35 +889,35 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		{
 			if (strcmp(cBuff1, "DHCP") == 0)
 			{
-				Eth.DHCP = value[0] != '0';
+				Settings.DHCP = value[0] != '0';
 			}
 			if (strcmp(cBuff1, "IP") == 0)
 			{
-				Eth.IP[counter[0]] = atoi(value);
+				Settings.IP[counter[0]] = atoi(value);
 				counter[0]++;
 			}
 			if (strcmp(cBuff1, "Mask") == 0)
 			{
-				Eth.Mask[counter[1]] = atoi(value);
+				Settings.Mask[counter[1]] = atoi(value);
 				counter[1]++;
 			}
 			if (strcmp(cBuff1, "GW") == 0)
 			{
-				Eth.GW[counter[2]] = atoi(value);
+				Settings.GW[counter[2]] = atoi(value);
 				counter[2]++;
 			}
 			if (strcmp(cBuff1, "DNS") == 0)
 			{
-				Eth.DNS[counter[3]] = atoi(value);
+				Settings.DNS[counter[3]] = atoi(value);
 				counter[3]++;
 			}
 		}
 
-		if (!Eth.DHCP && Alarm.active(dhcpAlarm))
+		if (!Settings.DHCP && Alarm.active(dhcpAlarm))
 		{
 			Alarm.disable(dhcpAlarm);
 		}
-		if (Eth.DHCP && !Alarm.active(dhcpAlarm))
+		if (Settings.DHCP && !Alarm.active(dhcpAlarm))
 		{
 			Alarm.enable(dhcpAlarm);
 		}
@@ -815,7 +926,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		String sNewIP = "";
 		for (int i = 0; i < 4; i++)
 		{
-			sNewIP += String(Eth.IP[i]);
+			sNewIP += String(Settings.IP[i]);
 			if (i < 3)
 			{
 				sNewIP += ".";
@@ -877,7 +988,8 @@ void setup()
 	readSDSched();
 	switchRelays();
 	readSDSettings(Settings.SettingsPath);
-	if (!readSDSettings(Settings.EthernetPath)) Eth.DHCP = true; //reading ethernet settings must for some reason take place much earlier than ethernet.begin
+	readSDSettings(Settings.OffsetsPath);
+	if (!readSDSettings(Settings.EthernetPath)) Settings.DHCP = true; //reading ethernet settings must for some reason take place much earlier than ethernet.begin
 	setupLCD();
 	setupWire();
 	setupDHT();
@@ -903,6 +1015,8 @@ void setup()
 	webserver.addCommand("settings.xml", settingsXMLCmd);			//get xml
 	webserver.addCommand("settings.data", settingsDataCmd);			//post data
 	webserver.addCommand("settings.default", settingsDefaultCmd);	//delete settings data from sd
+	webserver.addCommand("offsets.data", offsetsDataCmd);			//post data
+	webserver.addCommand("offsets.default", offsetsDefaultCmd);		//delete settings data from sd
 	webserver.addCommand("network.data", networkDataCmd);			//post data
 	webserver.addCommand("reboot", rebootCmd);						//reboot arduino
 	webserver.begin();
