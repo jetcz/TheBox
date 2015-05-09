@@ -41,6 +41,7 @@ function getSettings() {
         }
     });
 }
+var timeout = 180;
 var runned = false;
 function xmlParseStats(xml) {
     if (!runned) {
@@ -86,10 +87,10 @@ function xmlParseStats(xml) {
                 $('.tdVal').eq(i - offset).css("background-color", "green");
             }
 
-            if (parseInt(value) >= 65 && parseInt(value) < 180) {
+            if (parseInt(value) >= 65 && parseInt(value) < timeout) {
                 $('.tdVal').eq(i - offset).css("background-color", "#e97900");
             }
-            if (parseInt(value) >= 180) {
+            if (parseInt(value) >= timeout) {
                 $('.tdVal').eq(i - offset).css("background-color", "#c70000");
             }
         }
@@ -97,7 +98,8 @@ function xmlParseStats(xml) {
 };
 function xmlParseSettings(xml) {
     //settings
-    $("#timeout").val(parseInt($(xml).find("RemoteDSTimeout").text().trim()));
+    timeout = parseInt($(xml).find("RemoteDSTimeout").text().trim());
+    $("#timeout").val(timeout);
     var InvalidDSAction = parseInt($(xml).find("InvalidDSAction").text().trim());
     var TSEnabled = parseInt($(xml).find("TSEnabled").text().trim());
 
