@@ -21,6 +21,7 @@ struct SystemSettings
 		MainTempOffset = -1.2;
 		TSenabled = true;
 		InvalidDSAction = false;
+		UpdateRainPerDayInterval = 600; //10 min interval
 	}
 	/* ThingSpeak settings */
 	char ThingSpeakAddress[30];
@@ -40,6 +41,8 @@ struct SystemSettings
 
 	/* sensor polling settings */
 	byte UpdateSensorsInterval;
+
+	int UpdateRainPerDayInterval;
 
 	/* sensor offsets */
 	float SysTempOffset;

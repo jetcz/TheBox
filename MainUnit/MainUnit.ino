@@ -867,6 +867,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	ledLight(1, 'g');
 }
 #pragma endregion webduino
+
 void setup()
 {
 	setupSerial();

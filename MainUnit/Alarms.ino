@@ -81,7 +81,7 @@ void printSensorDataSerial(){
 		Serial.print(F("Uptime "));
 		Serial.println(sMainUptime);
 		Serial.print(F("Free ram "));
-		Serial.println(intToString(freeRam()) + "b (" + floatToString(float(freeRam()) / 8192 * 100) + "%)");
+		Serial.println(intToString(freeRam()) + "B (" + floatToString(float(freeRam()) / 8192 * 100) + "%)");
 		Serial.println();
 	}
 	else Serial.println(F("Main Unit DataSet invalid!"));
