@@ -78,12 +78,8 @@
     </None>
     <None Include="general.css" />
     <None Include="graph.css" />
-    <None Include="graph1_iframe.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="graph2_iframe.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <None Include="graph1.js" />
+    <None Include="graph2.js" />
     <None Include="graphs1.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>

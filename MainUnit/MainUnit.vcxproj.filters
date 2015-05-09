@@ -77,15 +77,15 @@
     <None Include="system.js">
       <Filter>www\js</Filter>
     </None>
-    <None Include="graph1_iframe.htm">
-      <Filter>www</Filter>
-    </None>
-    <None Include="graph2_iframe.htm">
-      <Filter>www</Filter>
-    </None>
     <None Include="SDscheduler.ino" />
     <None Include="loader.css">
       <Filter>www\css</Filter>
+    </None>
+    <None Include="graph2.js">
+      <Filter>www\js</Filter>
+    </None>
+    <None Include="graph1.js">
+      <Filter>www\js</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

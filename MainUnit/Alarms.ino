@@ -17,19 +17,16 @@ void printDebug() {
 
 void system() {
 	receiveData();
-	RemoteDS.Valid = isRemoteDataSetValid();
 	sNow = getDateTimeString(now());
 	sMainUptime = getUptimeString(getUptime());
 	enableDisableAlarms();
 	lcdBacklight();
+	RemoteDS.Valid = isRemoteDataSetValid();
 
 	//scheduler part
 	for (int i = 0; i < 4; i++)
 	{
-		if (Settings.RelayMode[i] > 1)
-		{
-			serviceSchedulers(i);
-		}
+		if (Settings.RelayMode[i] > 1) serviceSchedulers(i);
 	}
 }
 
@@ -163,8 +160,7 @@ void thingSpeak(){
 	}
 
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
-	if (RemoteDS.Valid == false) SystemDS.Size = 6;
-	else SystemDS.Size = 8;
+	SystemDS.Size = (RemoteDS.Valid) ? SystemDS.Size = 8 : SystemDS.Size = 6;
 
 	//close previous connnection
 	client.flush();
