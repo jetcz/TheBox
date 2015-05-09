@@ -83,10 +83,10 @@
     <None Include="graph2_iframe.htm">
       <Filter>www</Filter>
     </None>
-    <None Include="spinner.css">
+    <None Include="SDscheduler.ino" />
+    <None Include="loader.css">
       <Filter>www\css</Filter>
     </None>
-    <None Include="SDscheduler.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">
