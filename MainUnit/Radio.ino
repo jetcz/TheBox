@@ -9,10 +9,10 @@ void receiveData() {
 		float temp[9];
 		memcpy(&temp, buf, buflen);
 
-		RemoteDS.Data[0] = temp[0];							 		//remoteTemperature
+		RemoteDS.Data[0] = temp[0] + Settings.RemoteTempOffset;		//remoteTemperature
 		RemoteDS.Data[1] = temp[1];									//remoteHumidity
 		RemoteDS.Data[2] = temp[2];									//remoteHumidex
-		RemoteDS.Data[3] = temp[3];								//remoteSoilTemperature
+		RemoteDS.Data[3] = temp[3] + Settings.SoilTempOffset;		//remoteSoilTemperature
 		RemoteDS.Data[4] = temp[4];									//remoteSoilHumidity
 		RemoteDS.Data[5] = temp[5];									//remoteLight
 		//these get filled in weather sketch

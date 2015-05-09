@@ -82,14 +82,14 @@ function xmlParseStats(xml) {
         }
 
         if (i == offset + 3) {
-            if (parseInt(value) < 63) {
+            if (parseInt(value) < 65) {
                 $('.tdVal').eq(i - offset).css("background-color", "green");
             }
 
-            if (parseInt(value) >= 63 && parseInt(value) < 130) {
+            if (parseInt(value) >= 65 && parseInt(value) < 180) {
                 $('.tdVal').eq(i - offset).css("background-color", "#e97900");
             }
-            if (parseInt(value) >= 130) {
+            if (parseInt(value) >= 180) {
                 $('.tdVal').eq(i - offset).css("background-color", "#c70000");
             }
         }

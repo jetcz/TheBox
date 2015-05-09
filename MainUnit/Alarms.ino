@@ -33,7 +33,7 @@ void system() {
 	}
 }
 
-//fill datasets and apply offsets (apply offsets to some elements of system and  remoty ds aswell)
+//fill datasets and apply offsets
 void prepareDataSetArrays() {
 
 	sensors_event_t event;	//event for bmp180
@@ -55,13 +55,6 @@ void prepareDataSetArrays() {
 	MainDS.Data[4] = (_fVal == -255) ? _fVal : _fVal + Settings.PressureOffset;
 
 	MainDS.Timestamp = now();
-
-	if (bReceivedRadioMsg)
-	{
-		RemoteDS.Data[0] += Settings.RemoteTempOffset;		//remoteTemperature
-		RemoteDS.Data[3] += Settings.SoilTempOffset;		//remoteSoilTemperature
-	}
-
 }
 
 void printSensorDataSerial(){
