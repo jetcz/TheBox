@@ -93,6 +93,7 @@ void getRainPerHour() {
 	static QueueArray <byte> q;
 	static float _fLastTickCnt = fRainTicks;
 	static float _fTicksPerLastHour = 0;
+	if (fRainTicks == 0) _fLastTickCnt = 0; //in case we restart the remote unit and main unit keeps runnig
 
 	float _fTicks = fRainTicks - _fLastTickCnt;
 	_fTicksPerLastHour += _fTicks;
@@ -108,6 +109,7 @@ void getRainPerDay() {
 	static QueueArray <int> q;
 	static float _fLastTickCnt = fRainTicks;
 	static float _fTicksPerLastDay = 0;
+	if (fRainTicks == 0) _fLastTickCnt = 0;
 
 	float _fTicks = fRainTicks - _fLastTickCnt;
 	_fTicksPerLastDay += _fTicks;
