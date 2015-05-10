@@ -80,6 +80,9 @@ String sNow = "";							//current datetime string
 String sMainUptime = "";					//uptime string
 String sRemoteUptime = "";					//uptime string
 bool bReceivedRadioMsg = false;				//received at least one remote ds
+float fRainTicks = 0;
+int nRemoteFreeRam = 0;
+int nMainFreeRam = 0;
 
 //weather variables
 const char* cWeather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -559,6 +562,14 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
+		server.print(nMainFreeRam);		 //free ram main unit
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		server.print(nRemoteFreeRam);	//free ram remote unit
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
 		server.print(SystemDS.Data[0], 1); //systemp
 		server.printP(tag_end_sensor);
 
@@ -1028,7 +1039,7 @@ void setup()
 	MainDS.Timestamp = dtSysStart.unixtime();
 
 	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
-	RemoteDS.Size = 7;
+	RemoteDS.Size = 8;
 	RemoteDS.Valid = false;
 
 	SystemDS.APIkey = "GNQST00GBW05EYGC";

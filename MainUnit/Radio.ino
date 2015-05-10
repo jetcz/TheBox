@@ -6,9 +6,8 @@ void receiveData() {
 	if (driver.recv(buf, &buflen)) // Non-blocking
 	{
 		ledLight(2, 'b');
-		float temp[9];
+		float temp[10];
 		memcpy(&temp, buf, buflen);
-
 
 		RemoteDS.Data[0] = (temp[0] == -255) ? temp[0] : temp[0] + Settings.RemoteTempOffset;		//remoteTemperature
 		RemoteDS.Data[1] = temp[1];																	//remoteHumidity
@@ -19,11 +18,13 @@ void receiveData() {
 		//these get filled in weather sketch
 		//RemoteDS.Data[6]
 		//RemoteDS.Data[7]
-		RemoteDS.Data[8] = temp[6];									//total ticks (hidden field)
+		fRainTicks = temp[6];										//total ticks 
 		RemoteDS.Timestamp = now();
 
 		SystemDS.Data[6] = temp[7];									//vcc
 		SystemDS.Data[7] = temp[8];									//uptime
+
+		nRemoteFreeRam = temp[9];									//remote free ram
 
 		sRemoteUptime = getUptimeString(TimeSpan(SystemDS.Data[7]));
 		bReceivedRadioMsg = true;

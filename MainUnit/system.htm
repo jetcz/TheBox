@@ -100,12 +100,21 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="leftHeader">Free Ram</td>
+                        <td>
+                            <span class="Value"></span>B / <span id="mainRamPerc"></span>%
+                        </td>
+                        <td>
+                            <span class="Value"></span>B / <span id="remoteRamPerc"></span>%
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="leftHeader">Sys Temperature</td>
                         <td>
                             <span class="Value"></span>&deg;C
                         </td>
                         <td>
-                            &nbsp;
+                            -
                         </td>
                     </tr>
                     <tr>
@@ -130,10 +139,10 @@
                     <tr>
                         <td class="leftHeader">Failed Msg Cnt</td>
                         <td>
-                            <span class="Value"></span>
+                            <span class="Value"></span> TS msgs
                         </td>
                         <td>
-                            <span class="Value"></span>
+                            <span class="Value"></span> Radio msgs
                         </td>
                     </tr>
                     <tr>
@@ -186,7 +195,7 @@
                             </tr>
                             <tr>
                                 <td class="leftHeader">
-                                    Invalid DS action
+                                    Invalid DS relay action
                                 </td>
                                 <td style="text-align: left">
                                     <input type="radio" name="action" value="0">
@@ -198,7 +207,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">Thingspeak</td>
+                                <td class="leftHeader">Thingspeak upload</td>
                                 <td style="text-align: left">
                                     <input type="radio" name="thingspeak" value="0">
                                     OFF

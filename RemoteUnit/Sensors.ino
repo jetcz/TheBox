@@ -16,6 +16,7 @@ void prepareDataSetArrays() {
 	fRemoteUnitDataSet[6] = fRainTips;							//rain tips
 	interrupts();
 	fRemoteUnitDataSet[8] = getUptime();						//uptime
+	fRemoteUnitDataSet[9] = freeRam();							//freeRam
 
 
 }

@@ -91,14 +91,14 @@ void weatherForecast() {
 void getRainPerHour() {
 	if (!bReceivedRadioMsg) return;
 	static QueueArray <byte> q;
-	static float _fLastTickCnt = RemoteDS.Data[8];
+	static float _fLastTickCnt = fRainTicks;
 	static float _fTicksPerLastHour = 0;
 
-	float _fTicks = RemoteDS.Data[8] - _fLastTickCnt;
+	float _fTicks = fRainTicks - _fLastTickCnt;
 	_fTicksPerLastHour += _fTicks;
 	q.push(byte(_fTicks));
 	if (q.count() > 60) _fTicksPerLastHour -= q.pop();
-	_fLastTickCnt = RemoteDS.Data[8];
+	_fLastTickCnt = fRainTicks;
 	RemoteDS.Data[6] = _fTicksPerLastHour * 0.3;
 };
 
@@ -106,14 +106,14 @@ void getRainPerDay() {
 	if (!bReceivedRadioMsg) return;
 	Alarm.disable(getInitialTipCntAlarm);
 	static QueueArray <int> q;
-	static float _fLastTickCnt = RemoteDS.Data[8];
+	static float _fLastTickCnt = fRainTicks;
 	static float _fTicksPerLastDay = 0;
 
-	float _fTicks = RemoteDS.Data[8] - _fLastTickCnt;
+	float _fTicks = fRainTicks - _fLastTickCnt;
 	_fTicksPerLastDay += _fTicks;
 	q.push(int(_fTicks));
 	if (q.count() > 86400 / Settings.UpdateRainPerDayInterval) _fTicksPerLastDay -= q.pop(); //if the interval is set to 10 min, fifo is 144 bytes long
-	_fLastTickCnt = RemoteDS.Data[8];
+	_fLastTickCnt = fRainTicks;
 	RemoteDS.Data[7] = _fTicksPerLastDay * 0.3;
 };
 

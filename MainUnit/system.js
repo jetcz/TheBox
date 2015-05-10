@@ -57,8 +57,18 @@ function xmlParseStats(xml) {
         var value = $(this).text().trim();
         $(".Value").eq(i).text(value);
 
+        //calculate percentage of free ram
+        if (i == 2) {
+            var perc = parseFloat(value) / 8192 * 100;
+            $("#mainRamPerc").text(perc.toFixed(1));
+        }
+        //calculate percentage of free ram
+        if (i == 3) {
+            var perc = parseFloat(value) / 2048 * 100;
+            $("#remoteRamPerc").text(perc.toFixed(1));
+        }
         //color td starting offset
-        var offset = 3
+        var offset = 5;
         //preset voltage background color
         if (i == offset || i == offset + 1) {
             if (parseInt(value) > 4800) {

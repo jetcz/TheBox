@@ -7,6 +7,13 @@
     <TSAddr>api.thingspeak.com</TSAddr>
     <NTPAddr>tik.cesnet.cz</NTPAddr>
   </General>
+  <Offsets>
+    <SysTempOffset>-0.20</SysTempOffset>
+    <PressureOffset>24.00</PressureOffset>
+    <MainTempOffset>-1.20</MainTempOffset>
+    <RemoteTempOffset>-0.70</RemoteTempOffset>
+    <SoilTempOffset>-0.20</SoilTempOffset>
+  </Offsets>
   <Net>
     <DHCP>0</DHCP>
     <V>10</V>

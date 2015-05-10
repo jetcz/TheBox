@@ -169,30 +169,21 @@ void printLcdScreen3() {
 	lcd.print(F("RDS age    "));
 	lcd.setCursor(8, 2);
 	lcd.print(s);
-	lcd.setCursor(17-intToString(nFailedCntRadioTotal).length(), 2);
-	lcd.print(F("FR "));
+	lcd.setCursor(17 - intToString(nFailedCntRadioTotal).length(), 2);
+	lcd.print(F("fR "));
 	lcd.print(nFailedCntRadioTotal);
 
 	//4
 	lcd.setCursor(0, 3);
 	lcd.print(F("FreeRAM "));
-	lcd.print(floatToString(float(freeRam()) / 8192 * 100));
+	lcd.print(floatToString(float(nMainFreeRam) / 8192 * 100));
 	lcd.print(F("% "));
-	lcd.setCursor(17-intToString(nFailedCntTSTotal).length(), 3);
-	lcd.print(F("FT "));
+	lcd.setCursor(17 - intToString(nFailedCntTSTotal).length(), 3);
+	lcd.print(F("fT "));
 	lcd.print(nFailedCntTSTotal);
-
-
 }
 
 void lcdBacklight() {
-
-	if (getMainPir())
-	{
-		lcd.backlight();
-	}
-	else
-	{
-		lcd.noBacklight();
-	}
+	if (getMainPir()) lcd.backlight();
+	else lcd.noBacklight();
 }

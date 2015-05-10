@@ -83,7 +83,7 @@ struct SystemSettings
 
 struct DataSet
 {
-	float Data[9] = { 0 };
+	float Data[8] = { 0 };
 	byte Size;
 	bool Valid;
 	String APIkey;
@@ -111,4 +111,21 @@ struct RelayScheduler
 		}
 	}
 }; typedef struct RelayScheduler RelayScheduler;
+
+/*
+				MainDS			RemoteDS				SystemDS
+TS size			5				8						8
+				mainTemperature	remoteTemperature		sysTemperature
+				mainHumidity	remoteHumidity			sysUptime
+				mainHumidex		remoteHumidex			relay1
+				mainPir			remoteSoilTemperature	relay2
+				pressure		remoteSoilHumidity		relay3
+								remoteLight				relay4
+								rainHour				remoteVoltage
+								rainDay					remoteUptime
+not sent to TS					rainTicks				remoteFreeRam
+not sent to TS											mainFreeRam
+
+*/
+
 

@@ -16,33 +16,36 @@ void printDebug() {
 }
 
 void system() {
-	receiveData();
+	RemoteDS.Valid = isRemoteDataSetValid();
 	sNow = getDateTimeString(now());
 	sMainUptime = getUptimeString(getUptime());
 	enableDisableAlarms();
-	lcdBacklight();
-	RemoteDS.Valid = isRemoteDataSetValid();
+	lcdBacklight();	
 
 	//scheduler part
 	for (int i = 0; i < 4; i++)
 	{
 		if (Settings.RelayMode[i] > 1) serviceSchedulers(i);
 	}
+	receiveData();
 }
 
 //fill datasets and apply offsets
 void prepareDataSetArrays() {
 
 	sensors_event_t event;	//event for bmp180
+	//system DS
 	float _fVal;
 	_fVal = getSysTemperature(event);
 	SystemDS.Data[0] = (_fVal == -255) ? _fVal : _fVal + Settings.SysTempOffset;
 	SystemDS.Data[1] = getUptime().totalseconds();
-
 	for (int i = 0; i < 4; i++)
 	{
 		SystemDS.Data[i + 2] = getRelayState(i);
 	}
+	nMainFreeRam = freeRam();
+
+	//main DS
 	_fVal = getMainTemperature();
 	MainDS.Data[0] = (_fVal == -255) ? _fVal : _fVal + Settings.MainTempOffset;
 	MainDS.Data[1] = getMainHumidity();
@@ -80,7 +83,7 @@ void printSensorDataSerial(){
 		Serial.print(F("Uptime "));
 		Serial.println(sMainUptime);
 		Serial.print(F("Free ram "));
-		Serial.println(intToString(freeRam()) + "B (" + floatToString(float(freeRam()) / 8192 * 100) + "%)");
+		Serial.println(intToString(nMainFreeRam) + "B (" + floatToString(float(nMainFreeRam) / 8192 * 100) + "%)");
 		Serial.println();
 	}
 	else Serial.println(F("Main Unit DataSet invalid!"));
@@ -114,6 +117,8 @@ void printSensorDataSerial(){
 		Serial.println(F("mV"));
 		Serial.print(F("Uptime "));
 		Serial.println(getUptimeString(TimeSpan(SystemDS.Data[7])));
+		Serial.print(F("Free ram "));
+		Serial.println(intToString(nRemoteFreeRam) + "B (" + floatToString(float(nRemoteFreeRam) / 2048 * 100) + "%)");
 	}
 	else Serial.println(F("Remote Unit DataSet invalid!"));
 }
@@ -157,7 +162,7 @@ void thingSpeak(){
 #endif
 		byCurrentDataSet++;
 		return; //cancel thingspeak update
-	}
+}
 
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
 	SystemDS.Size = (RemoteDS.Valid) ? SystemDS.Size = 8 : SystemDS.Size = 6;
@@ -198,7 +203,7 @@ void thingSpeak(){
 #endif
 		updateThingSpeak(*DataSetPtr[byCurrentDataSet]);
 		byCurrentDataSet++;
-	}
+		}
 	// Check if Ethernet needs to be restarted
 	if ((nFailedCounter % Settings.RestartEthernetThreshold) == 0 && nFailedCounter != 0){
 		ledLight(3, 'r');
@@ -281,7 +286,7 @@ void syncRTCwithNTP() {
 #if DEBUG
 		Serial.println(F("NTP time sync failed!"));
 #endif
-	}
+}
 }
 
 void dhcp() {
@@ -310,7 +315,7 @@ void dhcp() {
 		Serial.println(Ethernet.dnsServerIP());
 #endif
 		ledLight(1, 'g');
-	}
+}
 }
 
 void writeSD() {
@@ -328,7 +333,7 @@ void writeSD() {
 		lcd.print(F("settings to SD card"));
 		lcd.setCursor(0, 2);
 		lcd.print(F("failed!"));
-	}
+}
 	else
 	{
 #if DEBUG

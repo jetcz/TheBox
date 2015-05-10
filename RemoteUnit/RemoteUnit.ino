@@ -29,11 +29,11 @@ const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
 
-const int nSleepTime2 = 1200;
+const int nSleepTime2 = 1500;
 #if debug
 const int nSleepTime = 18548 - nSleepTime2 - 1000; 
 #else
-const int nSleepTime = 18560 - nSleepTime2;
+const int nSleepTime = 18550 - nSleepTime2;
 #endif
 char buffer[24];
 #define DHTTYPE DHT22
@@ -48,7 +48,7 @@ RunningAverage Humidex(3);
 RunningAverage SoilTemp(3);
 RunningAverage SoilHum(3);
 
-float fRemoteUnitDataSet[9] = { 0 };
+float fRemoteUnitDataSet[10] = { 0 };
 volatile float fRainTips = 0;
 float *Vcc = &fRemoteUnitDataSet[7];
 
