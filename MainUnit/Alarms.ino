@@ -197,37 +197,13 @@ void thingSpeak(){
 		byCurrentDataSet++;
 		return; //cancel thingspeak update
 }
-
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
 	SystemDS.Size = (RemoteDS.Valid) ? SystemDS.Size = 8 : SystemDS.Size = 6;
 
-	//close previous connnection
+	//close previous connnection DO NOT CLOSE CONNECTION TEST
 	client.flush();
-	client.stop();
-	int iTimeout = 0;
-	while (client.status() != 0 && iTimeout < 5000) {
-		Alarm.delay(5);
-		iTimeout += 5;
-	}
-	if (iTimeout > 5000)
-	{
-#if DEBUG
-		Serial.println();
-		Serial.println(F("Couldn't close connection"));
-#endif
-
-		ledLight(3, 'r');
-	}
-	else
-#if DEBUG
-		Serial.println();
-	Serial.println(F("Connection closed"));
-	Serial.println();
-#endif
-
-	// Update ThingSpeak
-	if (!client.connected())
-	{ // iterate through our array of pointers to our dataset arrays 
+	
+	//{ // iterate through our array of pointers to our dataset arrays 
 		if (byCurrentDataSet > 2) {
 			byCurrentDataSet = 0;
 		}
@@ -237,7 +213,7 @@ void thingSpeak(){
 #endif
 		updateThingSpeak(*DataSetPtr[byCurrentDataSet]);
 		byCurrentDataSet++;
-		}
+
 	// Check if Ethernet needs to be restarted
 	if ((nFailedCounter % Settings.RestartEthernetThreshold) == 0 && nFailedCounter != 0){
 		ledLight(3, 'r');
