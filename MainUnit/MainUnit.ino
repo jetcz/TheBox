@@ -17,6 +17,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <IniFile.h>
 #include <QueueArray.h>
+#include <EmonLib.h>
 #include "avr/pgmspace.h"
 #include "DataStructures.h"
 
@@ -60,14 +61,14 @@ WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
+EnergyMonitor emon;
 
 //initialize custom structs
-SystemSettings Settings;			//her are all user configurables
+SystemSettings Settings;			//here are all user configurables
 DataSet MainDS;						//main dataset
 DataSet RemoteDS;					//remote dataset
 DataSet SystemDS;					//system dataset (warning, system dataset contains values from both main and remote unit)
 RelayScheduler Sched[4];			//scheduler settings
-
 
 //global variables
 unsigned int nFailedCounter;			//failed thingspeak uploads
@@ -148,7 +149,7 @@ P(messageSDFail) =
 void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
-	server.httpSuccess("text/html", "Connection: keep-alive"CRLF);
+	server.httpSuccess();
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/index.htm");        // open web page file
@@ -276,7 +277,7 @@ void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
-	server.httpSuccess("text/html"CRLF);
+	server.httpSuccess();
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/graphs1.htm");        // open web page file
@@ -294,7 +295,7 @@ void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
-	server.httpSuccess("text/html"CRLF);
+	server.httpSuccess();
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/graphs2.htm");        // open web page file
@@ -312,7 +313,7 @@ void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
-	server.httpSuccess("text/html"CRLF);
+	server.httpSuccess();
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/sched.htm");        // open web page file
@@ -335,7 +336,7 @@ void schedXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.httpFail();
 		return;
 	}
-	server.httpSuccess("text/xml", "Connection: keep-alive"CRLF);
+	server.httpSuccess("text/xml");
 
 	if (type == WebServer::GET)
 	{
@@ -482,6 +483,7 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 void schedDeleteCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
+	server.httpSuccess();
 	P(message) =
 		"<!DOCTYPE html><html><head>"
 		"<meta http-equiv=\"refresh\" content=\"1; url=sched.htm\">"
@@ -508,7 +510,7 @@ void schedDeleteCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
-	server.httpSuccess("text/html"CRLF);
+	server.httpSuccess();
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/system.htm");        // open web page file
@@ -613,7 +615,7 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.httpFail();
 		return;
 	}
-	server.httpSuccess("text/xml", "Connection: keep-alive"CRLF);
+	server.httpSuccess("text/xml");
 
 	if (type == WebServer::GET)
 	{
@@ -850,6 +852,7 @@ void offsetsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 void offsetsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
+	server.httpSuccess();
 	P(message) =
 		"<!DOCTYPE html><html><head>"
 		"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
@@ -872,6 +875,7 @@ void offsetsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char *
 void settingsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
+	server.httpSuccess();
 	P(message) =
 		"<!DOCTYPE html><html><head>"
 		"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
@@ -894,6 +898,7 @@ void settingsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char 
 void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'c');
+	server.httpSuccess();
 	P(message) =
 		"<!DOCTYPE html><html><head>"
 		"<meta http-equiv=\"refresh\" content=\"3; url=system.htm\">"
@@ -1086,8 +1091,4 @@ void loop()
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
 	webserver.processConnection();	//process webserver request as soon as possible
 }
-
-//TO DO
-//handle connectivity check better without dhcp
-//ethernet.maintain is blocking - if we dont get ip at startup, it blocks the whole unit for x (look into ethernet library) sec every  loop
 

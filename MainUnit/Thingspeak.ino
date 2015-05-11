@@ -1,6 +1,6 @@
 //************************************
 // Method:   	 updateThingSpeak
-// Description:  Creates string suitable for upload to Thingspeak, the actualy uploads it. Handles also fail counters, leds, and debug msgs.
+// Description:  Creates string suitable for upload to Thingspeak, then actually uploads it. Handles also fail counters, leds, and debug msgs.
 // Access:   	 public 
 // Returns:  	 void
 // Qualifier:	
@@ -10,35 +10,35 @@ void updateThingSpeak(DataSet ds){
 	ledLight(3, 'b');
 	/* This produces nice string for ThingSpeak like 1=21.5&2=51.8&3=..... etc depending on what array you put in.
 	The values in array MUST be sorted exactly like ThingSpeak fields go one by one: {teperature, humidity, humidex etc....} */
-	String s;
+	String _sValues;
 	for (int i = 0; i < ds.Size; i++)
 	{
 		if (ds.Data[i] > -100) //in case we get some broken values which are -255
 		{
-			s += intToString(i + 1) + "=" + floatToString(ds.Data[i]);
+			_sValues += intToString(i + 1) + "=" + floatToString(ds.Data[i]);
 
 			if (i < ds.Size - 1) {
-				s += "&";
+				_sValues += "&";
 			}
 		}
 	}
-	//update thingspeak
+	//connect to thingspeak
 	if (!client.connected())
 	{
 #if DEBUG
 		Serial.print(F("Connecting to ThingSpeak..."));
 #endif
+		ledLight(3, 'c');
 		client.connect(Settings.ThingSpeakAddress, 80);
 	}
+	//update thingspeak
 	if (client.connected())	{
+		nFailedCounter = 0;
 #if DEBUG
 		Serial.println(F("Connected to ThingSpeak"));
 		Serial.println(F("Sending data... "));
-		Serial.println(s);
+		Serial.println(_sValues);
 #endif
-		nFailedCounter = 0;
-
-		//POST update to thingspeak, print line by line
 		client.print(F("POST /update HTTP/1.1\n"));
 		client.print(F("Host: api.thingspeak.com\n"));
 		client.print(F("Connection: Keep-Alive\n"));
@@ -46,12 +46,19 @@ void updateThingSpeak(DataSet ds){
 		client.print(ds.APIkey + "\n");
 		client.print(F("Content-Type: application/x-www-form-urlencoded\n"));
 		client.print(F("Content-Length: "));
-		client.print(intToString(s.length()) + "\n\n");
-		client.println(s);
+		client.print(intToString(_sValues.length()) + "\n\n");
+		client.println(_sValues);
 		ledLight(3, 'g');
-	}
+}
 	else
 	{
+#if DEBUG
+		Serial.print(F("Connecting to ThingSpeak failed "));
+		Serial.print(intToString(nFailedCounter));
+		Serial.println(F(" times!"));
+		Serial.println();
+#endif
+		client.stop();
 		if (nFailedCounter > Settings.RestartEthernetThreshold)	ledLight(3, 'r');
 		else ledLight(3, 'y');
 		nFailedCounter++;
@@ -65,11 +72,5 @@ void updateThingSpeak(DataSet ds){
 		lcd.setCursor(0, 2);
 		lcd.print(intToString(nFailedCounter));
 		lcd.print(F(" times!"));
-#if DEBUG
-		Serial.print(F("Connecting to ThingSpeak failed "));
-		Serial.print(intToString(nFailedCounter));
-		Serial.println(F(" times!"));
-		Serial.println();
-#endif
-	}
+}
 }
