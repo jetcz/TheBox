@@ -1,3 +1,11 @@
+//************************************
+// Method:   	 updateThingSpeak
+// Description:  Creates string suitable for upload to Thingspeak, the actualy uploads it. Handles also fail counters, leds, and debug msgs.
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+// Parameter:	 DataSet ds
+//************************************
 void updateThingSpeak(DataSet ds){
 	/* This produces nice string for ThingSpeak like 1=21.5&2=51.8&3=..... etc depending on what array you put in.
 	The values in array MUST be sorted exactly like ThingSpeak fields go one by one: {teperature, humidity, humidex etc....} */

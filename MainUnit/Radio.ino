@@ -1,12 +1,19 @@
-
+//************************************
+// Method:   	 receiveData
+// Description:  Receive data from radio module and fill our datasets
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void receiveData() {
-	uint8_t buf[RH_ASK_MAX_MESSAGE_LEN];
-	uint8_t buflen = sizeof(buf);
+	const byte _byArrSize = 10; //how much float values are we sending
 
+	uint8_t buf[_byArrSize * 4];
+	uint8_t buflen = sizeof(buf);
 	if (driver.recv(buf, &buflen)) // Non-blocking
 	{
 		ledLight(2, 'b');
-		float temp[10];
+		float temp[_byArrSize];
 		memcpy(&temp, buf, buflen);
 
 		RemoteDS.Data[0] = (temp[0] == -255) ? temp[0] : temp[0] + Settings.RemoteTempOffset;		//remoteTemperature
@@ -31,10 +38,16 @@ void receiveData() {
 	}
 }
 
-//this needs to be called once per second
+//************************************
+// Method:   	 getFailedRadioMessages
+// Description:  Calculate how many radio transmissions failed since main unit startup presuming that the remote unit is up and running and sending interval is 60s. This needs to be called every second.
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void getFailedRadioMessages(){
-	static unsigned long _lCnt = 0;
-	static bool _bRepeat = false;
+	static int getFailedRadioMsgs;
+	static unsigned int _lCnt = 0;
 	_lCnt++;
 
 	//this is to find out how many radio transmissions failed
@@ -44,9 +57,5 @@ void getFailedRadioMessages(){
 		_lCnt = 0;
 	}
 
-	if (!_bRepeat)
-	{
-		_bRepeat = true;
-		Alarm.timerRepeat(1, getFailedRadioMessages);
-	}
+	if (getFailedRadioMsgs == 0) getFailedRadioMsgs = Alarm.timerRepeat(1, getFailedRadioMessages);
 }

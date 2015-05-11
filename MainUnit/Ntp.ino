@@ -31,27 +31,27 @@ unsigned long ntpUnixTime(UDP &udp)
 		return 0;				// sending request failed
 
 	// Wait for response; check every pollIntv ms up to maxPoll times
-	const int pollIntv = 150;		// poll every this many ms
-	const byte maxPoll = 10;		// poll up to this many times
-	int pktLen;				// received packet length
-	for (byte i = 0; i<maxPoll; i++) {
-		if ((pktLen = udp.parsePacket()) == 48)
+	const int _nPollIntv = 150;		// poll every this many ms
+	const byte _byMaxPoll = 10;		// poll up to this many times
+	int _nPktLen;				// received packet length
+	for (byte i = 0; i < _byMaxPoll; i++) {
+		if ((_nPktLen = udp.parsePacket()) == 48)
 			break;
-		Alarm.delay(pollIntv);
+		Alarm.delay(_nPollIntv);
 	}
-	if (pktLen != 48)
+	if (_nPktLen != 48)
 		return 0;				// no correct packet received
 
 	// Read and discard the first useless bytes
 	// Set useless to 32 for speed; set to 40 for accuracy.
-	const byte useless = 40;
-	for (byte i = 0; i < useless; ++i)
+	const byte _byUseless = 40;
+	for (byte i = 0; i < _byUseless; ++i)
 		udp.read();
 
 	// Read the integer part of sending time
-	unsigned long time = udp.read();	// NTP time
+	unsigned long _lTime = udp.read();	// NTP time
 	for (byte i = 1; i < 4; i++)
-		time = time << 8 | udp.read();
+		_lTime = _lTime << 8 | udp.read();
 
 	// Round to the nearest second if we want accuracy
 	// The fractionary part is the next byte divided by 256: if it is
@@ -59,11 +59,11 @@ unsigned long ntpUnixTime(UDP &udp)
 	// for an assumed network delay of 50ms, and (0.5-0.05)*256=115;
 	// additionally, we account for how much we delayed reading the packet
 	// since its arrival, which we assume on average to be pollIntv/2.
-	time += (udp.read() > 115 - pollIntv / 8);
+	_lTime += (udp.read() > 115 - _nPollIntv / 8);
 
 	// Discard the rest of the packet
 	udp.flush();
 
-	return time - 2208988800ul;		// convert NTP time to Unix time
+	return _lTime - 2208988800ul;		// convert NTP time to Unix time
 }
 

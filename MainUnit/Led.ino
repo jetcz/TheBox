@@ -1,3 +1,12 @@
+//************************************
+// Method:   	 ledLight
+// Description:  Lights up specified led with specified color
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+// Parameter:	 int led (1, 2, 3)
+// Parameter:	 char color (r, g, b, c, m, y, k)
+//************************************
 void ledLight(int led, char color) {
 	if (led == 1)
 	{

@@ -1,3 +1,10 @@
+//************************************
+// Method:   	 ledLight
+// Description:  Lights up led with specified color
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+// Parameter:	 char color (r, g, b, c, m, y, k)
 void ledLightDigital(char color) {
 
 	switch (color)

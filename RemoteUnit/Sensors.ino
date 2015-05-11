@@ -1,3 +1,10 @@
+//************************************
+// Method:   	 prepareDataSetArrays
+// Description:  Fills dataset with sensor readings.
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void prepareDataSetArrays() {
 
 
@@ -21,6 +28,13 @@ void prepareDataSetArrays() {
 
 }
 
+//************************************
+// Method:   	 printSensorData
+// Description:  Print sensor data to serial port.
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void printSensorData() {
 	Serial.print(F("Air temp: "));
 	Serial.print(fRemoteUnitDataSet[0], 1);
@@ -64,6 +78,15 @@ void printSensorData() {
 	Serial.println();
 }
 
+
+//************************************
+// Method:   	 powerSensors
+// Description:  Powers sensors if true. Disabùles sensors if false. (excluding DHT22 and DS18B20, these need to be handled separately)
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+// Parameter:	 bool state
+//************************************
 void powerSensors(bool state) {
 	if (state)
 	{
@@ -138,6 +161,14 @@ byte getSoilHumidity() {
 	return SoilHum.getAverage();
 }
 
+
+//************************************
+// Method:   	 ISRTipCnt
+// Description:  Interrupt method to gather tipping bucket tip count.
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void ISRTipCnt() {
 	fRainTips++;
 }

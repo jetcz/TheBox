@@ -1,4 +1,12 @@
-/* reset ethernet shield */
+
+//************************************
+// Method:   	 resetEthShield
+// Description:  Performs hardware reset of the ethernet shield
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+// Parameter:	 int pin
+//************************************
 void resetEthShield(int pin) {
 	pinMode(pin, OUTPUT);
 #if DEBUG
@@ -10,6 +18,14 @@ void resetEthShield(int pin) {
 	delay(250);
 }
 
+
+//************************************
+// Method:   	 isRemoteDataSetValid
+// Description:  Whether or not is the remote dataset valid, also lights up led accordingly
+// Access:   	 public 
+// Returns:  	 bool
+// Qualifier:	
+//************************************
 bool isRemoteDataSetValid() {
 	bool _bValid;
 
@@ -33,12 +49,27 @@ bool isRemoteDataSetValid() {
 	return _bValid;
 }
 
+//************************************
+// Method:   	 freeRam
+// Description:  Amount of free RAM in Bytes
+// Access:   	 public 
+// Returns:  	 int
+// Qualifier:	
+//************************************
 int freeRam() {
 	extern int __heap_start, *__brkval;
 	int _nVal;
 	return (int)&_nVal - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
 }
 
+
+//************************************
+// Method:   	 readVcc
+// Description:  Exact measurement of 5V
+// Access:   	 public 
+// Returns:  	 long
+// Qualifier:	
+//************************************
 long readVcc() {
 	// Read 1.1V reference against AVcc
 	// set the reference to Vcc and the measurement to the internal 1.1V reference
@@ -62,16 +93,40 @@ long readVcc() {
 	return result; // Vcc in millivolts
 }
 
+
+//************************************
+// Method:   	 getDateTimeString
+// Description:  Creates string of supplied DateTime
+// Access:   	 public 
+// Returns:  	 String
+// Qualifier:	
+// Parameter:	 DateTime t
+//************************************
 String getDateTimeString(DateTime t)
 {
 	sprintf(cBuff1, "%02d.%02d.%04d  %02d:%02d:%02d", t.day(), t.month(), t.year(), t.hour(), t.minute(), t.second());
 	return cBuff1;
 }
 
+//************************************
+// Method:   	 getUptime
+// Description:  Returns uptime of the system
+// Access:   	 public 
+// Returns:  	 TimeSpan
+// Qualifier:	
+//************************************
 TimeSpan getUptime(){
 	return DateTime(now()) - dtSysStart;
 }
 
+//************************************
+// Method:   	 getUptimeString
+// Description:  Returns uptime of the system as a string
+// Access:   	 public 
+// Returns:  	 String
+// Qualifier:	
+// Parameter:	 TimeSpan ts
+//************************************
 String getUptimeString(TimeSpan ts) {
 	sprintf(cBuff1, "%dd %02d:%02d:%02d", ts.days(), ts.hours(), ts.minutes(), ts.seconds());
 	return cBuff1;

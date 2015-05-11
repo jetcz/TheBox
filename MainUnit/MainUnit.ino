@@ -67,22 +67,22 @@ DataSet MainDS;						//main dataset
 DataSet RemoteDS;					//remote dataset
 DataSet SystemDS;					//system dataset (warning, system dataset contains values from both main and remote unit)
 RelayScheduler Sched[4];			//scheduler settings
-//EthernetSettings Settings;				//ethernet settings
+
 
 //global variables
-int nFailedCounter = 0;						//failed thingspeak uploads
-unsigned int nFailedCntTSTotal = 0;			//total failed thing speak messages
-unsigned int nFailedCntRadioTotal = 0;		//total failed radio messages
-DateTime dtSysStart;						//time of system start for uptime 
-DateTime dtLastNTPsync = 0;					//time of last ntp sync
-byte byCurrentDataSet = 0;					//for cycling betweeen thingspeak datasets
-String sNow = "";							//current datetime string
-String sMainUptime = "";					//uptime string
-String sRemoteUptime = "";					//uptime string
-bool bReceivedRadioMsg = false;				//received at least one remote ds
-float fRainTicks = 0;
-int nRemoteFreeRam = 0;
-int nMainFreeRam = 0;
+unsigned int nFailedCounter;			//failed thingspeak uploads
+unsigned int nFailedCntTSTotal;			//total failed thing speak messages
+unsigned int nFailedCntRadioTotal;		//total failed radio messages
+DateTime dtSysStart;					//time of system start for uptime 
+DateTime dtLastNTPsync;					//time of last ntp sync
+byte byCurrentDataSet;					//for cycling betweeen thingspeak datasets
+String sNow;							//current datetime string
+String sMainUptime;						//uptime string
+String sRemoteUptime;					//uptime string
+bool bReceivedRadioMsg = false;			//received at least one remote ds
+float fRainTicks;
+unsigned int nRemoteFreeRam;
+unsigned int nMainFreeRam;
 
 //weather variables
 const char* cWeather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -125,11 +125,9 @@ int dhcpAlarm;
 int writeSDAlarm;
 int getInitialTipCntAlarm;
 
-
 //reboot arduino
 void(*resetFunc) (void) = 0;
 
-//webduino commands implementation
 #pragma region webduino
 P(messageSDFail) =
 "<!DOCTYPE html><html><head>"
@@ -547,8 +545,12 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.print(sNow + " " + tcr->abbrev);
 		server.print(F("</Loc>"));
 		server.print(F("<Sync>"));
-		if (now() - dtLastNTPsync.unixtime() > 1000000000) server.print("never");
-		else server.print(getUptimeString(DateTime(now()) - dtLastNTPsync) + " ago");
+		if (now() - dtLastNTPsync.unixtime() > 1000000000) server.print(F("never"));
+		else
+		{
+			server.print(getUptimeString(DateTime(now()) - dtLastNTPsync));
+			server.print(F(" ago"));
+		}
 		server.print(F("</Sync>"));
 		server.print(F("</Time>"));
 		server.print(F("<Stats>"));
@@ -587,7 +589,7 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 
 		server.printP(tag_start_sensor);
 		if (bReceivedRadioMsg) server.print(now() - RemoteDS.Timestamp.unixtime());
-		else server.print(9999);
+		else server.print(F("9999"));
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
@@ -605,7 +607,6 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 };
 void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
-	Serial.println("///////////////////////////settings xml");
 	ledLight(1, 'c');
 	if (type == WebServer::POST)
 	{
@@ -693,29 +694,35 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 }
 void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	const static char remoteDStimeout[] PROGMEM = "remoteDStimeout";
+	const static char action[] PROGMEM = "action";
+	const static char thingspeak[] PROGMEM = "thingspeak";
+	const static char tsaddr[] PROGMEM = "tsaddr";
+	const static char ntpaddr[] PROGMEM = "ntpaddr";
+
 	ledLight(1, 'y');
 	server.httpSuccess();
 	if (type == WebServer::POST)
 	{
 		while (server.readPOSTparam(cBuff1, nBuffLen1, cBuff2, nBuffLen2)) //buffer = name, buff = value
 		{
-			if (strcmp(cBuff1, "remoteDStimeout") == 0)
+			if (strcmp_P(cBuff1, remoteDStimeout) == 0)
 			{
 				Settings.RemoteDataSetTimeout = atoi(cBuff2);
 			}
-			if (strcmp(cBuff1, "action") == 0)
+			if (strcmp_P(cBuff1, action) == 0)
 			{
 				Settings.InvalidDSAction = cBuff2[0] != '0';
 			}
-			if (strcmp(cBuff1, "thingspeak") == 0)
+			if (strcmp_P(cBuff1, thingspeak) == 0)
 			{
 				Settings.TSenabled = cBuff2[0] != '0';
 			}
-			if (strcmp(cBuff1, "tsaddr") == 0)
+			if (strcmp_P(cBuff1, tsaddr) == 0)
 			{
 				memcpy(&Settings.ThingSpeakAddress, cBuff2, nBuffLen2);
 			}
-			if (strcmp(cBuff1, "ntpaddr") == 0)
+			if (strcmp_P(cBuff1, ntpaddr) == 0)
 			{
 				memcpy(&Settings.NTPServer, cBuff2, nBuffLen2);
 			}
@@ -754,34 +761,51 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 		if (writeSDSettings()) server.printP(messageSuccess);
 		else server.printP(messageFail);
 		server.flushBuf();
+
+		//enable/disable thingspeak
+		if (Settings.TSenabled && !Alarm.active(updateTSAlarm))
+		{
+			Alarm.enable(updateTSAlarm);
+		}
+		if (!Settings.TSenabled && Alarm.active(updateTSAlarm))
+		{
+			Alarm.disable(updateTSAlarm);
+		}
+
 		ledLight(1, 'g');
 	}
 }
 void offsetsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	const static char SysTempOffset[] PROGMEM = "SysTempOffset";
+	const static char PressureOffset[] PROGMEM = "PressureOffset";
+	const static char MainTempOffset[] PROGMEM = "MainTempOffset";
+	const static char RemoteTempOffset[] PROGMEM = "RemoteTempOffset";
+	const static char SoilTempOffset[] PROGMEM = "SoilTempOffset";
+
 	ledLight(1, 'y');
 	server.httpSuccess();
 	if (type == WebServer::POST)
 	{
 		while (server.readPOSTparam(cBuff1, nBuffLen1, cBuff2, nBuffLen2)) //buffer = name, buff = value
 		{
-			if (strcmp(cBuff1, "SysTempOffset") == 0)
+			if (strcmp_P(cBuff1, SysTempOffset) == 0)
 			{
 				Settings.SysTempOffset = atof(cBuff2);
 			}
-			if (strcmp(cBuff1, "PressureOffset") == 0)
+			if (strcmp_P(cBuff1, PressureOffset) == 0)
 			{
 				Settings.PressureOffset = atof(cBuff2);
 			}
-			if (strcmp(cBuff1, "MainTempOffset") == 0)
+			if (strcmp_P(cBuff1, MainTempOffset) == 0)
 			{
 				Settings.MainTempOffset = atof(cBuff2);
 			}
-			if (strcmp(cBuff1, "RemoteTempOffset") == 0)
+			if (strcmp_P(cBuff1, RemoteTempOffset) == 0)
 			{
 				Settings.RemoteTempOffset = atof(cBuff2);
 			}
-			if (strcmp(cBuff1, "SoilTempOffset") == 0)
+			if (strcmp_P(cBuff1, SoilTempOffset) == 0)
 			{
 				Settings.SoilTempOffset = atof(cBuff2);
 			}
@@ -890,6 +914,12 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 }
 void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	const static char DHCP[] PROGMEM = "DHCP";
+	const static char IP[] PROGMEM = "IP";
+	const static char Mask[] PROGMEM = "Mask";
+	const static char GW[] PROGMEM = "GW";
+	const static char DNS[] PROGMEM = "DNS";
+
 	ledLight(1, 'y');
 	server.httpSuccess();
 	char value[4];
@@ -898,26 +928,26 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	{
 		while (server.readPOSTparam(cBuff1, 10, value, 4))
 		{
-			if (strcmp(cBuff1, "DHCP") == 0)
+			if (strcmp_P(cBuff1, DHCP) == 0)
 			{
 				Settings.DHCP = value[0] != '0';
 			}
-			if (strcmp(cBuff1, "IP") == 0)
+			if (strcmp_P(cBuff1, IP) == 0)
 			{
 				Settings.IP[counter[0]] = atoi(value);
 				counter[0]++;
 			}
-			if (strcmp(cBuff1, "Mask") == 0)
+			if (strcmp_P(cBuff1, Mask) == 0)
 			{
 				Settings.Mask[counter[1]] = atoi(value);
 				counter[1]++;
 			}
-			if (strcmp(cBuff1, "GW") == 0)
+			if (strcmp_P(cBuff1, GW) == 0)
 			{
 				Settings.GW[counter[2]] = atoi(value);
 				counter[2]++;
 			}
-			if (strcmp(cBuff1, "DNS") == 0)
+			if (strcmp_P(cBuff1, DNS) == 0)
 			{
 				Settings.DNS[counter[3]] = atoi(value);
 				counter[3]++;
@@ -988,7 +1018,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	}
 	ledLight(1, 'g');
 }
-#pragma endregion webduino
+#pragma endregion webduino commands implementation
 
 void setup()
 {
@@ -1010,7 +1040,7 @@ void setup()
 	setupEthernet();
 	setupAlarms();
 
-	//webduino commands
+	//add webduino commands
 	webserver.setDefaultCommand(&homePageCmd);						//get page
 	webserver.addCommand("index.htm", homePageCmd);					//get page
 	webserver.addCommand("sensors.xml", sensorsXMLCmd);				//get xml
@@ -1051,7 +1081,6 @@ void setup()
 #endif	
 }
 
-//control everything by timer alarms
 void loop()
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down

@@ -15,6 +15,13 @@ void printDebug() {
 	Serial.println();
 }
 
+//************************************
+// Method:   	 system
+// Description:  Helper method - service call which could be in main loop(), but executing every seconds is good enough
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void system() {
 	RemoteDS.Valid = isRemoteDataSetValid();
 	sNow = getDateTimeString(now());
@@ -30,9 +37,14 @@ void system() {
 	receiveData();
 }
 
-//fill datasets and apply offsets
+//************************************
+// Method:   	 prepareDataSetArrays
+// Description:  Fill datasets and apply offsets
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void prepareDataSetArrays() {
-
 	sensors_event_t event;	//event for bmp180
 	//system DS
 	float _fVal;
@@ -57,6 +69,13 @@ void prepareDataSetArrays() {
 	MainDS.Timestamp = now();
 }
 
+//************************************
+// Method:   	 printSensorDataSerial
+// Description:  Print some sensor data to serial port, disabled if DEBUG=false
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void printSensorDataSerial(){
 	if (MainDS.Valid == true)
 	{
@@ -123,6 +142,13 @@ void printSensorDataSerial(){
 	else Serial.println(F("Remote Unit DataSet invalid!"));
 }
 
+//************************************
+// Method:   	 printLcd
+// Description:  Responsible for printing stuff to LCD every second
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void printLcd() {
 	static byte _byLastScreen;
 	if (digitalRead(LCD_SWITCH[0]) == 0)
@@ -151,6 +177,14 @@ void printLcd() {
 	}
 }
 
+
+//************************************
+// Method:   	 thingSpeak
+// Description:  Helper method to call Thingspeak upload and rotate datasets
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void thingSpeak(){
 	//before we update thingspeak, check if the dataset is valid 
 	if (!DataSetPtr[byCurrentDataSet]->Valid)
@@ -240,17 +274,15 @@ void thingSpeak(){
 }
 
 
+//************************************
+// Method:   	 enableDisableAlarms
+// Description:  Helper method to temporarily disable alarms (currently only LCD alarm to disaply some message)
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void enableDisableAlarms() {
-	//enable disable thingspeak accoring to system settings
-	if (Settings.TSenabled && !Alarm.active(updateTSAlarm))
-	{
-		Alarm.enable(updateTSAlarm);
-	}
-	if (!Settings.TSenabled && Alarm.active(updateTSAlarm))
-	{
-		Alarm.disable(updateTSAlarm);
-	}
-
+	
 	//enable lcd refreshing after some msg shows up for x sec
 	static byte _bySecCnt = 0;
 	if (!Alarm.active(printLcdAlarm) && _bySecCnt > Settings.LcdMsgTimeout)
@@ -265,6 +297,13 @@ void enableDisableAlarms() {
 	}
 }
 
+//************************************
+// Method:   	 syncRTCwithNTP
+// Description:  Helper method to call NTP sync
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void syncRTCwithNTP() {
 	Alarm.disable(printLcdAlarm);
 	lcd.clear();
@@ -289,6 +328,14 @@ void syncRTCwithNTP() {
 }
 }
 
+
+//************************************
+// Method:   	 dhcp
+// Description:  Maintain DHCP lease if used
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void dhcp() {
 	if (Ethernet.maintain() % 2 == 1) {  //renew dhcp lease
 		Alarm.disable(printLcdAlarm);
@@ -318,6 +365,14 @@ void dhcp() {
 }
 }
 
+
+//************************************
+// Method:   	 writeSD
+// Description:  Helper method to call with delay, writes relay settings to SD card
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void writeSD() {
 	bool _bSucces = writeSDRelaySettings();
 	if (!_bSucces)

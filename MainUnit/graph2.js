@@ -261,7 +261,7 @@ $(document).ready(function () {
 
                 title: {
 
-                    text: 'Temperature °C'
+                    text: 'Temperature C'
 
                 },
                 id: 'T'

@@ -1,3 +1,10 @@
+//************************************
+// Method:   	 weatherForecast
+// Description:  Calculates weather forecast from relative changes in atmospheric pressure. This needs to be called every 60s.
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void weatherForecast() {
 	static int _nMinuteCnt = 0;
 	static bool _bFirstRound = true;
@@ -88,35 +95,51 @@ void weatherForecast() {
 		byForecast = 5; // Unknown
 }
 
+
+//************************************
+// Method:   	 getRainPerHour
+// Description:  Calculate running sum of rain fall from the last hour. This needs to be called every 60s.
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void getRainPerHour() {
 	if (!bReceivedRadioMsg) return;
 	static QueueArray <byte> q;
 	static float _fLastTickCnt = fRainTicks;
-	static float _fTicksPerLastHour = 0;
+	static unsigned int _fTicksPerLastHour = 0;
 	if (fRainTicks == 0) _fLastTickCnt = 0; //in case we restart the remote unit and main unit keeps runnig
 
-	float _fTicks = fRainTicks - _fLastTickCnt;
+	unsigned int _fTicks = fRainTicks - _fLastTickCnt;
 	_fTicksPerLastHour += _fTicks;
 	q.push(byte(_fTicks));
 	if (q.count() > 60) _fTicksPerLastHour -= q.pop();
 	_fLastTickCnt = fRainTicks;
-	RemoteDS.Data[6] = _fTicksPerLastHour * 0.3;
+	RemoteDS.Data[6] = float(_fTicksPerLastHour) * 0.3;
 };
 
+
+//************************************
+// Method:   	 getRainPerDay
+// Description:  Calculate running sum of rain fall from the las 24h. This is called by default every 10 minutes. The often it is call, the bigger FIFO it needs, so be careful not to waste all your RAM.
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
 void getRainPerDay() {
 	if (!bReceivedRadioMsg) return;
 	Alarm.disable(getInitialTipCntAlarm);
-	static QueueArray <int> q;
+	static QueueArray <byte> q;
 	static float _fLastTickCnt = fRainTicks;
-	static float _fTicksPerLastDay = 0;
+	static unsigned int _fTicksPerLastDay = 0;
 	if (fRainTicks == 0) _fLastTickCnt = 0;
 
-	float _fTicks = fRainTicks - _fLastTickCnt;
+	unsigned int _fTicks = fRainTicks - _fLastTickCnt;
 	_fTicksPerLastDay += _fTicks;
-	q.push(int(_fTicks));
+	q.push(byte(_fTicks));
 	if (q.count() > 86400 / Settings.UpdateRainPerDayInterval) _fTicksPerLastDay -= q.pop(); //if the interval is set to 10 min, fifo is 144 bytes long
 	_fLastTickCnt = fRainTicks;
-	RemoteDS.Data[7] = _fTicksPerLastDay * 0.3;
+	RemoteDS.Data[7] = float(_fTicksPerLastDay) * 0.3;
 };
 
 

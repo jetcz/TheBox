@@ -21,6 +21,13 @@ long readVcc() {
 	return result; // Vcc in millivolts
 }
 
+//************************************
+// Method:   	 freeRam
+// Description:  Amount of free RAM in Bytes
+// Access:   	 public 
+// Returns:  	 int
+// Qualifier:	
+//************************************
 int freeRam() {
 	extern int __heap_start, *__brkval;
 	int _nVal;
@@ -56,7 +63,14 @@ int millisRollover() {
   return _nNumRollovers;
 }
 
-//get uptime in seconds
+
+//************************************
+// Method:   	 getUptime
+// Description:  Returns uptime of the system in seconds
+// Access:   	 public 
+// Returns:  	 float
+// Qualifier:	
+//************************************
 float getUptime() {
 	static float _fUptime;
 	_fUptime = 4294967 * millisRollover() + round(millis() / 1000);

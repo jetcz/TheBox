@@ -5,7 +5,6 @@ void setupPins() {
 		pinMode(LED[i], OUTPUT);
 	}
 
-
 	//setup power pins	
 	digitalWrite(DHT22_PWR_PIN, LOW);
 	digitalWrite(PHOTORESISTOR_PWR_PIN, LOW);
@@ -38,7 +37,7 @@ void setupPins() {
 	digitalWrite(RADIO_TX_PIN, LOW);
 	pinMode(RADIO_TX_PIN, OUTPUT);
 
-	//these stupid sensor must be on all the time otherwise they produce shitty readings
+	//this stupid sensor must be on all the time otherwise it produces shitty readings
 	digitalWrite(DS_PWR_PIN, HIGH);
 	
 	pinMode(10, OUTPUT);
