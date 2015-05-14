@@ -23,13 +23,12 @@ void printDebug() {
 // Qualifier:	
 //************************************
 void system() {
+	DateTime _dtNow = now();
 	RemoteDS.Valid = isRemoteDataSetValid();
-	sNow = getDateTimeString(now());
-	sMainUptime = getUptimeString(getUptime());
+	sNow = getDateTimeString(_dtNow);
+	sMainUptime = getUptimeString(getUptime(_dtNow));
 	enableDisableAlarms();
 	lcdBacklight();	
-
-	//scheduler part
 	for (int i = 0; i < 4; i++)
 	{
 		if (Settings.RelayMode[i] > 1) serviceSchedulers(i);
@@ -45,12 +44,13 @@ void system() {
 // Qualifier:	
 //************************************
 void prepareDataSetArrays() {
+	DateTime _dtNow = now();
 	sensors_event_t event;	//event for bmp180
 	//system DS
 	float _fVal;
 	_fVal = getSysTemperature(event);
 	SystemDS.Data[0] = (_fVal == -255) ? _fVal : _fVal + Settings.SysTempOffset;
-	SystemDS.Data[1] = getUptime().totalseconds();
+	SystemDS.Data[1] = getUptime(_dtNow).totalseconds();
 	for (int i = 0; i < 4; i++)
 	{
 		SystemDS.Data[i + 2] = getRelayState(i);
@@ -66,7 +66,8 @@ void prepareDataSetArrays() {
 	_fVal = getPressure(event);
 	MainDS.Data[4] = (_fVal == -255) ? _fVal : _fVal + Settings.PressureOffset;
 
-	MainDS.Timestamp = now();
+	MainDS.Timestamp = _dtNow;
+	SystemDS.Timestamp = _dtNow;
 }
 
 //************************************

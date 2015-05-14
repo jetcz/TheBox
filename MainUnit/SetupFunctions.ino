@@ -214,6 +214,7 @@ void setupEthernet() {
 	//this gives client.connect() max timeout approx 3s
 	W5100.setRetransmissionTime(0x07D0);
 	W5100.setRetransmissionCount(3);
+	
 }
 
 void setupLCD(){

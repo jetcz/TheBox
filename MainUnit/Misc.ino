@@ -115,8 +115,8 @@ String getDateTimeString(DateTime t)
 // Returns:  	 TimeSpan
 // Qualifier:	
 //************************************
-TimeSpan getUptime(){
-	return DateTime(now()) - dtSysStart;
+TimeSpan getUptime(DateTime t){
+	return t - dtSysStart;
 }
 
 //************************************

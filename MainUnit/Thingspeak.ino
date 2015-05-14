@@ -16,20 +16,20 @@ void updateThingSpeak(DataSet ds){
 		if (ds.Data[i] > -100) //in case we get some broken values which are -255
 		{
 			_sValues += intToString(i + 1) + "=" + floatToString(ds.Data[i]);
-
-			if (i < ds.Size - 1) {
-				_sValues += "&";
-			}
+			if (i < ds.Size - 1) _sValues += "&";
 		}
 	}
 	//connect to thingspeak
-	if (!client.connected())
+	unsigned static long _lLastCnn;	
+	if (!client.connected() || now() - _lLastCnn > 420) //for some reason the connection doesn't last past 500 sec, so we need to close and reopen it manualy for maximum reliability
 	{
+		ledLight(3, 'c');
+		client.flush();
+		client.stop();
 #if DEBUG
 		Serial.print(F("Connecting to ThingSpeak..."));
-#endif
-		ledLight(3, 'c');
-		client.connect(Settings.ThingSpeakAddress, 80);
+#endif		
+		if (client.connect(Settings.ThingSpeakAddress, 80)) _lLastCnn = now();
 	}
 	//update thingspeak
 	if (client.connected())	{
@@ -44,12 +44,13 @@ void updateThingSpeak(DataSet ds){
 		client.print(F("Connection: Keep-Alive\n"));
 		client.print(F("X-THINGSPEAKAPIKEY: "));
 		client.print(ds.APIkey + "\n");
+		client.print(F("headers: false\n"));
 		client.print(F("Content-Type: application/x-www-form-urlencoded\n"));
 		client.print(F("Content-Length: "));
 		client.print(intToString(_sValues.length()) + "\n\n");
 		client.println(_sValues);
 		ledLight(3, 'g');
-}
+	}
 	else
 	{
 #if DEBUG
@@ -72,5 +73,5 @@ void updateThingSpeak(DataSet ds){
 		lcd.setCursor(0, 2);
 		lcd.print(intToString(nFailedCounter));
 		lcd.print(F(" times!"));
-}
+	}
 }

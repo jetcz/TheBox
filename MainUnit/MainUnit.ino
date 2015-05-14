@@ -17,7 +17,6 @@
 #include <LiquidCrystal_I2C.h>
 #include <IniFile.h>
 #include <QueueArray.h>
-#include <EmonLib.h>
 #include "avr/pgmspace.h"
 #include "DataStructures.h"
 
@@ -61,7 +60,6 @@ WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
-EnergyMonitor emon;
 
 //initialize custom structs
 SystemSettings Settings;			//here are all user configurables
@@ -1080,6 +1078,7 @@ void setup()
 	SystemDS.APIkey = "GNQST00GBW05EYGC";
 	SystemDS.Size = 8;
 	SystemDS.Valid = true;
+	SystemDS.Timestamp = dtSysStart.unixtime();
 
 #if DEBUG
 	Serial.println(F("Setup Done"));
