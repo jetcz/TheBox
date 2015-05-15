@@ -26,22 +26,22 @@ void resetEthShield(int pin) {
 // Returns:  	 bool
 // Qualifier:	
 //************************************
-bool isRemoteDataSetValid() {
+bool isRemoteDataSetValid(DateTime t) {
 	bool _bValid;
-
-	if (now() - RemoteDS.Timestamp.unixtime() < 65)
+	TimeSpan _tsDiff = t - RemoteDS.Timestamp;
+	if (_tsDiff.totalseconds() < 65)
 	{
 		_bValid = true;
 		ledLight(2, 'g');
 	}
 
-	if (now() - RemoteDS.Timestamp.unixtime() >= 65 && now() - RemoteDS.Timestamp.unixtime() <= Settings.RemoteDataSetTimeout)
+	if (_tsDiff.totalseconds() >= 65 && _tsDiff.totalseconds() <= Settings.RemoteDataSetTimeout)
 	{
 		_bValid = true;
 		ledLight(2, 'y');
 	}
 
-	if (now() - RemoteDS.Timestamp.unixtime() > Settings.RemoteDataSetTimeout)
+	if (_tsDiff.totalseconds() > Settings.RemoteDataSetTimeout)
 	{
 		_bValid = false;
 		ledLight(2, 'r');

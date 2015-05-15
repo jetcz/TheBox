@@ -51,7 +51,7 @@ void getFailedRadioMessages(){
 	_lCnt++;
 
 	//this is to find out how many radio transmissions failed
-	if (now() - RemoteDS.Timestamp.unixtime() > 63 && _lCnt > 63)
+	if (now() - RemoteDS.Timestamp.unixtime() > 67 && _lCnt > 64)
 	{
 		nFailedCntRadioTotal++;
 		_lCnt = 0;

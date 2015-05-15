@@ -30,7 +30,7 @@ void switchRelays() {
 #if DEBUG
 			Serial.print(F(" AUTO"));
 #endif
-			serviceSchedulers(i);
+			serviceSchedulers(now(), i);
 			break;
 		}
 	}
@@ -61,13 +61,12 @@ float getRelayState(int relay){
 // Qualifier:	
 // Parameter:	 int relay
 //************************************
-void serviceSchedulers(int relay){
+void serviceSchedulers(DateTime t, int relay){
 
 	if (Sched[relay].Variable != 0) //is not pir
 	{
-		time_t t = now();
 		//set current interval
-		unsigned long _lCurrSec = long(hour(t)) * 60 * 60 + long(minute(t)) * 60 + long(second(t));
+		unsigned long _lCurrSec = long(t.hour()) * 60 * 60 + long(t.minute()) * 60 + long(t.second());
 		bool _bSet = false; //in case we use all 5 intervals we need to have this aux variable
 		for (int i = 0; i < 5; i++)
 		{

@@ -1,18 +1,10 @@
 void printDebug() {
-	for (int i = 0; i < 4; i++)
-	{
-		if (Sched[i].Variable != 0)
-		{
-
-			Serial.print("current val ");
-			Serial.println(*TargetVarPtr[Sched[i].Variable]);
-			Serial.print("target val min ");
-			Serial.println(Sched[i].Value[Sched[i].CurrentInterval][0]);
-			Serial.print("target val max ");
-			Serial.println(Sched[i].Value[Sched[i].CurrentInterval][1]);
-		}
-	}
-	Serial.println();
+	DateTime t = now();
+	Serial.print(t.hour());
+	Serial.print(":");
+	Serial.print(t.minute());
+	Serial.print(":");
+	Serial.println(t.second());
 }
 
 //************************************
@@ -24,14 +16,14 @@ void printDebug() {
 //************************************
 void system() {
 	DateTime _dtNow = now();
-	RemoteDS.Valid = isRemoteDataSetValid();
+	RemoteDS.Valid = isRemoteDataSetValid(_dtNow);
 	sNow = getDateTimeString(_dtNow);
 	sMainUptime = getUptimeString(getUptime(_dtNow));
 	enableDisableAlarms();
 	lcdBacklight();	
 	for (int i = 0; i < 4; i++)
 	{
-		if (Settings.RelayMode[i] > 1) serviceSchedulers(i);
+		if (Settings.RelayMode[i] > 1) serviceSchedulers(_dtNow, i);
 	}
 	receiveData();
 }
