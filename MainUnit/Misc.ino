@@ -29,13 +29,13 @@ void resetEthShield(int pin) {
 bool isRemoteDataSetValid(DateTime t) {
 	bool _bValid;
 	TimeSpan _tsDiff = t - RemoteDS.Timestamp;
-	if (_tsDiff.totalseconds() < 65)
+	if (_tsDiff.totalseconds() < Settings.RadioMsgInterval)
 	{
 		_bValid = true;
 		ledLight(2, 'g');
 	}
 
-	if (_tsDiff.totalseconds() >= 65 && _tsDiff.totalseconds() <= Settings.RemoteDataSetTimeout)
+	if (_tsDiff.totalseconds() >= Settings.RadioMsgInterval && _tsDiff.totalseconds() <= Settings.RemoteDataSetTimeout)
 	{
 		_bValid = true;
 		ledLight(2, 'y');

@@ -20,6 +20,7 @@ struct SystemSettings
 		TSenabled = true;
 		InvalidDSAction = false;
 		UpdateRainPerDayInterval = 600; //10 min interval
+		RadioMsgInterval = 64; //it supposed to be 60 but we need small reserve
 	}
 
 	void setDefaultOffsetsSettings(){
@@ -49,6 +50,8 @@ struct SystemSettings
 	byte UpdateSensorsInterval;
 
 	int UpdateRainPerDayInterval;
+
+	byte RadioMsgInterval;
 
 	/* sensor offsets */
 	float SysTempOffset;

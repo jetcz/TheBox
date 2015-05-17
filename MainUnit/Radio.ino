@@ -7,14 +7,14 @@
 //************************************
 void receiveData() {
 	const byte _byArrSize = 10; //how much float values are we sending
+	byte _byBuff[_byArrSize * 4];
+	byte _byBuffLen = sizeof(_byBuff);
 
-	uint8_t buf[_byArrSize * 4];
-	uint8_t buflen = sizeof(buf);
-	if (driver.recv(buf, &buflen)) // Non-blocking
+	if (driver.recv(_byBuff, &_byBuffLen)) // Non-blocking
 	{
 		ledLight(2, 'b');
 		float temp[_byArrSize];
-		memcpy(&temp, buf, buflen);
+		memcpy(&temp, _byBuff, _byBuffLen);
 
 		RemoteDS.Data[0] = (temp[0] == -255) ? temp[0] : temp[0] + Settings.RemoteTempOffset;		//remoteTemperature
 		RemoteDS.Data[1] = temp[1];																	//remoteHumidity
@@ -46,16 +46,15 @@ void receiveData() {
 // Qualifier:	
 //************************************
 void getFailedRadioMessages(){
-	static int getFailedRadioMsgs;
-	static unsigned int _lCnt = 0;
-	_lCnt++;
+	static int failedRadioMsgsAlarm;
+	static unsigned int _nCnt;
 
 	//this is to find out how many radio transmissions failed
-	if (now() - RemoteDS.Timestamp.unixtime() > 67 && _lCnt > 64)
-	{
+	if (now() - RemoteDS.Timestamp.unixtime() > Settings.RadioMsgInterval && _nCnt > Settings.RadioMsgInterval)	{
 		nFailedCntRadioTotal++;
-		_lCnt = 0;
+		_nCnt = 0;
 	}
+	_nCnt++;
 
-	if (getFailedRadioMsgs == 0) getFailedRadioMsgs = Alarm.timerRepeat(1, getFailedRadioMessages);
+	if (failedRadioMsgsAlarm == 0) failedRadioMsgsAlarm = Alarm.timerRepeat(1, getFailedRadioMessages); //fist call of this function enables periodical calling of this function
 }
