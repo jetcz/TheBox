@@ -28,7 +28,6 @@ const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
-
 const int nSleepTime2 = 1500;
 #if debug
 const int nSleepTime = 18548 - nSleepTime2 - 1000; 
@@ -41,20 +40,14 @@ OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
 DHT dht(DHT22_DATA_PIN, DHTTYPE);
 RH_ASK driver(2000, 14, RADIO_TX_PIN);
-RunningAverage Light(3);
-RunningAverage AirTemp(3);
-RunningAverage AirHum(3);
-RunningAverage Humidex(3);
-RunningAverage SoilTemp(3);
-RunningAverage SoilHum(3);
 
-float fRemoteUnitDataSet[10] = { 0 };
+float DS[10] = { 0 };
 volatile float fRainTips = 0;
-float *Vcc = &fRemoteUnitDataSet[7];
+float *Vcc = &DS[7];
 
 //handle offsets in main unit
 //const float fAirTemperatureOffset = -0.7;
-//onst float fSoilTemperatureOffset = -0.2;
+//const float fSoilTemperatureOffset = -0.2;
 
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
@@ -76,6 +69,7 @@ void setup() {
 	fRainTips = 0;
 	interrupts();
 
+	//////////////////////////////////////////////////////////////////////////send initial sensor readings after startup
 	digitalWrite(DHT22_PWR_PIN, HIGH);
 	Sleepy::loseSomeTime(nSleepTime2);
 	ledLightDigital('g');
@@ -89,8 +83,7 @@ void setup() {
 }
 
 void loop() {
-
-	//get sensor data after 20s
+	//////////////////////////////////////////////////////////////////////////get sensor data after 20s
 	digitalWrite(DHT22_PWR_PIN, HIGH);
 	Sleepy::loseSomeTime(nSleepTime2);
 	ledLightDigital('g');
@@ -103,7 +96,7 @@ void loop() {
 #endif
 	Sleepy::loseSomeTime(nSleepTime);
 
-	//get sensor data after 40s
+	//////////////////////////////////////////////////////////////////////////get sensor data after 40s
 	digitalWrite(DHT22_PWR_PIN, HIGH);
 	Sleepy::loseSomeTime(nSleepTime2);
 	ledLightDigital('g');
@@ -116,7 +109,7 @@ void loop() {
 #endif
 	Sleepy::loseSomeTime(nSleepTime);
 
-	//get sensor data after 60s
+	//////////////////////////////////////////////////////////////////////////get sensor data after 60s
 	digitalWrite(DHT22_PWR_PIN, HIGH);
 	Sleepy::loseSomeTime(nSleepTime2);
 	ledLightDigital('g');
@@ -127,11 +120,10 @@ void loop() {
 	printSensorData();
 	delay(1000);
 #endif
-	//send sensor data
+	//////////////////////////////////////////////////////////////////////////send sensor data
 	ledLightDigital('b');
 	delayMicroseconds(100);
 	ledLightDigital('k');
 	sendMessage();
 	Sleepy::loseSomeTime(nSleepTime);
-
 }

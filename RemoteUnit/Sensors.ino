@@ -6,26 +6,21 @@
 // Qualifier:	
 //************************************
 void prepareDataSetArrays() {
-
-
-	fRemoteUnitDataSet[0] = getAirTemperature();				//remoteTemperature
-	fRemoteUnitDataSet[1] = getAirHumidity();					//remoteHumidity
-	fRemoteUnitDataSet[2] = getAirHumidex();					//remoteHumidex
+	DS[0] = getAirTemperature();				//remoteTemperature
+	DS[1] = getAirHumidity();					//remoteHumidity
+	DS[2] = getAirHumidex();					//remoteHumidex
 
 	powerSensors(true);
-	fRemoteUnitDataSet[7] = readVcc();
-	fRemoteUnitDataSet[3] = getSoilTemperature();				//remoteSoilTemperature
-
-	fRemoteUnitDataSet[4] = getSoilHumidity();					//remoteSoilHumidity
-	fRemoteUnitDataSet[5] = getLight();							//remoteLight
+	DS[7] = readVcc();
+	DS[3] = getSoilTemperature();				//remoteSoilTemperature
+	DS[4] = getSoilHumidity();					//remoteSoilHumidity
+	DS[5] = getLight();							//remoteLight
 	powerSensors(false);
 	noInterrupts();
-	fRemoteUnitDataSet[6] = fRainTips;							//rain tips
+	DS[6] = fRainTips;							//rain tips
 	interrupts();
-	fRemoteUnitDataSet[8] = getUptime();						//uptime
-	fRemoteUnitDataSet[9] = freeRam();							//freeRam
-
-
+	DS[8] = getUptime();						//uptime
+	DS[9] = freeRam();							//freeRam
 }
 
 //************************************
@@ -37,38 +32,38 @@ void prepareDataSetArrays() {
 //************************************
 void printSensorData() {
 	Serial.print(F("Air temp: "));
-	Serial.print(fRemoteUnitDataSet[0], 1);
+	Serial.print(DS[0], 1);
 	Serial.println(F("C"));
 
 	Serial.print(F("Air hum: "));
-	Serial.print(fRemoteUnitDataSet[1], 0);
+	Serial.print(DS[1], 0);
 	Serial.println(F("%RH"));
 
 	Serial.print(F("Humidex: "));
-	Serial.print(fRemoteUnitDataSet[2], 1);
+	Serial.print(DS[2], 1);
 	Serial.println(F("C"));
 
 	Serial.print(F("Soil temp: "));
-	Serial.print(fRemoteUnitDataSet[3], 1);
+	Serial.print(DS[3], 1);
 	Serial.println(F("C"));
 
 	Serial.print(F("Soil hum: "));
-	Serial.print(fRemoteUnitDataSet[4], 0);
+	Serial.print(DS[4], 0);
 	Serial.println(F("%"));
 
 	Serial.print(F("Light: "));
-	Serial.print(fRemoteUnitDataSet[5], 0);
+	Serial.print(DS[5], 0);
 	Serial.println(F("%"));
 
 	Serial.print(F("RainTicks: "));
-	Serial.println(fRemoteUnitDataSet[6], 0);
+	Serial.println(DS[6], 0);
 
 	Serial.print(F("Vcc: "));
-	Serial.print(fRemoteUnitDataSet[7], 0);
+	Serial.print(DS[7], 0);
 	Serial.println(F("mV"));
 
 	Serial.print(F("Uptime: "));
-	Serial.print(fRemoteUnitDataSet[8], 0);
+	Serial.print(DS[8], 0);
 	Serial.println("s");
 
 	Serial.print(F("Free ram: "));
@@ -101,6 +96,7 @@ void powerSensors(bool state) {
 }
 
 float getAirTemperature() {
+	static RunningAverage AirTemp(3);
 	float _fTemp = dht.readTemperature();
 	if (isnan(_fTemp)) {
 #if debug
@@ -112,12 +108,12 @@ float getAirTemperature() {
 		AirTemp.addValue(_fTemp);
 		return AirTemp.getAverage();
 	}
-
 }
 
 float getAirHumidity(){
+	static RunningAverage AirHum(3);
 	float _fHum = dht.readHumidity();
-	if (isnan(_fHum) || (fRemoteUnitDataSet[0] == -255)) {
+	if (isnan(_fHum) || (DS[0] == -255)) {
 #if debug
 		Serial.print(F("Failed to read from DHT sensor! "));
 #endif
@@ -130,15 +126,12 @@ float getAirHumidity(){
 }
 
 float getAirHumidex() {
-	if ((fRemoteUnitDataSet[0] == -255) || (fRemoteUnitDataSet[1] == -255))
-	{
-		return -255;
-	}
-	else
-		return (dht.computeHeatIndex(AirTemp.getAverage()*1.8 + 32, AirHum.getAverage()) - 32)*0.556;
+	if ((DS[0] == -255) || (DS[1] == -255)) return -255;
+	else return (dht.computeHeatIndex(DS[0] * 1.8 + 32, DS[1]) - 32)*0.556;
 }
 
 byte getLight() {
+	static RunningAverage Light(3);
 	float _fLight = analogRead(PHOTORESISTOR_DATA_PIN)*(*Vcc) / 1023;
 	byte _byLight = ((_fLight / *Vcc) * 100);
 	Light.addValue(_byLight);
@@ -146,6 +139,7 @@ byte getLight() {
 }
 
 float getSoilTemperature() {
+	static RunningAverage SoilTemp(3);
 	ds.requestTemperatures();
 	float _fTemp = ds.getTempCByIndex(0);
 	if (_fTemp == 85) return -255;
@@ -155,6 +149,7 @@ float getSoilTemperature() {
 
 //returns soil humidity percentage 0 = air, 100 = salt water
 byte getSoilHumidity() {
+	static RunningAverage SoilHum(3);
 	float _fHum = analogRead(HUMIDITY_DATA_PIN)*(*Vcc) / 1023;
 	byte hum = ((_fHum / *Vcc - 1)*-115);
 	SoilHum.addValue(hum);
