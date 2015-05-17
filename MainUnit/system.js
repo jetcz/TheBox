@@ -41,8 +41,8 @@ function getSettings() {
         }
     });
 }
-var timeout = 180;
 var runned = false;
+var interval = 22;
 function xmlParseStats(xml) {
     if (!runned) {
         $(document).find(".wrapContent.message").hide();
@@ -93,11 +93,11 @@ function xmlParseStats(xml) {
         }
 
         if (i == offset + 3) {
-            if (parseInt(value) < 65) {
+            if (parseInt(value) < interval) {
                 $('.tdVal').eq(i - offset).css("background-color", "green");
             }
 
-            if (parseInt(value) >= 65 && parseInt(value) < timeout) {
+            if (parseInt(value) >= interval && parseInt(value) < timeout) {
                 $('.tdVal').eq(i - offset).css("background-color", "#e97900");
             }
             if (parseInt(value) >= timeout) {
@@ -106,9 +106,11 @@ function xmlParseStats(xml) {
         }
     })
 };
+var timeout = 180;
 function xmlParseSettings(xml) {
     //settings
     timeout = parseInt($(xml).find("RemoteDSTimeout").text().trim());
+    interval = parseInt($(xml).find("RadioMsgInterval").text().trim());
     $("#timeout").val(timeout);
     var InvalidDSAction = parseInt($(xml).find("InvalidDSAction").text().trim());
     var TSEnabled = parseInt($(xml).find("TSEnabled").text().trim());

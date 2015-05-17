@@ -52,7 +52,12 @@ float getMainHumidex() {
 		return -255;
 	}
 	else
-		return (dht.computeHeatIndex(MainDS.Data[0] * 1.8 + 32, MainDS.Data[1]) - 32)*0.556;
+	{
+		float e;
+		e = (6.112 * pow(10, (7.5 * MainDS.Data[0] / (237.7 + MainDS.Data[0]))) *  MainDS.Data[1] / 100); //vapor pressure
+		float humidex = MainDS.Data[0] + 0.55555555 * (e - 10.0); //humidex
+		return humidex;
+	}
 }
 
 bool getMainPir() {

@@ -624,6 +624,9 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.print(F("<?xml version = \"1.0\" ?>"));
 		server.print(F("<Settings>"));
 		server.print(F("<General>"));
+		server.print(F("<RadioMsgInterval>"));
+		server.print(Settings.RadioMsgInterval);
+		server.print(F("</RadioMsgInterval>"));
 		server.print(F("<RemoteDSTimeout>"));
 		server.print(Settings.RemoteDataSetTimeout);
 		server.print(F("</RemoteDSTimeout>"));

@@ -5,7 +5,7 @@
 // Returns:  	 void
 // Qualifier:	
 //************************************
-void prepareDataSetArrays() {
+void getDataSet() {
 	DS[0] = getAirTemperature();				//remoteTemperature
 	DS[1] = getAirHumidity();					//remoteHumidity
 	DS[2] = getAirHumidex();					//remoteHumidex
@@ -127,7 +127,12 @@ float getAirHumidity(){
 
 float getAirHumidex() {
 	if ((DS[0] == -255) || (DS[1] == -255)) return -255;
-	else return (dht.computeHeatIndex(DS[0] * 1.8 + 32, DS[1]) - 32)*0.556;
+	else {
+		float e;
+		e = (6.112 * pow(10, (7.5 * DS[0] / (237.7 + DS[0]))) *  DS[1] / 100); //vapor pressure
+		float humidex = DS[0] + 0.55555555 * (e - 10.0); //humidex
+		return humidex;
+	}
 }
 
 byte getLight() {

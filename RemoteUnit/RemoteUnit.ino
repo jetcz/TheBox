@@ -28,12 +28,9 @@ const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
-const int nSleepTime2 = 1500;
-#if debug
-const int nSleepTime = 18548 - nSleepTime2 - 1000; 
-#else
-const int nSleepTime = 18550 - nSleepTime2;
-#endif
+const int nDHTPwrTimeout = 1500;
+const int nSleepTime = 20000 - nDHTPwrTimeout;
+
 char buffer[24];
 #define DHTTYPE DHT22
 OneWire oneWire(DS_DATA_PIN);
@@ -44,10 +41,7 @@ RH_ASK driver(2000, 14, RADIO_TX_PIN);
 float DS[10] = { 0 };
 volatile float fRainTips = 0;
 float *Vcc = &DS[7];
-
-//handle offsets in main unit
-//const float fAirTemperatureOffset = -0.7;
-//const float fSoilTemperatureOffset = -0.2;
+unsigned long _lLastTime;
 
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
@@ -68,62 +62,17 @@ void setup() {
 	}
 	fRainTips = 0;
 	interrupts();
-
-	//////////////////////////////////////////////////////////////////////////send initial sensor readings after startup
-	digitalWrite(DHT22_PWR_PIN, HIGH);
-	Sleepy::loseSomeTime(nSleepTime2);
-	ledLightDigital('g');
-	ledLightDigital('k');
-	prepareDataSetArrays();
-	digitalWrite(DHT22_PWR_PIN, LOW);
-	ledLightDigital('b');
-	delayMicroseconds(100);
-	ledLightDigital('k');
-	sendMessage();
 }
 
 void loop() {
-	//////////////////////////////////////////////////////////////////////////get sensor data after 20s
+	_lLastTime = millis();
 	digitalWrite(DHT22_PWR_PIN, HIGH);
-	Sleepy::loseSomeTime(nSleepTime2);
+	Sleepy::loseSomeTime(nDHTPwrTimeout);
 	ledLightDigital('g');
 	ledLightDigital('k');
-	prepareDataSetArrays();
+	getDataSet();
 	digitalWrite(DHT22_PWR_PIN, LOW);
-#if debug
-	printSensorData();
-	delay(1000);
-#endif
-	Sleepy::loseSomeTime(nSleepTime);
-
-	//////////////////////////////////////////////////////////////////////////get sensor data after 40s
-	digitalWrite(DHT22_PWR_PIN, HIGH);
-	Sleepy::loseSomeTime(nSleepTime2);
-	ledLightDigital('g');
-	ledLightDigital('k');
-	prepareDataSetArrays();
-	digitalWrite(DHT22_PWR_PIN, LOW);
-#if debug
-	printSensorData();
-	delay(1000);
-#endif
-	Sleepy::loseSomeTime(nSleepTime);
-
-	//////////////////////////////////////////////////////////////////////////get sensor data after 60s
-	digitalWrite(DHT22_PWR_PIN, HIGH);
-	Sleepy::loseSomeTime(nSleepTime2);
-	ledLightDigital('g');
-	ledLightDigital('k');
-	prepareDataSetArrays();
-	digitalWrite(DHT22_PWR_PIN, LOW);
-#if debug
-	printSensorData();
-	delay(1000);
-#endif
-	//////////////////////////////////////////////////////////////////////////send sensor data
-	ledLightDigital('b');
-	delayMicroseconds(100);
-	ledLightDigital('k');
 	sendMessage();
-	Sleepy::loseSomeTime(nSleepTime);
+	_lLastTime = _lLastTime - millis();
+	Sleepy::loseSomeTime(nSleepTime-_lLastTime);
 }
