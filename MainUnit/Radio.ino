@@ -6,7 +6,7 @@
 // Qualifier:	
 //************************************
 void receiveData() {
-	const byte _byArrSize = 10; //how much float values are we sending
+	const byte _byArrSize = 11; //how much float values are we sending
 	byte _byBuff[_byArrSize * 4];
 	byte _byBuffLen = sizeof(_byBuff);
 
@@ -33,6 +33,8 @@ void receiveData() {
 
 		nRemoteFreeRam = temp[9];									//remote free ram
 
+		Settings.RadioMsgInterval = temp[10];						//radio messages interval
+
 		sRemoteUptime = getUptimeString(TimeSpan(SystemDS.Data[7]));
 		bReceivedRadioMsg = true;
 	}
@@ -46,15 +48,5 @@ void receiveData() {
 // Qualifier:	
 //************************************
 void getFailedRadioMessages(){
-	static int failedRadioMsgsAlarm;
-	static unsigned int _nCnt;
-
-	//this is to find out how many radio transmissions failed
-	if (now() - RemoteDS.Timestamp.unixtime() > Settings.RadioMsgInterval && _nCnt > Settings.RadioMsgInterval)	{
-		nFailedCntRadioTotal++;
-		_nCnt = 0;
-	}
-	_nCnt++;
-
-	if (failedRadioMsgsAlarm == 0) failedRadioMsgsAlarm = Alarm.timerRepeat(1, getFailedRadioMessages); //fist call of this function enables periodical calling of this function
+	if (now() - RemoteDS.Timestamp.unixtime() > Settings.RadioMsgInterval + 1) nFailedCntRadioTotal++;
 }

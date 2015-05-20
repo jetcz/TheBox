@@ -155,7 +155,12 @@ float getSoilTemperature() {
 //returns soil humidity percentage 0 = air, 100 = salt water
 byte getSoilHumidity() {
 	static RunningAverage SoilHum(3);
-	float _fHum = analogRead(HUMIDITY_DATA_PIN)*(*Vcc) / 1023;
+	RunningAverage AnalogReadings(3);	
+	for (int i = 0; i < 3; i++)
+	{
+		AnalogReadings.addValue(analogRead(HUMIDITY_DATA_PIN));
+	}
+	float _fHum = AnalogReadings.getAverage()*(*Vcc) / 1023;
 	byte hum = ((_fHum / *Vcc - 1)*-115);
 	SoilHum.addValue(hum);
 	return SoilHum.getAverage();

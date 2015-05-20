@@ -93,14 +93,14 @@ function xmlParseStats(xml) {
         }
 
         if (i == offset + 3) {
-            if (parseInt(value) < interval) {
+            if (parseInt(value) <= interval) {
                 $('.tdVal').eq(i - offset).css("background-color", "green");
             }
 
-            if (parseInt(value) >= interval && parseInt(value) < timeout) {
+            if (parseInt(value) > interval && parseInt(value) <= timeout) {
                 $('.tdVal').eq(i - offset).css("background-color", "#e97900");
             }
-            if (parseInt(value) >= timeout) {
+            if (parseInt(value) > timeout) {
                 $('.tdVal').eq(i - offset).css("background-color", "#c70000");
             }
         }

@@ -228,7 +228,7 @@ void setupLCD(){
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
 	Alarm.timerOnce(180, syncRTCwithNTP);
-	Alarm.timerOnce(65, getFailedRadioMessages);  //repeats itself after first run
+	Alarm.timerRepeat(Settings.RadioMsgInterval, getFailedRadioMessages);
 	Alarm.timerRepeat(1, system);
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd);
 	Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms

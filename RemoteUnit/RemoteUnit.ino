@@ -28,8 +28,8 @@ const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
+const int nMsgTimeout = 10000;
 const int nDHTPwrTimeout = 1500;
-const int nSleepTime = 20000 - nDHTPwrTimeout;
 
 char buffer[24];
 #define DHTTYPE DHT22
@@ -38,7 +38,7 @@ DallasTemperature ds(&oneWire);
 DHT dht(DHT22_DATA_PIN, DHTTYPE);
 RH_ASK driver(2000, 14, RADIO_TX_PIN);
 
-float DS[10] = { 0 };
+float DS[11] = { 0 };
 volatile float fRainTips = 0;
 float *Vcc = &DS[7];
 unsigned long _lLastTime;
@@ -46,7 +46,7 @@ unsigned long _lLastTime;
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
 void setup() {
-
+	DS[10] = nMsgTimeout/1000;
 	noInterrupts();
 #if debug
 	Serial.begin(9600);
@@ -73,6 +73,6 @@ void loop() {
 	getDataSet();
 	digitalWrite(DHT22_PWR_PIN, LOW);
 	sendMessage();
-	_lLastTime = _lLastTime - millis();
-	Sleepy::loseSomeTime(nSleepTime-_lLastTime);
+	_lLastTime = millis() - _lLastTime;
+	Sleepy::loseSomeTime(nMsgTimeout - _lLastTime);
 }
