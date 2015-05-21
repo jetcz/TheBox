@@ -20,7 +20,7 @@ struct SystemSettings
 		TSenabled = true;
 		InvalidDSAction = false;
 		UpdateRainPerDayInterval = 600; //10 min interval
-		RadioMsgInterval = 10;
+		RadioMsgInterval = 20;
 	}
 
 	void setDefaultOffsetsSettings(){

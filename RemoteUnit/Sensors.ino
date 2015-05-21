@@ -99,7 +99,7 @@ float getAirTemperature() {
 	static RunningAverage AirTemp(3);
 	float _fTemp = dht.readTemperature();
 	if (isnan(_fTemp)) {
-#if debug
+#if DEBUG
 		Serial.print(F("Failed to read from DHT sensor! "));
 #endif
 		return -255;
@@ -114,7 +114,7 @@ float getAirHumidity(){
 	static RunningAverage AirHum(3);
 	float _fHum = dht.readHumidity();
 	if (isnan(_fHum) || (DS[0] == -255)) {
-#if debug
+#if DEBUG
 		Serial.print(F("Failed to read from DHT sensor! "));
 #endif
 		return -255;
@@ -137,7 +137,7 @@ float getAirHumidex() {
 
 byte getLight() {
 	static RunningAverage Light(3);
-	float _fLight = analogRead(PHOTORESISTOR_DATA_PIN)*(*Vcc) / 1023;
+	float _fLight = analogRead(PHOTORESISTOR_DATA_PIN)*(*Vcc) / 1023.0;
 	byte _byLight = ((_fLight / *Vcc) * 100);
 	Light.addValue(_byLight);
 	return Light.getAverage();
@@ -160,7 +160,7 @@ byte getSoilHumidity() {
 	{
 		AnalogReadings.addValue(analogRead(HUMIDITY_DATA_PIN));
 	}
-	float _fHum = AnalogReadings.getAverage()*(*Vcc) / 1023;
+	float _fHum = AnalogReadings.getAverage()*(*Vcc) / 1023.0;
 	byte hum = ((_fHum / *Vcc - 1)*-115);
 	SoilHum.addValue(hum);
 	return SoilHum.getAverage();

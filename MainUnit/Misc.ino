@@ -133,7 +133,7 @@ long readVcc() {
 	uint8_t high = ADCH; // unlocks both
 	long result = (high << 8) | low;
 	//result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
-	result = 1122500L / result;
+	result = lVccCalibration / result;
 	return result; // Vcc in millivolts
 }
 

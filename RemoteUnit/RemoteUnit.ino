@@ -7,7 +7,8 @@
 #include <JeeLib.h>
 #include <Ports.h>
 
-#define debug false
+#define DEBUG false
+
 /* pin mappings
 a0	14
 a1	15
@@ -28,8 +29,9 @@ const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
-const int nMsgTimeout = 10000;
-const int nDHTPwrTimeout = 1500;
+const int nMsgTimeout = 20000;		//timeout between messsages in ms
+const int nDHTPwrTimeout = 1500;	//timeout after powering the dht up
+const long lVccCalibration = 1093800;
 
 char buffer[24];
 #define DHTTYPE DHT22
@@ -46,9 +48,9 @@ unsigned long _lLastTime;
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
 void setup() {
-	DS[10] = nMsgTimeout/1000;
+	DS[10] = nMsgTimeout / 1000;
 	noInterrupts();
-#if debug
+#if DEBUG
 	Serial.begin(9600);
 #endif
 	attachInterrupt(0, ISRTipCnt, FALLING);
@@ -57,9 +59,11 @@ void setup() {
 	ds.begin();
 	ds.requestTemperatures();
 	while (!driver.init()) {
+#if DEBUG
 		Serial.println("radio init failed");
+#endif
 		ledLightDigital('r');
-	}
+}
 	fRainTips = 0;
 	interrupts();
 }

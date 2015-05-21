@@ -26,8 +26,6 @@ void setupSD() {
 }
 
 void setupPins(){
-
-
 	pinMode(RADIO_CTRL_PIN, OUTPUT);			//radio control sleep pin
 	digitalWrite(RADIO_CTRL_PIN, HIGH);
 
@@ -191,8 +189,6 @@ void setupEthernet() {
 				Settings.GW[i] = Ethernet.gatewayIP()[i];
 				Settings.DNS[i] = Ethernet.dnsServerIP()[i];
 			}
-
-
 		}
 	}
 	else {
@@ -213,8 +209,7 @@ void setupEthernet() {
 	}
 	//this gives client.connect() max timeout approx 3s
 	W5100.setRetransmissionTime(0x07D0);
-	W5100.setRetransmissionCount(3);
-	
+	W5100.setRetransmissionCount(3);	
 }
 
 void setupLCD(){
@@ -247,7 +242,7 @@ void setupAlarms() {
 
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
-	Alarm.timerRepeat(10, printDebug);
+	Alarm.timerRepeat(2, printDebug);
 #endif
 	
 }

@@ -42,7 +42,7 @@ void receiveData() {
 
 //************************************
 // Method:   	 getFailedRadioMessages
-// Description:  Calculate how many radio transmissions failed since main unit startup presuming that the remote unit is up and running and sending interval is 60s. This needs to be called every second.
+// Description:  Calculate how many radio transmissions failed since main unit startup presuming that the remote unit. This needs to be called every radio msg interval
 // Access:   	 public 
 // Returns:  	 void
 // Qualifier:	

@@ -1,10 +1,5 @@
 void printDebug() {
-	DateTime t = now();
-	Serial.print(t.hour());
-	Serial.print(":");
-	Serial.print(t.minute());
-	Serial.print(":");
-	Serial.println(t.second());
+	Serial.println(readVcc());
 }
 
 //************************************
@@ -198,7 +193,7 @@ void thingSpeak(){
 
 #if DEBUG
 	Serial.print(F("Update ThingSpeak with dataset "));
-	Serial.println(intToString(nCurrentDataSet));
+	Serial.println(_byCurrentDS);
 #endif
 	updateThingSpeak(*DataSetPtr[_byCurrentDS]);
 	_nCnt++;

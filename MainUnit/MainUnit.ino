@@ -23,6 +23,8 @@
 //enable/disable all serial.print messages
 #define DEBUG false
 
+//my arduino specific calibration constant for reading vcc
+const long lVccCalibration = 1100000;
 //setup pins
 const int RESET_ETH_SHIELD_PIN = 14;
 const int DHT22_PIN = 9;
