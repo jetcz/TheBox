@@ -20,7 +20,7 @@ void system() {
 	sNow = getDateTimeString(_dtNow);
 	sMainUptime = getUptimeString(getUptime(_dtNow));
 	enableDisableAlarms();
-	lcdBacklight();	
+	lcdBacklight();
 	for (int i = 0; i < 4; i++)
 	{
 		if (Settings.RelayMode[i] > 1) serviceSchedulers(_dtNow, i);
@@ -173,85 +173,47 @@ void printLcd() {
 
 //************************************
 // Method:   	 thingSpeak
-// Description:  Helper method to call Thingspeak upload and rotate datasets
+// Description:  Helper method to call Thingspeak upload, rotate datasets adn restart arduino if there problems uploading
 // Access:   	 public 
 // Returns:  	 void
 // Qualifier:	
 //************************************
 void thingSpeak(){
-	//before we update thingspeak, check if the dataset is valid 
-	if (!DataSetPtr[byCurrentDataSet]->Valid)
-	{
+	static unsigned int _nCnt;
+	byte _byCurrentDS = _nCnt % 3;
+	if (updateTSAlarm == 0) updateTSAlarm = Alarm.timerRepeat(Settings.UpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
 
+	//before we update thingspeak, check if the dataset is valid 
+	if (!DataSetPtr[_byCurrentDS]->Valid)
+	{
 #if DEBUG
 		Serial.println();
 		Serial.println(F("DataSet not valid, aborting upload!"));
 #endif
-		byCurrentDataSet++;
+		_nCnt++;
 		return; //cancel thingspeak update
-}
+	}
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
 	SystemDS.Size = (RemoteDS.Valid) ? SystemDS.Size = 8 : SystemDS.Size = 6;
 
-	//close previous connnection DO NOT CLOSE CONNECTION TEST
-	client.flush();
-	
-	//{ // iterate through our array of pointers to our dataset arrays 
-		if (byCurrentDataSet > 2) {
-			byCurrentDataSet = 0;
-		}
 #if DEBUG
-		Serial.print(F("Update ThingSpeak with dataset "));
-		Serial.println(intToString(byCurrentDataSet));
+	Serial.print(F("Update ThingSpeak with dataset "));
+	Serial.println(intToString(nCurrentDataSet));
 #endif
-		updateThingSpeak(*DataSetPtr[byCurrentDataSet]);
-		byCurrentDataSet++;
-
-	// Check if Ethernet needs to be restarted
-	if ((nFailedCounter % Settings.RestartEthernetThreshold) == 0 && nFailedCounter != 0){
-		ledLight(3, 'r');
-#if DEBUG
-		Serial.println(F("Ethernet Shield needs to be restarted!"));
-		Serial.println();
-#endif
-		Alarm.disable(printLcdAlarm);
-		lcd.clear();
-		lcd.setCursor(0, 0);
-		lcd.print(F("Ethernet Shield"));
-		lcd.setCursor(0, 1);
-		lcd.print(F("must be restarted!"));
-		setupEthernet();
-	}
-	// Check if Arduino needs to be restarted
-	if ((nFailedCounter % Settings.RestartArduinoThreshold) == 0 && nFailedCounter != 0) {
-		ledLight(1, 'r');
-		ledLight(3, 'r');
-#if DEBUG
-		Serial.println(F("Arduino needs to be restarted!"));
-		Serial.println();
-#endif
-		Alarm.disable(printLcdAlarm);
-		lcd.clear();
-		lcdBacklight();
-		lcd.setCursor(0, 0);
-		lcd.print(F("Arduino needs to"));
-		lcd.setCursor(0, 1);
-		lcd.print(F("be restarted"));
-		Alarm.delay(3000);
-		resetFunc(); //reboot arduino
-	}
+	updateThingSpeak(*DataSetPtr[_byCurrentDS]);
+	_nCnt++;
+	needRestart();
 }
-
 
 //************************************
 // Method:   	 enableDisableAlarms
-// Description:  Helper method to temporarily disable alarms (currently only LCD alarm to disaply some message)
+// Description:  Helper method to temporarily disable alarms (currently only LCD alarm to display some message)
 // Access:   	 public 
 // Returns:  	 void
 // Qualifier:	
 //************************************
 void enableDisableAlarms() {
-	
+
 	//enable lcd refreshing after some msg shows up for x sec
 	static byte _bySecCnt = 0;
 	if (!Alarm.active(printLcdAlarm) && _bySecCnt > Settings.LcdMsgTimeout)
@@ -294,7 +256,7 @@ void syncRTCwithNTP() {
 #if DEBUG
 		Serial.println(F("NTP time sync failed!"));
 #endif
-}
+	}
 }
 
 
@@ -331,7 +293,7 @@ void dhcp() {
 		Serial.println(Ethernet.dnsServerIP());
 #endif
 		ledLight(1, 'g');
-}
+	}
 }
 
 
@@ -357,7 +319,7 @@ void writeSD() {
 		lcd.print(F("settings to SD card"));
 		lcd.setCursor(0, 2);
 		lcd.print(F("failed!"));
-}
+	}
 	else
 	{
 #if DEBUG

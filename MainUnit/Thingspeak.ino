@@ -8,6 +8,7 @@
 //************************************
 void updateThingSpeak(DataSet ds){
 	ledLight(3, 'b');
+	client.flush();
 	/* This produces nice string for ThingSpeak like 1=21.5&2=51.8&3=..... etc depending on what array you put in.
 	The values in array MUST be sorted exactly like ThingSpeak fields go one by one: {teperature, humidity, humidex etc....} */
 	String _sValues;
@@ -24,7 +25,6 @@ void updateThingSpeak(DataSet ds){
 	if (!client.connected() || now() - _lLastCnn > 420) //for some reason the connection doesn't last past 500 sec, so we need to close and reopen it manualy for maximum reliability
 	{
 		ledLight(3, 'c');
-		client.flush();
 		client.stop();
 #if DEBUG
 		Serial.print(F("Connecting to ThingSpeak..."));

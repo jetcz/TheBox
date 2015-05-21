@@ -74,7 +74,6 @@ unsigned int nFailedCntTSTotal;			//total failed thing speak messages
 unsigned int nFailedCntRadioTotal;		//total failed radio messages
 DateTime dtSysStart;					//time of system start for uptime 
 DateTime dtLastNTPsync;					//time of last ntp sync
-byte byCurrentDataSet;					//for cycling betweeen thingspeak datasets
 String sNow;							//current datetime string
 String sMainUptime;						//uptime string
 String sRemoteUptime;					//uptime string
@@ -123,6 +122,7 @@ int updateTSAlarm;
 int dhcpAlarm;
 int writeSDAlarm;
 int getInitialTipCntAlarm;
+int failedRadioMessagesAlarm;
 
 //reboot arduino
 void(*resetFunc) (void) = 0;

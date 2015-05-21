@@ -20,6 +20,50 @@ void resetEthShield(int pin) {
 
 
 //************************************
+// Method:   	 needRestart
+// Description:  Check whether ethernet shiled and arduino needs to be restared
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
+void needRestart() {
+	// Check if Ethernet needs to be restarted
+	if ((nFailedCounter % Settings.RestartEthernetThreshold) == 0 && nFailedCounter != 0){
+		ledLight(3, 'r');
+#if DEBUG
+		Serial.println(F("Ethernet Shield needs to be restarted!"));
+		Serial.println();
+#endif
+		Alarm.disable(printLcdAlarm);
+		lcd.clear();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Ethernet Shield"));
+		lcd.setCursor(0, 1);
+		lcd.print(F("must be restarted!"));
+		setupEthernet();
+	}
+	// Check if Arduino needs to be restarted
+	if ((nFailedCounter % Settings.RestartArduinoThreshold) == 0 && nFailedCounter != 0) {
+		ledLight(1, 'r');
+		ledLight(3, 'r');
+#if DEBUG
+		Serial.println(F("Arduino needs to be restarted!"));
+		Serial.println();
+#endif
+		Alarm.disable(printLcdAlarm);
+		lcd.clear();
+		lcdBacklight();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Arduino needs to"));
+		lcd.setCursor(0, 1);
+		lcd.print(F("be restarted"));
+		Alarm.delay(3000);
+		resetFunc(); //reboot arduino
+	}
+}
+
+
+//************************************
 // Method:   	 isRemoteDataSetValid
 // Description:  Whether or not is the remote dataset valid, also lights up led accordingly
 // Access:   	 public 
