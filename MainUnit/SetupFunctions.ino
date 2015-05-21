@@ -223,12 +223,12 @@ void setupLCD(){
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
 	Alarm.timerOnce(180, syncRTCwithNTP);
-	Alarm.timerOnce(110, thingSpeak); //update ThingSpeak after x sec (boot time of ovis), then it repeats itself by Settings.UpdateThingSpeakInterval
+	updateTSAlarm = Alarm.timerRepeat(Settings.UpdateThingSpeakInterval, thingSpeak);
 	failedRadioMessagesAlarm = Alarm.timerRepeat(Settings.RadioMsgInterval, getFailedRadioMessages); //count failed radio messages by default interval (gets reinitialized once we get first radio msg)
 	Alarm.timerRepeat(1, system);
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd);
 	Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
-	printSerialAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+	if (DEBUG) printSerialAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	Alarm.timerRepeat(60, getRainPerHour);
 	getInitialTipCntAlarm = Alarm.timerRepeat(60, getRainPerDay);
@@ -238,7 +238,6 @@ void setupAlarms() {
 
 	if (!Settings.DHCP) Alarm.disable(dhcpAlarm);
 	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
-	if (!DEBUG) Alarm.disable(printSerialAlarm);
 
 #if DEBUG
 	Serial.println(F("Alarms initialized"));

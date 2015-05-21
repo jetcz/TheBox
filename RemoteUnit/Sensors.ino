@@ -11,7 +11,7 @@ void getDataSet() {
 	DS[2] = getAirHumidex();					//remoteHumidex
 
 	powerSensors(true);
-	DS[7] = readVcc();
+	DS[7] = getVcc();
 	DS[3] = getSoilTemperature();				//remoteSoilTemperature
 	DS[4] = getSoilHumidity();					//remoteSoilHumidity
 	DS[5] = getLight();							//remoteLight

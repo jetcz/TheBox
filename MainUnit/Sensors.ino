@@ -64,4 +64,9 @@ bool getMainPir() {
 	return digitalRead(PIR_PIN);
 }
 
+float getVcc(){
+	static RunningAverage _raVcc(6);
+	_raVcc.addValue(int(readVcc()));
+	return _raVcc.getAverage();
+}
 

@@ -1,5 +1,5 @@
 void printDebug() {
-	Serial.println(readVcc());
+
 }
 
 //************************************
@@ -176,7 +176,7 @@ void printLcd() {
 void thingSpeak(){
 	static unsigned int _nCnt;
 	byte _byCurrentDS = _nCnt % 3;
-	if (updateTSAlarm == 0) updateTSAlarm = Alarm.timerRepeat(Settings.UpdateThingSpeakInterval, thingSpeak); //update ThingSpeak every x ms
+	if (millis() < 100000) return;	//return if time is less than 1:40 (boot time of ovis)
 
 	//before we update thingspeak, check if the dataset is valid 
 	if (!DataSetPtr[_byCurrentDS]->Valid)
@@ -192,6 +192,7 @@ void thingSpeak(){
 	SystemDS.Size = (RemoteDS.Valid) ? SystemDS.Size = 8 : SystemDS.Size = 6;
 
 #if DEBUG
+	Serial.println();
 	Serial.print(F("Update ThingSpeak with dataset "));
 	Serial.println(_byCurrentDS);
 #endif

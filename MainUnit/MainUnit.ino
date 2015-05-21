@@ -578,7 +578,7 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(readVcc());
+		server.print(getVcc(), 0);
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
