@@ -27,7 +27,7 @@ struct SystemSettings
 		SysTempOffset = -0.2;
 		PressureOffset = 24;
 		MainTempOffset = -1.2;
-		RemoteTempOffset = -0.7;
+		RemoteTempOffset = -0.5;
 		SoilTempOffset = -0.2;
 	}
 	/* ThingSpeak settings */

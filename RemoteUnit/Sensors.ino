@@ -161,11 +161,16 @@ byte getSoilHumidity() {
 		AnalogReadings.addValue(analogRead(HUMIDITY_DATA_PIN));
 	}
 	float _fHum = AnalogReadings.getAverage()*(*Vcc) / 1023.0;
-	byte hum = ((_fHum / *Vcc - 1)*-115);
+	byte hum = ((_fHum / *Vcc - 1)*-101);
 	SoilHum.addValue(hum);
 	return SoilHum.getAverage();
 }
 
+float getVcc(){
+	static RunningAverage _raVcc(3);
+	_raVcc.addValue(float(readVcc()));
+	return _raVcc.getAverage();
+}
 
 //************************************
 // Method:   	 ISRTipCnt
