@@ -1,4 +1,6 @@
-Either use these libs https://github.com/jetcz/ArduinoLibraries (recommended) OR make following changes:
+Use these libs https://github.com/jetcz/ArduinoLibraries 
+
+Changes:
 
 RadioHead library - RH_ASK.cpp:
 Arduino ethernet library probably uses timer 1 somehow therefore you MUST add this to RH_ASK.cpp:
@@ -6,4 +8,7 @@ Arduino ethernet library probably uses timer 1 somehow therefore you MUST add th
 
 Webduino library - WebServer.h:
 change WEBDUINO_COMMANDS_COUNT to 16
+
+TimeAlarms library
+Implement Alarm.active() function
 
