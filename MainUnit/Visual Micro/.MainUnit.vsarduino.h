@@ -86,6 +86,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <Alarms.ino>
 #include <DataStructures.h>
 #include <DataTypesConversion.ino>
+#include <EnergyMon.ino>
 #include <Lcd.ino>
 #include <Led.ino>
 #include <Misc.ino>

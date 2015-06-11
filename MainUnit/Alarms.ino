@@ -1,4 +1,12 @@
 void printDebug() {
+	static unsigned long a = 0;
+	Serial.print("Voltage0 ");
+	Serial.println(emon0.Vrms);
+	Serial.print("Voltage3 ");
+	Serial.println(emon3.Vrms);
+	Serial.print("Time ");
+	Serial.println(millis()-a);
+	a = millis();
 
 }
 
@@ -52,9 +60,14 @@ void prepareDataSetArrays() {
 	MainDS.Data[3] = getMainPir();
 	_fVal = getPressure(event);
 	MainDS.Data[4] = (_fVal == -255) ? _fVal : _fVal + Settings.PressureOffset;
+	MainDS.Data[5] = getPower(0);
+	MainDS.Data[6] = getPower(3);
+	MainDS.Data[7] = getVoltage();
 
 	MainDS.Timestamp = _dtNow;
 	SystemDS.Timestamp = _dtNow;
+
+	Vcc = getVcc();
 }
 
 //************************************

@@ -12,3 +12,6 @@ change WEBDUINO_COMMANDS_COUNT to 16
 TimeAlarms library
 Implement Alarm.active() function
 
+EmonLib library
+Make the calculations non blocking
+

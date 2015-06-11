@@ -4,21 +4,22 @@
 #include <Adafruit_BMP085_U.h>
 #include <DHT.h>
 #include <SPI.h>
-#include <Ethernet.h>
+#include <Ethernet.h>		//slightly modified, can use default
 #include <EthernetUdp.h>
 #include <utility/w5100.h>
 #include <SD.h>
 #include <Time.h>
-#include <TimeAlarms.h>
+#include <TimeAlarms.h>		//modified, cannot use default (refer to readme)
 #include <Timezone.h>
 #include <RunningAverage.h>
-#include <WebServer.h>
-#include <RH_ASK.h>
+#include <WebServer.h>		//slightly modified, can use default (refer to readme)
+#include <RH_ASK.h>			//slightly modified, can use default (refer to readme)
 #include <LiquidCrystal_I2C.h>
 #include <IniFile.h>
 #include <QueueArray.h>
 #include "avr/pgmspace.h"
 #include "DataStructures.h"
+#include <EmonLib.h>		//modified, cannot use default (refer to readme)
 
 //enable/disable all serial.print messages
 #define DEBUG false
@@ -39,6 +40,7 @@ const int LCD_SWITCH[3] = { 32, 34, 36 };
 const int LCD_SWITCH_PWR_PIN = 30;
 const int RADIO_RX_PIN = 17;
 const int RADIO_CTRL_PIN = 18;
+const int VOLTAGE_PIN = 54;
 
 //general buffers for various usages (datatypes conversion, reading ini settings etc)
 const int nBuffLen1 = 30;
@@ -62,6 +64,9 @@ WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
+EnergyMonitor emon0;
+EnergyMonitor emon3;
+float Vcc;
 
 //initialize custom structs
 SystemSettings Settings;			//here are all user configurables
@@ -229,6 +234,25 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 
 		server.printP(tag_start_sensor);
 		server.print(RemoteDS.Data[7], 1); //rain /day
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		if (getRelayState(0) == 1)
+		{
+			server.print(getPower(0), 0);
+			server.print("W");
+		}
+		else server.print("");
+
+		server.printP(tag_end_sensor);
+
+		server.printP(tag_start_sensor);
+		if (getRelayState(3) == 1)
+		{
+			server.print(getPower(3), 0);
+			server.print("W");
+		}
+		else server.print("");
 		server.printP(tag_end_sensor);
 
 		server.print(F("</Sen>"));
@@ -441,7 +465,7 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 			Serial.print("-");
 			Serial.println(Sched[i].Value[j][1]);
 		}
-	}
+}
 #endif // debug
 
 	P(messageSuccess) =
@@ -578,11 +602,15 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(getVcc(), 0);
+		server.print(Vcc, 0);
+		server.print(F("mV / "));
+		server.print(getVoltage(), 1);
+		server.print(F("V"));
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
 		server.print(int(SystemDS.Data[6]));
+		server.print(F("mV"));
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
@@ -1072,7 +1100,7 @@ void setup()
 
 	//datasets setup
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
-	MainDS.Size = 5;
+	MainDS.Size = 8;
 	MainDS.Valid = true;
 	MainDS.Timestamp = dtSysStart.unixtime();
 
@@ -1085,14 +1113,20 @@ void setup()
 	SystemDS.Valid = true;
 	SystemDS.Timestamp = dtSysStart.unixtime();
 
+	emon0.voltage(VOLTAGE_PIN, 934, 1.7);  // Voltage: input pin, calibration, phase_shift
+	emon3.voltage(VOLTAGE_PIN, 934, 1.7);  // Voltage: input pin, calibration, phase_shift
+
 #if DEBUG
 	Serial.println(F("Setup Done"));
 #endif	
+
 }
 
 void loop()
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
-	webserver.processConnection();	//process webserver request as soon as possible				
+	webserver.processConnection();	//process webserver request as soon as possible		
+	emon0.calcVI(100, Vcc);			//measure power consumption in outlets (non-blocking)
+	emon3.calcVI(100, Vcc);			//measure power consumption in outlets (non-blocking)
 }
 

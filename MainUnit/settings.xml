@@ -1,6 +1,7 @@
 <?xml version = "1.0" ?>
 <Settings>
   <General>
+    <RadioMsgInterval>20</RadioMsgInterval>
     <RemoteDSTimeout>180</RemoteDSTimeout>
     <InvalidDSAction>0</InvalidDSAction>
     <TSEnabled>1</TSEnabled>
@@ -11,7 +12,7 @@
     <SysTempOffset>-0.20</SysTempOffset>
     <PressureOffset>24.00</PressureOffset>
     <MainTempOffset>-1.20</MainTempOffset>
-    <RemoteTempOffset>-0.70</RemoteTempOffset>
+    <RemoteTempOffset>-0.50</RemoteTempOffset>
     <SoilTempOffset>-0.20</SoilTempOffset>
   </Offsets>
   <Net>

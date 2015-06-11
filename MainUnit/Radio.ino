@@ -49,6 +49,6 @@ void receiveData() {
 //************************************
 void getFailedRadioMessages(){
 	static bool bSetRadioMsgInterval = false;
-	if (now() - RemoteDS.Timestamp.unixtime() > Settings.RadioMsgInterval + 1) nFailedCntRadioTotal++;
+	if (now() - RemoteDS.Timestamp.unixtime() > Settings.RadioMsgInterval + 2) nFailedCntRadioTotal++;
 	if (bReceivedRadioMsg && !bSetRadioMsgInterval) Alarm.write(failedRadioMessagesAlarm, Settings.RadioMsgInterval);
 }

@@ -1,49 +1,49 @@
 <?xml version = "1.0" ?>
 <Schedulers>
   <Relay>
-    <Variable>2</Variable>
+    <Variable>4</Variable>
     <Interval>
       <Enabled>1</Enabled>
       <Time>
-        <H>10</H>
+        <H>8</H>
         <M>0</M>
       </Time>
       <Value>
-        <From>10.00</From>
-        <To>12.00</To>
+        <From>21.00</From>
+        <To>22.00</To>
       </Value>
     </Interval>
     <Interval>
       <Enabled>1</Enabled>
       <Time>
-        <H>12</H>
-        <M>50</M>
+        <H>20</H>
+        <M>0</M>
       </Time>
       <Value>
-        <From>14.00</From>
-        <To>50.00</To>
+        <From>16.00</From>
+        <To>17.00</To>
       </Value>
     </Interval>
     <Interval>
-      <Enabled>1</Enabled>
+      <Enabled>0</Enabled>
       <Time>
-        <H>18</H>
-        <M>10</M>
+        <H>0</H>
+        <M>0</M>
       </Time>
       <Value>
-        <From>10.00</From>
-        <To>12.00</To>
+        <From>0.00</From>
+        <To>0.00</To>
       </Value>
     </Interval>
     <Interval>
-      <Enabled>1</Enabled>
+      <Enabled>0</Enabled>
       <Time>
-        <H>19</H>
-        <M>10</M>
+        <H>0</H>
+        <M>0</M>
       </Time>
       <Value>
-        <From>5.00</From>
-        <To>3.00</To>
+        <From>0.00</From>
+        <To>0.00</To>
       </Value>
     </Interval>
     <Interval>
@@ -61,47 +61,47 @@
   <Relay>
     <Variable>0</Variable>
     <Interval>
-      <Enabled>1</Enabled>
+      <Enabled>0</Enabled>
       <Time>
-        <H>1</H>
-        <M>10</M>
-      </Time>
-      <Value>
-        <From>15.00</From>
-        <To>20.00</To>
-      </Value>
-    </Interval>
-    <Interval>
-      <Enabled>1</Enabled>
-      <Time>
-        <H>12</H>
-        <M>55</M>
-      </Time>
-      <Value>
-        <From>80.00</From>
-        <To>85.00</To>
-      </Value>
-    </Interval>
-    <Interval>
-      <Enabled>1</Enabled>
-      <Time>
-        <H>13</H>
+        <H>0</H>
         <M>0</M>
       </Time>
       <Value>
-        <From>14.00</From>
-        <To>10.00</To>
+        <From>0.00</From>
+        <To>0.00</To>
       </Value>
     </Interval>
     <Interval>
       <Enabled>0</Enabled>
       <Time>
-        <H>15</H>
+        <H>0</H>
         <M>0</M>
       </Time>
       <Value>
-        <From>10.00</From>
-        <To>11.00</To>
+        <From>0.00</From>
+        <To>0.00</To>
+      </Value>
+    </Interval>
+    <Interval>
+      <Enabled>0</Enabled>
+      <Time>
+        <H>0</H>
+        <M>0</M>
+      </Time>
+      <Value>
+        <From>0.00</From>
+        <To>0.00</To>
+      </Value>
+    </Interval>
+    <Interval>
+      <Enabled>0</Enabled>
+      <Time>
+        <H>0</H>
+        <M>0</M>
+      </Time>
+      <Value>
+        <From>0.00</From>
+        <To>0.00</To>
       </Value>
     </Interval>
     <Interval>
@@ -117,60 +117,60 @@
     </Interval>
   </Relay>
   <Relay>
-    <Variable>5</Variable>
+    <Variable>0</Variable>
     <Interval>
-      <Enabled>1</Enabled>
+      <Enabled>0</Enabled>
       <Time>
-        <H>5</H>
-        <M>50</M>
-      </Time>
-      <Value>
-        <From>10.00</From>
-        <To>15.00</To>
-      </Value>
-    </Interval>
-    <Interval>
-      <Enabled>1</Enabled>
-      <Time>
-        <H>10</H>
-        <M>20</M>
-      </Time>
-      <Value>
-        <From>10.00</From>
-        <To>12.00</To>
-      </Value>
-    </Interval>
-    <Interval>
-      <Enabled>1</Enabled>
-      <Time>
-        <H>11</H>
+        <H>0</H>
         <M>0</M>
       </Time>
       <Value>
-        <From>5.10</From>
-        <To>11.00</To>
+        <From>0.00</From>
+        <To>0.00</To>
       </Value>
     </Interval>
     <Interval>
-      <Enabled>1</Enabled>
+      <Enabled>0</Enabled>
       <Time>
-        <H>12</H>
+        <H>0</H>
         <M>0</M>
       </Time>
       <Value>
-        <From>0.10</From>
-        <To>0.50</To>
+        <From>0.00</From>
+        <To>0.00</To>
       </Value>
     </Interval>
     <Interval>
-      <Enabled>1</Enabled>
+      <Enabled>0</Enabled>
       <Time>
-        <H>13</H>
+        <H>0</H>
         <M>0</M>
       </Time>
       <Value>
-        <From>-2.00</From>
-        <To>-3.20</To>
+        <From>0.00</From>
+        <To>0.00</To>
+      </Value>
+    </Interval>
+    <Interval>
+      <Enabled>0</Enabled>
+      <Time>
+        <H>0</H>
+        <M>0</M>
+      </Time>
+      <Value>
+        <From>0.00</From>
+        <To>0.00</To>
+      </Value>
+    </Interval>
+    <Interval>
+      <Enabled>0</Enabled>
+      <Time>
+        <H>0</H>
+        <M>0</M>
+      </Time>
+      <Value>
+        <From>0.00</From>
+        <To>0.00</To>
       </Value>
     </Interval>
   </Relay>

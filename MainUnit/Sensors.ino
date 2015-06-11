@@ -70,3 +70,27 @@ float getVcc(){
 	return _raVcc.getAverage();
 }
 
+float getPower(int relay){
+	static RunningAverage _raCurr0(3);
+	static RunningAverage _raCurr3(3);
+
+	if (relay = 0)
+	{
+		_raCurr0.addValue(emon0.realPower);
+		return _raCurr0.getAverage();
+	}
+
+	if (relay = 3)
+	{
+		_raCurr3.addValue(emon3.realPower);
+		return _raCurr3.getAverage();
+	}
+	return 0;
+}
+
+float getVoltage(){
+	static RunningAverage _raVoltage(6);
+	_raVoltage.addValue((emon0.Vrms + emon3.Vrms)/2);
+	return _raVoltage.getAverage();
+}
+

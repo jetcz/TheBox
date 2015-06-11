@@ -10,7 +10,7 @@ var channelsLoaded = 0;
 // the 'T' Temperature left axis, or the 'O' Other right axis.
 var channelKeys = [];
 channelKeys.push(
-{ channelNumber: 25683, name: 'The Box (main unit)', key: '91GX43EXD6RUSL4U', fieldList: [{ field: 1, axis: 'T' }, { field: 2, axis: 'O' }, { field: 3, axis: 'T' }, { field: 5, axis: 'O' }] },
+{ channelNumber: 25683, name: 'The Box (main unit)', key: '91GX43EXD6RUSL4U', fieldList: [{ field: 1, axis: 'T' }, { field: 2, axis: 'O' }, { field: 3, axis: 'T' }, { field: 5, axis: 'O' }, { field: 6, axis: 'O' }, { field: 7, axis: 'O' }, { field: 8, axis: 'O' }] },
 { channelNumber: 25982, name: 'The Box (remote unit)', key: 'OL1GVYUB2HFK7E2M', fieldList: [{ field: 1, axis: 'T' }, { field: 2, axis: 'O' }, { field: 3, axis: 'T' }, { field: 4, axis: 'T' }, { field: 5, axis: 'O' }, { field: 6, axis: 'O' }, { field: 7, axis: 'O' }, { field: 8, axis: 'O' }] }
 );
 /*
@@ -289,7 +289,7 @@ $(document).ready(function () {
                 window.console && console.log('Channel ' + channelIndex + ' field ' + fieldIndex);
 
 
-                if (channelIndex == 0 && (fieldIndex == 1 || fieldIndex == 2 || fieldIndex == 3)) {  //hide humidity humidex and pressure
+                if (channelIndex == 0 && (fieldIndex == 1 || fieldIndex == 2 || fieldIndex == 3 || fieldIndex == 4 || fieldIndex == 5 || fieldIndex == 6)) {
                     chartOptions.series.push({
                         data: channelKeys[channelIndex].fieldList[fieldIndex].data,
                         index: channelKeys[channelIndex].fieldList[fieldIndex].series,
@@ -299,7 +299,7 @@ $(document).ready(function () {
                     });
                 }
                 else
-                    if (channelIndex == 1 && (fieldIndex == 1 || fieldIndex == 2 || fieldIndex == 3) || fieldIndex == 5 || fieldIndex == 6 || fieldIndex == 7) {  //hide humidity humidex and rain
+                    if (channelIndex == 1 && (fieldIndex == 1 || fieldIndex == 2 || fieldIndex == 3) || fieldIndex == 5 || fieldIndex == 6 || fieldIndex == 7) { 
                         chartOptions.series.push({
                             data: channelKeys[channelIndex].fieldList[fieldIndex].data,
                             index: channelKeys[channelIndex].fieldList[fieldIndex].series,
