@@ -56,6 +56,19 @@ void setupPins(){
 		ledLight(i, 'k');
 		pinMode(LCD_SWITCH[i], INPUT_PULLUP);
 	}
+
+	//current sensor right socket
+	pinMode(59, OUTPUT);	//vcc
+	digitalWrite(59, HIGH);
+	pinMode(57, OUTPUT);	//gnd
+	digitalWrite(57, LOW);
+
+	//current sensor left socket
+	pinMode(64, OUTPUT);	//vcc
+	digitalWrite(64, HIGH);
+	pinMode(62, OUTPUT);	//gnd
+	digitalWrite(62, LOW);
+
 #if DEBUG
 	Serial.println(F("Pins initialized and set"));
 #endif
@@ -228,7 +241,8 @@ void setupAlarms() {
 	Alarm.timerRepeat(1, system);
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd);
 	Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
-	if (DEBUG) printSerialAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+	Alarm.timerRepeat(Settings.UpdatePWRSensorsInterval, getPWRData); //get sensor data every x ms
+	//if (DEBUG) printSerialAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	Alarm.timerRepeat(60, getRainPerHour);
 	getInitialTipCntAlarm = Alarm.timerRepeat(60, getRainPerDay);
@@ -241,7 +255,7 @@ void setupAlarms() {
 
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
-	Alarm.timerRepeat(2, printDebug);
+	Alarm.timerRepeat(3, printDebug);
 #endif
 	
 }

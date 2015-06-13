@@ -41,6 +41,8 @@ const int LCD_SWITCH_PWR_PIN = 30;
 const int RADIO_RX_PIN = 17;
 const int RADIO_CTRL_PIN = 18;
 const int VOLTAGE_PIN = 54;
+const int CURRENT_LEFT_PIN = 63;
+const int CURRENT_RIGHT_PIN = 58;
 
 //general buffers for various usages (datatypes conversion, reading ini settings etc)
 const int nBuffLen1 = 30;
@@ -64,8 +66,7 @@ WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
-EnergyMonitor emon0;
-EnergyMonitor emon3;
+EnergyMonitor emon;
 float Vcc;
 
 //initialize custom structs
@@ -239,7 +240,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_start_sensor);
 		if (getRelayState(0) == 1)
 		{
-			server.print(getPower(0), 0);
+			server.print(MainDS.Data[5], 1);
 			server.print("W");
 		}
 		else server.print("");
@@ -249,7 +250,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_start_sensor);
 		if (getRelayState(3) == 1)
 		{
-			server.print(getPower(3), 0);
+			server.print(MainDS.Data[6], 1);
 			server.print("W");
 		}
 		else server.print("");
@@ -604,7 +605,7 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_start_sensor);
 		server.print(Vcc, 0);
 		server.print(F("mV / "));
-		server.print(getVoltage(), 1);
+		server.print(MainDS.Data[7], 1);
 		server.print(F("V"));
 		server.printP(tag_end_sensor);
 
@@ -1113,20 +1114,18 @@ void setup()
 	SystemDS.Valid = true;
 	SystemDS.Timestamp = dtSysStart.unixtime();
 
-	emon0.voltage(VOLTAGE_PIN, 934, 1.7);  // Voltage: input pin, calibration, phase_shift
-	emon3.voltage(VOLTAGE_PIN, 934, 1.7);  // Voltage: input pin, calibration, phase_shift
-
+	emon.voltage(VOLTAGE_PIN, 939, -0.24);  // Voltage: input pin, calibration, phase_shift
+	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 17.3);
+	
 #if DEBUG
 	Serial.println(F("Setup Done"));
 #endif	
-
 }
 
 void loop()
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
 	webserver.processConnection();	//process webserver request as soon as possible		
-	emon0.calcVI(100, Vcc);			//measure power consumption in outlets (non-blocking)
-	emon3.calcVI(100, Vcc);			//measure power consumption in outlets (non-blocking)
+	emon.calcVI(80, Vcc);			//measure power consumption in outlets (non-blocking)
 }
 

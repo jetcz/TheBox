@@ -13,5 +13,5 @@ TimeAlarms library
 Implement Alarm.active() function
 
 EmonLib library
-Make the calculations non blocking
+Completely custom implementation (non-blocking behaviour, calculate two outlets at once)
 

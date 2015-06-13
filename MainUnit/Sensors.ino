@@ -71,18 +71,22 @@ float getVcc(){
 }
 
 float getPower(int relay){
-	static RunningAverage _raCurr0(3);
-	static RunningAverage _raCurr3(3);
+	static RunningAverage _raCurr0(6);
+	static RunningAverage _raCurr3(6);
 
-	if (relay = 0)
+	if (relay == 0)
 	{
-		_raCurr0.addValue(emon0.realPower);
+		if (emon.realPower1 < 0 || emon.powerFactor1 < 0) {}
+		else
+			_raCurr0.addValue(emon.realPower1);
 		return _raCurr0.getAverage();
 	}
 
-	if (relay = 3)
+	if (relay == 3)
 	{
-		_raCurr3.addValue(emon3.realPower);
+		if (emon.realPower2 < 0 || emon.powerFactor2 < 0) {}
+		else
+			_raCurr3.addValue(emon.realPower2);
 		return _raCurr3.getAverage();
 	}
 	return 0;
@@ -90,7 +94,7 @@ float getPower(int relay){
 
 float getVoltage(){
 	static RunningAverage _raVoltage(6);
-	_raVoltage.addValue((emon0.Vrms + emon3.Vrms)/2);
+	_raVoltage.addValue((emon.Vrms));
 	return _raVoltage.getAverage();
 }
 

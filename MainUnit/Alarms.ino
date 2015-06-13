@@ -1,13 +1,15 @@
 void printDebug() {
-	static unsigned long a = 0;
-	Serial.print("Voltage0 ");
-	Serial.println(emon0.Vrms);
-	Serial.print("Voltage3 ");
-	Serial.println(emon3.Vrms);
-	Serial.print("Time ");
-	Serial.println(millis()-a);
-	a = millis();
-
+	Serial.print("Voltage ");
+	Serial.println(MainDS.Data[7]);
+	Serial.print("Power left: ");
+	Serial.println(MainDS.Data[5]);
+	Serial.print("Power right: ");
+	Serial.println(MainDS.Data[6]);
+	Serial.print("Phasecal1: ");
+	Serial.println(emon.powerFactor1);
+	Serial.print("Phasecal2: ");
+	Serial.println(emon.powerFactor2);
+	Serial.println();
 }
 
 //************************************
@@ -60,14 +62,27 @@ void prepareDataSetArrays() {
 	MainDS.Data[3] = getMainPir();
 	_fVal = getPressure(event);
 	MainDS.Data[4] = (_fVal == -255) ? _fVal : _fVal + Settings.PressureOffset;
-	MainDS.Data[5] = getPower(0);
-	MainDS.Data[6] = getPower(3);
-	MainDS.Data[7] = getVoltage();
 
 	MainDS.Timestamp = _dtNow;
 	SystemDS.Timestamp = _dtNow;
+}
 
+
+//************************************
+// Method:   	 getPWRData
+// Description:  Get power data (mains voltage, power consumption of appliances connected to sockets)
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
+void getPWRData(){
+	float fPwr;
 	Vcc = getVcc();
+	fPwr = getPower(0);
+	MainDS.Data[5] = (fPwr < 1) ? 0 : fPwr;
+	fPwr = getPower(3);
+	MainDS.Data[6] = (fPwr < 1) ? 0 : fPwr;
+	MainDS.Data[7] = getVoltage();
 }
 
 //************************************

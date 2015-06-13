@@ -17,6 +17,7 @@ struct SystemSettings
 		LightIntensity[1] = 1; //G
 		LightIntensity[2] = 2; //B
 		UpdateSensorsInterval = 10;
+		UpdatePWRSensorsInterval = 3;
 		TSenabled = true;
 		InvalidDSAction = false;
 		UpdateRainPerDayInterval = 600; //10 min interval
@@ -50,6 +51,7 @@ struct SystemSettings
 	byte UpdateSensorsInterval;
 
 	int UpdateRainPerDayInterval;
+	int UpdatePWRSensorsInterval;
 
 	byte RadioMsgInterval;
 
