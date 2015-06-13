@@ -76,12 +76,12 @@ void prepareDataSetArrays() {
 // Qualifier:	
 //************************************
 void getPWRData(){
-	float fPwr;
-	Vcc = getVcc();
-	fPwr = getPower(0);
-	MainDS.Data[5] = (fPwr < 1) ? 0 : fPwr;
-	fPwr = getPower(3);
-	MainDS.Data[6] = (fPwr < 1) ? 0 : fPwr;
+	float _fVal;
+	Vcc = readVcc();
+	_fVal = getPower(0);
+	MainDS.Data[5] = (_fVal < 1) ? 0 : _fVal;
+	_fVal = getPower(3);
+	MainDS.Data[6] = (_fVal < 1) ? 0 : _fVal;
 	MainDS.Data[7] = getVoltage();
 }
 

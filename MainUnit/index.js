@@ -72,7 +72,7 @@ function getInputsRepeat() {
         dataType: "xml",
         success: xmlParseInputs,
         complete: function () {
-            setTimeout(getInputsRepeat, 5000);
+            setTimeout(getInputsRepeat, 3000);
         }
     })
 }

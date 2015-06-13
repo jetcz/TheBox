@@ -63,6 +63,8 @@ void printLcdScreen2() {
 	static byte _byLastLenRemoteData6;
 	static byte _byLastLenRemoteData7;
 	static byte _byLastLenMainData4;
+	static byte _byLastLenMainData5;
+	static byte _byLastLenMainData6;
 
 	byte _byCurrLenRemoteData2 = floatToString(RemoteDS.Data[2]).length();
 	byte _byCurrLenRemoteData3 = floatToString(RemoteDS.Data[3]).length();
@@ -71,6 +73,8 @@ void printLcdScreen2() {
 	byte _byCurrLenRemoteData6 = floatToString(RemoteDS.Data[6]).length();
 	byte _byCurrLenRemoteData7 = floatToString(RemoteDS.Data[7]).length();
 	byte _byCurrLenMainData4 = floatToString(MainDS.Data[4]).length();
+	byte _byCurrLenMainData5 = floatToString(MainDS.Data[5]).length();
+	byte _byCurrLenMainData6 = floatToString(MainDS.Data[6]).length();
 
 	//line 1 humidex	soiltemp
 	if (_byCurrLenRemoteData2 != _byLastLenRemoteData2)
@@ -123,20 +127,40 @@ void printLcdScreen2() {
 		lcd.print(F("          "));
 	}
 	lcd.setCursor(16 - _byCurrLenRemoteData6, 2);
-	lcd.print(RemoteDS.Data[6], 1); //rain
+	lcd.print(RemoteDS.Data[6], 1); //rain/hour
 	lcd.print(F("mm/h"));
 
 	//line 4
+	if (_byCurrLenMainData5 != _byLastLenMainData5)
+	{
+		lcd.setCursor(0, 3);
+		lcd.print(F("     "));
+	}
+	lcd.setCursor(0, 3);
+	lcd.print(MainDS.Data[5], (MainDS.Data[5] > 100) ? 0 : 1); //power left socket
+	lcd.print(F("W"));
+
+	if (_byCurrLenMainData6 != _byLastLenMainData6)
+	{
+		lcd.setCursor(6, 3);
+		lcd.print(F("     "));
+	}
+	lcd.setCursor(6, 3);
+	lcd.print(MainDS.Data[6], (MainDS.Data[6] > 100) ? 0 : 1); //power right socket
+	lcd.print(F("W"));
+
 	if (_byCurrLenRemoteData6 != _byLastLenRemoteData6)
 	{
 		lcd.setCursor(10, 3);
 		lcd.print(F("          "));
 	}
 	lcd.setCursor(16 - _byCurrLenRemoteData7, 3);
-	lcd.print(RemoteDS.Data[7], 1); //rain
+	lcd.print(RemoteDS.Data[7], 1); //rain/day
 	lcd.print(F("mm/d"));
 
 	_byLastLenMainData4 = _byCurrLenMainData4;
+	_byLastLenMainData5 = _byCurrLenMainData5;
+	_byLastLenMainData6 = _byCurrLenMainData6;
 	_byLastLenRemoteData2 = _byCurrLenRemoteData2;
 	_byLastLenRemoteData3 = _byCurrLenRemoteData3;
 	_byLastLenRemoteData4 = _byCurrLenRemoteData4;

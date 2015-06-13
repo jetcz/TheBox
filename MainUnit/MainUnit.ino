@@ -25,7 +25,7 @@
 #define DEBUG false
 
 //my arduino specific calibration constant for reading vcc
-const long lVccCalibration = 1100000;
+const float lVccCalibration = 1100000;
 //setup pins
 const int RESET_ETH_SHIELD_PIN = 14;
 const int DHT22_PIN = 9;
@@ -240,7 +240,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_start_sensor);
 		if (getRelayState(0) == 1)
 		{
-			server.print(MainDS.Data[5], 1);
+			server.print(MainDS.Data[5], (MainDS.Data[5] > 100) ? 0 : 1);	//left socket pwr
 			server.print("W");
 		}
 		else server.print("");
@@ -250,7 +250,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_start_sensor);
 		if (getRelayState(3) == 1)
 		{
-			server.print(MainDS.Data[6], 1);
+			server.print(MainDS.Data[6], (MainDS.Data[6] > 100) ? 0 : 1);	//right soceket pwr
 			server.print("W");
 		}
 		else server.print("");
@@ -466,7 +466,7 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 			Serial.print("-");
 			Serial.println(Sched[i].Value[j][1]);
 		}
-}
+	}
 #endif // debug
 
 	P(messageSuccess) =
@@ -1114,9 +1114,12 @@ void setup()
 	SystemDS.Valid = true;
 	SystemDS.Timestamp = dtSysStart.unixtime();
 
+	//Calibration process: attach a classic lightbulb or heater and set the phase_shift constant so that the reported power factor is 1,
+	//then connect a multimeter and set the calibration constant so that the reported voltage is same as on multimeter
 	emon.voltage(VOLTAGE_PIN, 939, -0.24);  // Voltage: input pin, calibration, phase_shift
-	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 17.3);
-	
+	//Calibratiion process: connect a known load and adjust the calibration constants so the reported wattage is the same as the load
+	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 18, 17.25); //Current: input pin, input pin, calibration, calibration
+
 #if DEBUG
 	Serial.println(F("Setup Done"));
 #endif	

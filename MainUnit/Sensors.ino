@@ -64,19 +64,14 @@ bool getMainPir() {
 	return digitalRead(PIR_PIN);
 }
 
-float getVcc(){
-	static RunningAverage _raVcc(6);
-	_raVcc.addValue(int(readVcc()));
-	return _raVcc.getAverage();
-}
-
 float getPower(int relay){
 	static RunningAverage _raCurr0(6);
 	static RunningAverage _raCurr3(6);
 
 	if (relay == 0)
 	{
-		if (emon.realPower1 < 0 || emon.powerFactor1 < 0) {}
+		if (getRelayState(0) == 0) _raCurr0.clear();
+		else if (emon.realPower1 < 0 || emon.powerFactor1 < 0) {}
 		else
 			_raCurr0.addValue(emon.realPower1);
 		return _raCurr0.getAverage();
@@ -84,7 +79,8 @@ float getPower(int relay){
 
 	if (relay == 3)
 	{
-		if (emon.realPower2 < 0 || emon.powerFactor2 < 0) {}
+		if (getRelayState(3) == 0) _raCurr3.clear();
+		else if (emon.realPower2 < 0 || emon.powerFactor2 < 0) {}
 		else
 			_raCurr3.addValue(emon.realPower2);
 		return _raCurr3.getAverage();
