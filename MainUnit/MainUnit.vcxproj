@@ -76,9 +76,6 @@
     <None Include="DataTypesConversion.ino">
       <FileType>CppCode</FileType>
     </None>
-    <None Include="EnergyMon.ino">
-      <FileType>CppCode</FileType>
-    </None>
     <None Include="general.css" />
     <None Include="graph.css" />
     <None Include="graph1.js" />

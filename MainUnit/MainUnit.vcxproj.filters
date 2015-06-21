@@ -87,7 +87,6 @@
     <None Include="graph1.js">
       <Filter>www\js</Filter>
     </None>
-    <None Include="EnergyMon.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">

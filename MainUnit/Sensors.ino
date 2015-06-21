@@ -21,7 +21,7 @@ float getPressure(sensors_event_t event) {
 float getMainTemperature() {
 	static RunningAverage _raMainTemp(6);
 	float _fTemp;
-	_fTemp = dht.readTemperature();
+	_fTemp = dht.getTemperature();
 	if (isnan(_fTemp)) {
 		return -255;
 	}
@@ -33,7 +33,7 @@ float getMainTemperature() {
 float getMainHumidity() {
 	static RunningAverage _raMainHumidity(6);
 	float _fHum;
-	_fHum = dht.readHumidity();
+	_fHum = dht.getHumidity();
 	if (isnan(_fHum)) {
 		return -255;
 	}
@@ -70,7 +70,10 @@ float getPower(int relay){
 
 	if (relay == 0)
 	{
-		if (getRelayState(0) == 0) _raCurr0.clear();
+		if (!getRelayState(0)){
+			_raCurr0.clear();
+			return 0;
+		}
 		else if (emon.realPower1 < 0 || emon.powerFactor1 < 0) {}
 		else
 			_raCurr0.addValue(emon.realPower1);
@@ -79,7 +82,11 @@ float getPower(int relay){
 
 	if (relay == 3)
 	{
-		if (getRelayState(3) == 0) _raCurr3.clear();
+		if (!getRelayState(3))
+		{
+			_raCurr3.clear();
+			return 0;
+		}
 		else if (emon.realPower2 < 0 || emon.powerFactor2 < 0) {}
 		else
 			_raCurr3.addValue(emon.realPower2);

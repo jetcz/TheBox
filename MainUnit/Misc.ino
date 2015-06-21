@@ -36,6 +36,7 @@ void needRestart() {
 #endif
 		Alarm.disable(printLcdAlarm);
 		lcd.clear();
+		lcd.backlight();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Ethernet Shield"));
 		lcd.setCursor(0, 1);
@@ -52,7 +53,7 @@ void needRestart() {
 #endif
 		Alarm.disable(printLcdAlarm);
 		lcd.clear();
-		lcdBacklight();
+		lcd.backlight();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Arduino needs to"));
 		lcd.setCursor(0, 1);

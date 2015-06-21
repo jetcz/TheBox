@@ -41,16 +41,14 @@ void switchRelays() {
 
 //************************************
 // Method:   	 getRelayState
-// Description:  Return current relay state (0/1)
+// Description:  Return current relay state true/false (must be inverted because HIGH = off)
 // Access:   	 public 
-// Returns:  	 float
+// Returns:  	 bool
 // Qualifier:	
 // Parameter:	 int relay
 //************************************
-float getRelayState(int relay){
-	bool _bState = digitalRead(RELAY_PIN[relay]);
-	if (_bState == HIGH) return 0;
-	if (_bState == LOW) return 1;
+bool getRelayState(int relay){
+	return !digitalRead(RELAY_PIN[relay]);
 }
 
 //************************************

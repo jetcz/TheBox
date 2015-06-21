@@ -25,10 +25,9 @@ void system() {
 	sNow = getDateTimeString(_dtNow);
 	sMainUptime = getUptimeString(getUptime(_dtNow));
 	enableDisableAlarms();
-	lcdBacklight();
-	for (int i = 0; i < 4; i++)
+	for (int relay = 0; relay < 4; relay++)
 	{
-		if (Settings.RelayMode[i] > 1) serviceSchedulers(_dtNow, i);
+		if (Settings.RelayMode[relay] > 1) serviceSchedulers(_dtNow, relay);
 	}
 	receiveData();
 }
@@ -167,36 +166,42 @@ void printSensorDataSerial(){
 //************************************
 void printLcd() {
 	static byte _byLastScreen;
-	if (digitalRead(LCD_SWITCH[0]) == 0)
+	if (getMainPir())
 	{
-		if (_byLastScreen != 1) {
-			lcd.clear();
+		lcd.backlight();
+
+		if (digitalRead(LCD_SWITCH[0]) == 0)
+		{
+			if (_byLastScreen != 1) {
+				lcd.clear();
+			}
+			printLcdScreen1();
+			_byLastScreen = 1;
 		}
-		printLcdScreen1();
-		_byLastScreen = 1;
-	}
-	else if (digitalRead(LCD_SWITCH[1]) == 0)
-	{
-		if (_byLastScreen != 2) {
-			lcd.clear();
+		else if (digitalRead(LCD_SWITCH[1]) == 0)
+		{
+			if (_byLastScreen != 2) {
+				lcd.clear();
+			}
+			printLcdScreen2();
+			_byLastScreen = 2;
 		}
-		printLcdScreen2();
-		_byLastScreen = 2;
-	}
-	else if (digitalRead(LCD_SWITCH[2]) == 0)
-	{
-		if (_byLastScreen != 3) {
-			lcd.clear();
+		else if (digitalRead(LCD_SWITCH[2]) == 0)
+		{
+			if (_byLastScreen != 3) {
+				lcd.clear();
+			}
+			printLcdScreen3();
+			_byLastScreen = 3;
 		}
-		printLcdScreen3();
-		_byLastScreen = 3;
 	}
+	else  lcd.noBacklight();
 }
 
 
 //************************************
 // Method:   	 thingSpeak
-// Description:  Helper method to call Thingspeak upload, rotate datasets adn restart arduino if there problems uploading
+// Description:  Helper method to call Thingspeak upload, rotate datasets and restart arduino if there problems uploading
 // Access:   	 public 
 // Returns:  	 void
 // Qualifier:	

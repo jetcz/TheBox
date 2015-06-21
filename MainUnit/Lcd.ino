@@ -17,12 +17,12 @@ void printLcdScreen1() {
 	lcd.setCursor(0, 0);
 	lcd.print(MainDS.Data[0], 1);
 	lcd.print(F("C"));
+
 	if (_byLastLenRemoteData0 != _byCurrLenRemoteData0)
 	{
 		lcd.setCursor(10, 0);
 		lcd.print(F("          "));
 	}
-
 	lcd.setCursor(19 - _byCurrLenRemoteData0, 0);
 	lcd.print(RemoteDS.Data[0], 1);
 	lcd.print(F("C"));
@@ -33,6 +33,7 @@ void printLcdScreen1() {
 	lcd.setCursor(0, 1);
 	lcd.print(MainDS.Data[1], 1);
 	lcd.print(F("%RH"));
+
 	if (_byLastLenRemoteData1 != _byCurrLenRemoteData1)
 	{
 		lcd.setCursor(10, 1);
@@ -51,7 +52,6 @@ void printLcdScreen1() {
 	//line 4
 	lcd.setCursor(0, 3);
 	lcd.print(sNow);
-
 }
 
 void printLcdScreen2() {
@@ -205,9 +205,4 @@ void printLcdScreen3() {
 	lcd.setCursor(17 - intToString(nFailedCntTSTotal).length(), 3);
 	lcd.print(F("fT "));
 	lcd.print(nFailedCntTSTotal);
-}
-
-void lcdBacklight() {
-	if (getMainPir()) lcd.backlight();
-	else lcd.noBacklight();
 }

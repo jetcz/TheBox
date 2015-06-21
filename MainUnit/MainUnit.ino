@@ -2,7 +2,7 @@
 #include <RTClib.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP085_U.h>
-#include <DHT.h>
+#include <DHT.h>			//slightly modified, can use default
 #include <SPI.h>
 #include <Ethernet.h>		//slightly modified, can use default
 #include <EthernetUdp.h>
@@ -21,7 +21,7 @@
 #include "DataStructures.h"
 #include <EmonLib.h>		//modified, cannot use default (refer to readme)
 
-//enable/disable all serial.print messages
+#define PRINT_SUMMARY false
 #define DEBUG false
 
 //my arduino specific calibration constant for reading vcc
@@ -57,7 +57,7 @@ TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };		 //winter time = UTC + 1
 //global reference variables
 RTC_DS1307 rtc;
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
-DHT dht(DHT22_PIN, DHT22);
+DHT dht;
 EthernetClient client;
 EthernetUDP udp;
 File file;
@@ -238,7 +238,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		if (getRelayState(0) == 1)
+		if (getRelayState(0))
 		{
 			server.print(MainDS.Data[5], (MainDS.Data[5] > 100) ? 0 : 1);	//left socket pwr
 			server.print("W");
@@ -248,7 +248,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		if (getRelayState(3) == 1)
+		if (getRelayState(3))
 		{
 			server.print(MainDS.Data[6], (MainDS.Data[6] > 100) ? 0 : 1);	//right soceket pwr
 			server.print("W");
@@ -272,7 +272,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		for (int i = 0; i < 4; i++)
 		{
 			server.print(F("<S>"));
-			server.print(int(getRelayState(i)));
+			server.print(getRelayState(i));
 			server.print(F("</S>"));
 		}
 		server.print(F("</States>"));

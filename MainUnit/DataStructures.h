@@ -119,15 +119,15 @@ struct RelayScheduler
 
 /*
 				MainDS			RemoteDS				SystemDS
-TS size			5				8						8
+TS size			8				8						8
 				mainTemperature	remoteTemperature		sysTemperature
 				mainHumidity	remoteHumidity			sysUptime
 				mainHumidex		remoteHumidex			relay1
 				mainPir			remoteSoilTemperature	relay2
 				pressure		remoteSoilHumidity		relay3
-								remoteLight				relay4
-								rainHour				remoteVoltage
-								rainDay					remoteUptime
+				leftSocektPWR	remoteLight				relay4
+				rightSocektPWR	rainHour				remoteVoltage
+				mainsVoltage	rainDay					remoteUptime
 not sent to TS					rainTicks				remoteFreeRam
 not sent to TS											mainFreeRam
 

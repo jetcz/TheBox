@@ -83,7 +83,7 @@ void setupWire() {
 }
 
 void setupDHT(){
-	dht.begin();
+	dht.setup(DHT22_PIN);
 #if DEBUG
 	Serial.println(F("DHT22 initialized"));
 #endif
@@ -242,7 +242,7 @@ void setupAlarms() {
 	printLcdAlarm = Alarm.timerRepeat(1, printLcd);
 	Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
 	Alarm.timerRepeat(Settings.UpdatePWRSensorsInterval, getPWRData); //get sensor data every x ms
-	//if (DEBUG) printSerialAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+	if (PRINT_SUMMARY) printSerialAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	Alarm.timerRepeat(60, getRainPerHour);
 	getInitialTipCntAlarm = Alarm.timerRepeat(60, getRainPerDay);
@@ -255,7 +255,7 @@ void setupAlarms() {
 
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
-	Alarm.timerRepeat(3, printDebug);
+	//Alarm.timerRepeat(3, printDebug);
 #endif
 	
 }
