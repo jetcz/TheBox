@@ -137,7 +137,7 @@ void printLcdScreen2() {
 		lcd.print(F("     "));
 	}
 	lcd.setCursor(0, 3);
-	lcd.print(MainDS.Data[5], (MainDS.Data[5] > 100) ? 0 : 1); //power left socket
+	lcd.print(MainDS.Data[5], (MainDS.Data[5] >= 100) ? 0 : 1); //power left socket
 	lcd.print(F("W"));
 
 	if (_byCurrLenMainData6 != _byLastLenMainData6)
@@ -146,7 +146,7 @@ void printLcdScreen2() {
 		lcd.print(F("     "));
 	}
 	lcd.setCursor(6, 3);
-	lcd.print(MainDS.Data[6], (MainDS.Data[6] > 100) ? 0 : 1); //power right socket
+	lcd.print(MainDS.Data[6], (MainDS.Data[6] >= 100) ? 0 : 1); //power right socket
 	lcd.print(F("W"));
 
 	if (_byCurrLenRemoteData6 != _byLastLenRemoteData6)

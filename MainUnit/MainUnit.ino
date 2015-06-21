@@ -1,31 +1,34 @@
 #include <Wire.h>
+#include <SPI.h>
 #include <RTClib.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP085_U.h>
-#include <DHT.h>			//slightly modified, can use default
-#include <SPI.h>
-#include <Ethernet.h>		//slightly modified, can use default
-#include <EthernetUdp.h>
-#include <utility/w5100.h>
 #include <SD.h>
-#include <Time.h>
-#include <TimeAlarms.h>		//modified, cannot use default (refer to readme)
+#include <utility/w5100.h>
+#include <EthernetUdp.h>
 #include <Timezone.h>
-#include <RunningAverage.h>
-#include <WebServer.h>		//slightly modified, can use default (refer to readme)
-#include <RH_ASK.h>			//slightly modified, can use default (refer to readme)
+#include <Time.h>
 #include <LiquidCrystal_I2C.h>
 #include <IniFile.h>
 #include <QueueArray.h>
+#include <RunningAverage.h>
 #include "avr/pgmspace.h"
+//slightly modified libs, can use default
+#include <DHT.h>
+#include <Ethernet.h>
+#include <WebServer.h>
+#include <RH_ASK.h>
+//modified, cannot use default (refer to readme)
+#include <EmonLib.h>
+#include <TimeAlarms.h>
 #include "DataStructures.h"
-#include <EmonLib.h>		//modified, cannot use default (refer to readme)
 
 #define PRINT_SUMMARY false
 #define DEBUG false
 
 //my arduino specific calibration constant for reading vcc
 const float lVccCalibration = 1100000;
+
 //setup pins
 const int RESET_ETH_SHIELD_PIN = 14;
 const int DHT22_PIN = 9;
@@ -240,7 +243,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_start_sensor);
 		if (getRelayState(0))
 		{
-			server.print(MainDS.Data[5], (MainDS.Data[5] > 100) ? 0 : 1);	//left socket pwr
+			server.print(MainDS.Data[5], (MainDS.Data[5] >= 100) ? 0 : 1);	//left socket pwr
 			server.print("W");
 		}
 		else server.print("");
@@ -250,7 +253,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_start_sensor);
 		if (getRelayState(3))
 		{
-			server.print(MainDS.Data[6], (MainDS.Data[6] > 100) ? 0 : 1);	//right soceket pwr
+			server.print(MainDS.Data[6], (MainDS.Data[6] >= 100) ? 0 : 1);	//right soceket pwr
 			server.print("W");
 		}
 		else server.print("");
@@ -1129,6 +1132,6 @@ void loop()
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
 	webserver.processConnection();	//process webserver request as soon as possible		
-	emon.calcVI(80, Vcc);			//measure power consumption in outlets (non-blocking)
+	emon.calcVI(100, Vcc);			//measure power consumption in outlets (non-blocking)
 }
 
