@@ -34,10 +34,9 @@ const int nDHTPwrTimeout = 1500;	//timeout after powering the dht up
 const long lVccCalibration = 1093800;
 
 char buffer[24];
-#define DHTTYPE DHT22
 OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
-DHT dht(DHT22_DATA_PIN, DHTTYPE);
+DHT dht;
 RH_ASK driver(2000, 14, RADIO_TX_PIN);
 
 float DS[11] = { 0 };
@@ -55,7 +54,7 @@ void setup() {
 #endif
 	attachInterrupt(0, ISRTipCnt, FALLING);
 	setupPins();
-	dht.begin();
+	dht.setup(DHT22_DATA_PIN);
 	ds.begin();
 	ds.requestTemperatures();
 	while (!driver.init()) {

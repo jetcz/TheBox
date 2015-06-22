@@ -1117,10 +1117,10 @@ void setup()
 	SystemDS.Valid = true;
 	SystemDS.Timestamp = dtSysStart.unixtime();
 
-	//Calibration process: attach a classic lightbulb or heater and set the phase_shift constant so that the reported power factor is 1,
+	//Calibration process: attach a classic light bulb or heater and set the phase_shift constant so that the reported power factor is 1,
 	//then connect a multimeter and set the calibration constant so that the reported voltage is same as on multimeter
 	emon.voltage(VOLTAGE_PIN, 939, -0.24);  // Voltage: input pin, calibration, phase_shift
-	//Calibratiion process: connect a known load and adjust the calibration constants so the reported wattage is the same as the load
+	//Calibration process: connect a known load and adjust the calibration constants so the reported wattage is the same as the load
 	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 18, 17.25); //Current: input pin, input pin, calibration, calibration
 
 #if DEBUG
@@ -1132,6 +1132,6 @@ void loop()
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
 	webserver.processConnection();	//process webserver request as soon as possible		
-	emon.calcVI(100, Vcc);			//measure power consumption in outlets (non-blocking)
+	emon.calcVI(80, Vcc);			//measure power consumption in outlets (non-blocking)
 }
 

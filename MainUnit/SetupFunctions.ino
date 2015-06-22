@@ -79,7 +79,6 @@ void setupWire() {
 #if DEBUG
 	Serial.println(F("Wire initialized"));
 #endif
-	ledLight(1, 'g');
 }
 
 void setupDHT(){
@@ -159,12 +158,12 @@ void setupRadio(){
 #endif
 }
 
-void setupEthernet() {
-	ledLight(1, 'y');
+void setupEthernet() {	
 	resetEthShield(RESET_ETH_SHIELD_PIN);	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
 
 	if (Settings.DHCP)
 	{
+		ledLight(1, 'y');
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Obtaining DHCP lease"));
@@ -220,7 +219,7 @@ void setupEthernet() {
 		Serial.println(Ethernet.dnsServerIP());
 #endif
 	}
-	//this gives client.connect() max timeout approx 3s
+	//this gives client.connect() max timeout approx 3s (probably not working as expected)
 	W5100.setRetransmissionTime(0x07D0);
 	W5100.setRetransmissionCount(3);	
 }
@@ -255,7 +254,7 @@ void setupAlarms() {
 
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
-	//Alarm.timerRepeat(3, printDebug);
+	Alarm.timerRepeat(3, printDebug);
 #endif
 	
 }

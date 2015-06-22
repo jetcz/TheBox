@@ -15,3 +15,9 @@ Implement Alarm.active() function
 EmonLib library
 Completely custom implementation (non-blocking behaviour, calculate two outlets at once)
 
+Ethernet library
+Shorter DHCP lease request timeout, shorter connect() timout
+
+DHT library
+Use non-Adafruit library, add noInterrupt()
+
