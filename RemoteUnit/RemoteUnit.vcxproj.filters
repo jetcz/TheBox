@@ -21,7 +21,6 @@
     <None Include="SetupFunctions.ino" />
     <None Include="Led.ino" />
     <None Include="Radio.ino" />
-    <None Include="DataTypesConversion.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.RemoteUnit.vsarduino.h">

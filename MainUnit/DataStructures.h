@@ -86,14 +86,40 @@ struct SystemSettings
 
 }; typedef struct SystemSettings SystemSettings;
 
-struct DataSet
+class DataSet
 {
-	float Data[8] = { 0 };
+public:
+	//constructor
+	DataSet() {
+		ThingSpeakString.reserve(70);
+	}
+
+	//properties
+	float Data[8];
 	byte Size;
 	bool Valid;
 	String APIkey;
 	DateTime Timestamp;
-}; typedef struct DataSet DataSet;
+	String ThingSpeakString;
+
+	//commonly used pointers
+	float *Temperature = &Data[0];
+	float *Humidity = &Data[1]; //not for system DS
+
+	//get thinkgspeak string
+	void GetTSString(){
+		ThingSpeakString = "";
+		for (int i = 0; i < this->Size; i++)
+		{
+			if (this->Data[i] > -100) //in case we get some broken values which are -255
+			{
+				ThingSpeakString += String(i + 1) + "=" + String(this->Data[i], 1);
+				if (i < this->Size - 1) ThingSpeakString += "&";
+			}
+		}
+	}
+
+}; typedef class DataSet DataSet;
 
 struct RelayScheduler
 {
@@ -119,7 +145,7 @@ struct RelayScheduler
 
 /*
 				MainDS			RemoteDS				SystemDS
-TS size			8				8						8
+				TS size			8				8						8
 				mainTemperature	remoteTemperature		sysTemperature
 				mainHumidity	remoteHumidity			sysUptime
 				mainHumidex		remoteHumidex			relay1
@@ -128,9 +154,9 @@ TS size			8				8						8
 				leftSocektPWR	remoteLight				relay4
 				rightSocektPWR	rainHour				remoteVoltage
 				mainsVoltage	rainDay					remoteUptime
-not sent to TS					rainTicks				remoteFreeRam
-not sent to TS											mainFreeRam
+				not sent to TS					rainTicks				remoteFreeRam
+				not sent to TS											mainFreeRam
 
-*/
+				*/
 
 

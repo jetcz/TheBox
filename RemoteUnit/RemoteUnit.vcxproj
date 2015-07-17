@@ -76,9 +76,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="DataTypesConversion.ino">
-      <FileType>CppCode</FileType>
-    </None>
     <None Include="Led.ino">
       <FileType>CppCode</FileType>
     </None>

@@ -54,8 +54,22 @@ void prepareDataSetArrays() {
 	nMainFreeRam = freeRam();
 
 	//main DS
-	_fVal = getMainTemperature();
-	MainDS.Data[0] = (_fVal == -255) ? _fVal : _fVal + Settings.MainTempOffset;
+	dhtStatus = dht1.read22(DHT22_PIN);
+	if (dhtStatus != 0)
+	{
+#if DEBUG
+		Serial.println(F("Failed to read from DHT22!"));
+#endif
+		dhtFailures++;
+		if (dhtFailures == 2) ledLight(1, 'y');
+		else if (dhtFailures > 2) ledLight(1, 'r');
+	}
+	else
+	{
+		dhtFailures = 0;
+		ledLight(1, 'g');
+	}
+	MainDS.Data[0] = getMainTemperature();
 	MainDS.Data[1] = getMainHumidity();
 	MainDS.Data[2] = getMainHumidex();
 	MainDS.Data[3] = getMainPir();
@@ -207,26 +221,29 @@ void printLcd() {
 // Qualifier:	
 //************************************
 void thingSpeak(){
+	if (millis() < 100000) return;	//return if time is less than 1:40 (boot time of ovis)
 	static unsigned int _nCnt;
 	byte _byCurrentDS = _nCnt % 3;
-	if (millis() < 100000) return;	//return if time is less than 1:40 (boot time of ovis)
 
 	//before we update thingspeak, check if the dataset is valid 
 	if (!DataSetPtr[_byCurrentDS]->Valid)
 	{
 #if DEBUG
 		Serial.println();
-		Serial.println(F("DataSet not valid, aborting upload!"));
+		Serial.print(F("DS "));
+		Serial.print(_byCurrentDS);
+		Serial.println(F(" not valid, aborting upload!"));
 #endif
 		_nCnt++;
 		return; //cancel thingspeak update
 	}
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
 	SystemDS.Size = (RemoteDS.Valid) ? SystemDS.Size = 8 : SystemDS.Size = 6;
+	DataSetPtr[_byCurrentDS]->GetTSString();
 
 #if DEBUG
 	Serial.println();
-	Serial.print(F("Update ThingSpeak with dataset "));
+	Serial.print(F("Update ThingSpeak with DS "));
 	Serial.println(_byCurrentDS);
 #endif
 	updateThingSpeak(*DataSetPtr[_byCurrentDS]);

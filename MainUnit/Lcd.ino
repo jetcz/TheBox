@@ -2,11 +2,13 @@
 void printLcdScreen1() {
 	//this is to know lengths of printed strings so we dont have to refresh whole screen (causes flicker)
 	static byte _byLastLenMainData0;
+	static byte _byLastLenMainData1;
 	static byte _byLastLenRemoteData0;
 	static byte _byLastLenRemoteData1;
-	byte _byCurrLenMainData0 = floatToString(MainDS.Data[0]).length();
-	byte _byCurrLenRemoteData0 = floatToString(RemoteDS.Data[0]).length();
-	byte _byCurrLenRemoteData1 = floatToString(RemoteDS.Data[1]).length();
+	byte _byCurrLenMainData0 = floatToString(*MainDS.Temperature).length();
+	byte _byCurrLenMainData1 = floatToString(*MainDS.Humidity).length();
+	byte _byCurrLenRemoteData0 = floatToString(*RemoteDS.Temperature).length();
+	byte _byCurrLenRemoteData1 = floatToString(*RemoteDS.Humidity).length();
 
 	//line 1
 	if (_byLastLenMainData0 != _byCurrLenMainData0)
@@ -15,7 +17,7 @@ void printLcdScreen1() {
 		lcd.print(F("          "));
 	}
 	lcd.setCursor(0, 0);
-	lcd.print(MainDS.Data[0], 1);
+	lcd.print(*MainDS.Temperature, 1);
 	lcd.print(F("C"));
 
 	if (_byLastLenRemoteData0 != _byCurrLenRemoteData0)
@@ -24,14 +26,19 @@ void printLcdScreen1() {
 		lcd.print(F("          "));
 	}
 	lcd.setCursor(19 - _byCurrLenRemoteData0, 0);
-	lcd.print(RemoteDS.Data[0], 1);
+	lcd.print(*RemoteDS.Temperature, 1);
 	lcd.print(F("C"));
 	_byLastLenMainData0 = _byCurrLenMainData0;
 	_byLastLenRemoteData0 = _byCurrLenRemoteData0;
 
 	//line 2
+	if (_byLastLenMainData1 != _byCurrLenMainData1)
+	{
+		lcd.setCursor(0, 1);
+		lcd.print(F("          "));
+	}
 	lcd.setCursor(0, 1);
-	lcd.print(MainDS.Data[1], 1);
+	lcd.print(*MainDS.Humidity, 1);
 	lcd.print(F("%RH"));
 
 	if (_byLastLenRemoteData1 != _byCurrLenRemoteData1)
@@ -40,8 +47,9 @@ void printLcdScreen1() {
 		lcd.print(F("          "));
 	}
 	lcd.setCursor(17 - _byCurrLenRemoteData1, 1);
-	lcd.print(RemoteDS.Data[1], 1);
+	lcd.print(*RemoteDS.Humidity, 1);
 	lcd.print(F("%RH"));
+	_byLastLenMainData1 = _byCurrLenMainData1;
 	_byLastLenRemoteData1 = _byCurrLenRemoteData1;
 
 	//line 3
@@ -173,7 +181,7 @@ void printLcdScreen2() {
 void printLcdScreen3() {
 	//line 1
 	lcd.setCursor(0, 0);
-	lcd.print(SystemDS.Data[0], 1);
+	lcd.print(*SystemDS.Temperature, 1);
 	lcd.print(F("C"));
 	lcd.setCursor(20 - sMainUptime.length(), 0);
 	lcd.print(sMainUptime);

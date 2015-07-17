@@ -5,21 +5,10 @@
 // Returns:  	 void
 // Qualifier:	
 // Parameter:	 DataSet ds
-//************************************
 void updateThingSpeak(DataSet ds){
+//************************************
 	ledLight(3, 'b');
 	client.flush();
-	/* This produces nice string for ThingSpeak like 1=21.5&2=51.8&3=..... etc depending on what array you put in.
-	The values in array MUST be sorted exactly like ThingSpeak fields go one by one: {teperature, humidity, humidex etc....} */
-	String _sValues;
-	for (int i = 0; i < ds.Size; i++)
-	{
-		if (ds.Data[i] > -100) //in case we get some broken values which are -255
-		{
-			_sValues += intToString(i + 1) + "=" + floatToString(ds.Data[i]);
-			if (i < ds.Size - 1) _sValues += "&";
-		}
-	}
 	//connect to thingspeak
 	unsigned static long _lLastCnn;	
 	if (!client.connected() || now() - _lLastCnn > 420) //for some reason the connection doesn't last past 500 sec, so we need to close and reopen it manualy for maximum reliability
@@ -37,7 +26,7 @@ void updateThingSpeak(DataSet ds){
 #if DEBUG
 		Serial.println(F("Connected to ThingSpeak"));
 		Serial.println(F("Sending data... "));
-		Serial.println(_sValues);
+		Serial.println(ds.ThingSpeakString);
 #endif
 		client.print(F("POST /update HTTP/1.1\n"));
 		client.print(F("Host: api.thingspeak.com\n"));
@@ -47,8 +36,8 @@ void updateThingSpeak(DataSet ds){
 		client.print(F("headers: false\n"));
 		client.print(F("Content-Type: application/x-www-form-urlencoded\n"));
 		client.print(F("Content-Length: "));
-		client.print(intToString(_sValues.length()) + "\n\n");
-		client.println(_sValues);
+		client.print(intToString(ds.ThingSpeakString.length()) + "\n\n");
+		client.println(ds.ThingSpeakString);
 		ledLight(3, 'g');
 	}
 	else

@@ -1,7 +1,7 @@
 #include <RunningAverage.h>
 #include <SPI.h>
-#include <RH_ASK.h>
-#include <DHT.h>
+#include <RH_NRF24.h>
+#include <dht.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <JeeLib.h>
@@ -29,20 +29,24 @@ const int RADIO_TX_PIN = 15;
 const int RADIO_PWR_PIN = 6;
 const int LED[3] = { 13, 12, 11 };
 
+const int RADIO_ENABLE_PIN = 15;
+const int RADIO_SELECT_PIN = 15;
+
 const int nMsgTimeout = 20000;		//timeout between messsages in ms
-const int nDHTPwrTimeout = 1500;	//timeout after powering the dht up
 const long lVccCalibration = 1093800;
 
 char buffer[24];
 OneWire oneWire(DS_DATA_PIN);
 DallasTemperature ds(&oneWire);
-DHT dht;
-RH_ASK driver(2000, 14, RADIO_TX_PIN);
+dht dht1;
+int dhtStatus;
+RH_NRF24 nrf24(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
+//RH_ASK driver(2000, 14, RADIO_TX_PIN);
 
 float DS[11] = { 0 };
 volatile float fRainTips = 0;
 float *Vcc = &DS[7];
-unsigned long _lLastTime;
+unsigned long lLastTime;
 
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
@@ -54,28 +58,27 @@ void setup() {
 #endif
 	attachInterrupt(0, ISRTipCnt, FALLING);
 	setupPins();
-	dht.setup(DHT22_DATA_PIN);
 	ds.begin();
 	ds.requestTemperatures();
-	while (!driver.init()) {
-#if DEBUG
-		Serial.println("radio init failed");
-#endif
-		ledLightDigital('r');
-}
+	setupRadio();
 	fRainTips = 0;
 	interrupts();
 }
 
-void loop() {
-	_lLastTime = millis();
-	digitalWrite(DHT22_PWR_PIN, HIGH);
-	Sleepy::loseSomeTime(nDHTPwrTimeout);
+void loop() {	
+	lLastTime = millis();
+
 	ledLightDigital('g');
 	ledLightDigital('k');
+
 	getDataSet();
-	digitalWrite(DHT22_PWR_PIN, LOW);
+
+#if DEBUG
+	printSensorData();
+#endif
+
 	sendMessage();
-	_lLastTime = millis() - _lLastTime;
-	Sleepy::loseSomeTime(nMsgTimeout - _lLastTime);
+
+	lLastTime = millis() - lLastTime;
+	Sleepy::loseSomeTime(nMsgTimeout - lLastTime);
 }

@@ -17,17 +17,18 @@ void setupPins() {
 	pinMode(HUMIDITY_PWR_PIN, OUTPUT);
 	pinMode(RADIO_PWR_PIN, OUTPUT);
 
+	/*
 	pinMode(17, OUTPUT);
 	digitalWrite(17, LOW);
 	pinMode(16, OUTPUT);
 	digitalWrite(16, LOW);
 	pinMode(9, OUTPUT);
-	digitalWrite(9, LOW);
-	
+	digitalWrite(9, LOW);*/
+
 	//tipping bucket
 	pinMode(2, INPUT_PULLUP);
-	pinMode(7, OUTPUT);
-	digitalWrite(7, LOW);
+//	pinMode(7, OUTPUT);
+//	digitalWrite(7, LOW);
 
 	//setup data pins
 	pinMode(DHT22_DATA_PIN, INPUT);
@@ -38,9 +39,24 @@ void setupPins() {
 	pinMode(RADIO_TX_PIN, OUTPUT);
 
 	//this stupid sensor must be on all the time otherwise it produces shitty readings
-	digitalWrite(DS_PWR_PIN, HIGH);
-	
-	pinMode(10, OUTPUT);
-	digitalWrite(10, HIGH);
+//	digitalWrite(DS_PWR_PIN, HIGH);
 
+//	pinMode(10, OUTPUT);
+//	digitalWrite(10, HIGH);
+
+}
+
+void setupRadio(){
+	if (!nrf24.init())
+#if DEBUG
+		Serial.println(F("Radion init failed"));
+#endif
+	if (!nrf24.setChannel(8))
+#if DEBUG
+		Serial.println(F("Radio setChannel failed"));
+#endif
+	if (!nrf24.setRF(RH_NRF24::DataRate250kbps, RH_NRF24::TransmitPower0dBm));
+#if DEBUG
+	Serial.println(F("Radio setRF failed"));
+#endif
 }

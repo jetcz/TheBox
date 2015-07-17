@@ -6,19 +6,26 @@
 // Qualifier:	
 //************************************
 void getDataSet() {
+	digitalWrite(DHT22_PWR_PIN, HIGH);
+	Sleepy::loseSomeTime(1500);
+	dhtStatus = dht1.read22(DHT22_DATA_PIN);
+	digitalWrite(DHT22_PWR_PIN, LOW);
+
 	DS[0] = getAirTemperature();				//remoteTemperature
 	DS[1] = getAirHumidity();					//remoteHumidity
 	DS[2] = getAirHumidex();					//remoteHumidex
+	DS[3] = getSoilTemperature();				//remoteSoilTemperature
 
 	powerSensors(true);
 	DS[7] = getVcc();
-	DS[3] = getSoilTemperature();				//remoteSoilTemperature
 	DS[4] = getSoilHumidity();					//remoteSoilHumidity
 	DS[5] = getLight();							//remoteLight
 	powerSensors(false);
+
 	noInterrupts();
 	DS[6] = fRainTips;							//rain tips
 	interrupts();
+
 	DS[8] = getUptime();						//uptime
 	DS[9] = freeRam();							//freeRam
 }
@@ -76,7 +83,7 @@ void printSensorData() {
 
 //************************************
 // Method:   	 powerSensors
-// Description:  Powers sensors if true. Disabùles sensors if false. (excluding DHT22 and DS18B20, these need to be handled separately)
+// Description:  Powers sensors if true. Disables sensors if false. (excluding DHT22 and DS18B20, these need to be handled separately)
 // Access:   	 public 
 // Returns:  	 void
 // Qualifier:	
@@ -97,32 +104,23 @@ void powerSensors(bool state) {
 
 float getAirTemperature() {
 	static RunningAverage AirTemp(3);
-	float _fTemp = dht.getTemperature();
-	if (isnan(_fTemp)) {
-#if DEBUG
-		Serial.print(F("Failed to read from DHT sensor! "));
-#endif
-		return -255;
-	}
-	else {
-		AirTemp.addValue(_fTemp);
+	if (dhtStatus == 0)
+	{
+		AirTemp.addValue(dht1.temperature);
 		return AirTemp.getAverage();
 	}
+	else return -255;
 }
+
 
 float getAirHumidity(){
 	static RunningAverage AirHum(3);
-	float _fHum = dht.getHumidity();
-	if (isnan(_fHum) || (DS[0] == -255)) {
-#if DEBUG
-		Serial.print(F("Failed to read from DHT sensor! "));
-#endif
-		return -255;
-	}
-	else {
-		AirHum.addValue(_fHum);
+	if (dhtStatus == 0)
+	{
+		AirHum.addValue(dht1.humidity);
 		return AirHum.getAverage();
-	};
+	}
+	else return -255;
 }
 
 float getAirHumidex() {
@@ -161,7 +159,7 @@ byte getSoilHumidity() {
 		AnalogReadings.addValue(analogRead(HUMIDITY_DATA_PIN));
 	}
 	float _fHum = (AnalogReadings.getAverage() + 0.5)*(*Vcc) / 1024.0;
-	byte hum = ((_fHum / *Vcc - 1)*-101);
+	byte hum = ((_fHum / *Vcc - 1)*-103);
 	SoilHum.addValue(hum);
 	return SoilHum.getAverage();
 }

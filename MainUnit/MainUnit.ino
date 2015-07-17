@@ -14,17 +14,17 @@
 #include <RunningAverage.h>
 #include "avr/pgmspace.h"
 //slightly modified libs, can use default
-#include <DHT.h>
+#include <dht.h>
 #include <Ethernet.h>
 #include <WebServer.h>
-#include <RH_ASK.h>
+#include <RH_NRF24.h>
 //modified, cannot use default (refer to readme)
 #include <EmonLib.h>
 #include <TimeAlarms.h>
 #include "DataStructures.h"
 
 #define PRINT_SUMMARY false
-#define DEBUG false
+#define DEBUG true
 
 //my arduino specific calibration constant for reading vcc
 const float lVccCalibration = 1100000;
@@ -41,8 +41,8 @@ const int LED2[3] = { 5, 6, 7 };
 const int LED3[3] = { 11, 12, 13 };
 const int LCD_SWITCH[3] = { 32, 34, 36 };
 const int LCD_SWITCH_PWR_PIN = 30;
-const int RADIO_RX_PIN = 17;
-const int RADIO_CTRL_PIN = 18;
+const int RADIO_SELECT_PIN = 18;
+const int RADIO_ENABLE_PIN = 17;
 const int VOLTAGE_PIN = 54;
 const int CURRENT_LEFT_PIN = 63;
 const int CURRENT_RIGHT_PIN = 58;
@@ -60,16 +60,16 @@ TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };		 //winter time = UTC + 1
 //global reference variables
 RTC_DS1307 rtc;
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
-DHT dht;
+dht dht1;
 EthernetClient client;
 EthernetUDP udp;
 File file;
-RH_ASK driver(2000, RADIO_RX_PIN, 0);
 WebServer webserver("", 80);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
 EnergyMonitor emon;
+RH_NRF24 nrf24(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
 float Vcc;
 
 //initialize custom structs
@@ -92,6 +92,8 @@ bool bReceivedRadioMsg = false;			//received at least one remote ds
 float fRainTicks;
 unsigned int nRemoteFreeRam;
 unsigned int nMainFreeRam;
+int dhtStatus;
+unsigned int dhtFailures;
 
 //weather variables
 const char* cWeather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -197,11 +199,11 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.print(F("<Sen>"));
 
 		server.printP(tag_start_sensor);
-		server.print(MainDS.Data[0], 1); //mainairtemp
+		server.print(*MainDS.Temperature, 1); //mainairtemp
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(RemoteDS.Data[0], 1); //remoteairtemp
+		server.print(*RemoteDS.Temperature, 1); //remoteairtemp
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
@@ -209,11 +211,11 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(MainDS.Data[1], 0); //mainhum
+		server.print(*MainDS.Humidity, 0); //mainhum
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(RemoteDS.Data[1], 0); //remoteairhum
+		server.print(*RemoteDS.Humidity, 0); //remoteairhum
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
@@ -602,7 +604,7 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(SystemDS.Data[0], 1); //systemp
+		server.print(*SystemDS.Temperature, 1); //systemp
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
@@ -1073,7 +1075,6 @@ void setup()
 	if (!readSDSettings(Settings.EthernetPath)) Settings.DHCP = true; //reading ethernet settings must for some reason take place much earlier than ethernet.begin
 	setupLCD();
 	setupWire();
-	setupDHT();
 	setupBMP();
 	setupRTC();
 	setupRadio();
@@ -1132,6 +1133,6 @@ void loop()
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
 	webserver.processConnection();	//process webserver request as soon as possible		
-	emon.calcVI(80, Vcc);			//measure power consumption in outlets (non-blocking)
+	emon.calcVI(100, Vcc);			//measure power consumption in outlets (non-blocking)
 }
 

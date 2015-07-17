@@ -5,12 +5,13 @@
 // Returns:  	 void
 // Qualifier:	
 //************************************
+
 void receiveData() {
 	const byte _byArrSize = 11; //how much float values are we sending
 	byte _byBuff[_byArrSize * 4];
 	byte _byBuffLen = sizeof(_byBuff);
 
-	if (driver.recv(_byBuff, &_byBuffLen)) // Non-blocking
+	if (nrf24.recv(_byBuff, &_byBuffLen)) // Non-blocking
 	{
 		ledLight(2, 'b');
 		float temp[_byArrSize];
@@ -39,6 +40,7 @@ void receiveData() {
 		bReceivedRadioMsg = true;
 	}
 }
+
 
 //************************************
 // Method:   	 getFailedRadioMessages

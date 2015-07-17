@@ -10,7 +10,7 @@ float getSysTemperature(sensors_event_t event) {
 }
 
 float getPressure(sensors_event_t event) {
-	if (SystemDS.Data[0] == -255) return -255;
+	if (*SystemDS.Temperature == -255) return -255;
 	static RunningAverage _raPressure(6);
 	bmp.getEvent(&event);
 	_raPressure.addValue(event.pressure);
@@ -20,44 +20,21 @@ float getPressure(sensors_event_t event) {
 
 float getMainTemperature() {
 	static RunningAverage _raMainTemp(6);
-	float _fTemp;
-	_fTemp = dht.getTemperature();
-	if (isnan(_fTemp)) {
-		return -255;
-	}
-	else
-		_raMainTemp.addValue(_fTemp);
+	if (dhtStatus == 0)	_raMainTemp.addValue(dht1.temperature);
 	return _raMainTemp.getAverage();
 }
 
 float getMainHumidity() {
 	static RunningAverage _raMainHumidity(6);
-	float _fHum;
-	_fHum = dht.getHumidity();
-	if (isnan(_fHum)) {
-		return -255;
-	}
-	else if (MainDS.Data[0] == -255)
-	{
-		return -255;
-	}
-	else
-		_raMainHumidity.addValue(_fHum);;
+	if (dhtStatus == 0)	_raMainHumidity.addValue(dht1.humidity);
 	return _raMainHumidity.getAverage();
 }
 
 float getMainHumidex() {
-	if ((MainDS.Data[0] == -255) || (MainDS.Data[1] == -255))
-	{
-		return -255;
-	}
-	else
-	{
-		float e;
-		e = (6.112 * pow(10, (7.5 * MainDS.Data[0] / (237.7 + MainDS.Data[0]))) *  MainDS.Data[1] / 100); //vapor pressure
-		float humidex = MainDS.Data[0] + 0.55555555 * (e - 10.0); //humidex
-		return humidex;
-	}
+	float e;
+	e = (6.112 * pow(10, (7.5 * *MainDS.Temperature / (237.7 + *MainDS.Temperature))) *  *MainDS.Humidity / 100); //vapor pressure
+	float humidex = *MainDS.Temperature + 0.55555555 * (e - 10.0); //humidex
+	return humidex;
 }
 
 bool getMainPir() {
@@ -65,8 +42,8 @@ bool getMainPir() {
 }
 
 float getPower(int relay){
-	static RunningAverage _raCurr0(6);
-	static RunningAverage _raCurr3(6);
+	static RunningAverage _raCurr0(5);
+	static RunningAverage _raCurr3(5);
 
 	if (relay == 0)
 	{
@@ -96,7 +73,7 @@ float getPower(int relay){
 }
 
 float getVoltage(){
-	static RunningAverage _raVoltage(6);
+	static RunningAverage _raVoltage(10);
 	_raVoltage.addValue((emon.Vrms));
 	return _raVoltage.getAverage();
 }

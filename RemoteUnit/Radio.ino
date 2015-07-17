@@ -7,7 +7,10 @@
 //************************************
 void sendMessage() {
 	digitalWrite(RADIO_PWR_PIN, HIGH);
-	driver.send((uint8_t*)&DS, sizeof(DS));
-	driver.waitPacketSent();
+	Sleepy::loseSomeTime(10);
+
+	nrf24.send((uint8_t*)&DS, sizeof(DS));
+	nrf24.waitPacketSent();
+
 	digitalWrite(RADIO_PWR_PIN, LOW);	
 }

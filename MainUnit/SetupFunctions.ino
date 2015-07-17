@@ -26,8 +26,6 @@ void setupSD() {
 }
 
 void setupPins(){
-	pinMode(RADIO_CTRL_PIN, OUTPUT);			//radio control sleep pin
-	digitalWrite(RADIO_CTRL_PIN, HIGH);
 
 	pinMode(PIR_PIN, INPUT);			//pir pin
 
@@ -78,13 +76,6 @@ void setupWire() {
 	Wire.begin();
 #if DEBUG
 	Serial.println(F("Wire initialized"));
-#endif
-}
-
-void setupDHT(){
-	dht.setup(DHT22_PIN);
-#if DEBUG
-	Serial.println(F("DHT22 initialized"));
 #endif
 }
 
@@ -148,17 +139,21 @@ void setupRTC(){
 }
 
 void setupRadio(){
-	if (!driver.init()) {
+	if (!nrf24.init())
 #if DEBUG
-		Serial.println(F("Radio failed"));
+		Serial.println(F("Radion init failed"));
 #endif
-	}
+	if (!nrf24.setChannel(8))
 #if DEBUG
-	else Serial.println(F("Radio initialized"));
+		Serial.println(F("Radio setChannel failed"));
+#endif
+	if (!nrf24.setRF(RH_NRF24::DataRate250kbps, RH_NRF24::TransmitPower0dBm))
+#if DEBUG
+		Serial.println(F("Radio setRF failed"));
 #endif
 }
 
-void setupEthernet() {	
+void setupEthernet() {
 	resetEthShield(RESET_ETH_SHIELD_PIN);	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
 
 	if (Settings.DHCP)
@@ -221,7 +216,7 @@ void setupEthernet() {
 	}
 	//this gives client.connect() max timeout approx 3s (probably not working as expected)
 	W5100.setRetransmissionTime(0x07D0);
-	W5100.setRetransmissionCount(3);	
+	W5100.setRetransmissionCount(3);
 }
 
 void setupLCD(){
@@ -254,8 +249,8 @@ void setupAlarms() {
 
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
-	Alarm.timerRepeat(3, printDebug);
+	//Alarm.timerRepeat(3, printDebug);
 #endif
-	
+
 }
 
