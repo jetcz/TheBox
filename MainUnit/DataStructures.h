@@ -1,3 +1,4 @@
+//structure for holding all the settings
 struct SystemSettings
 {
 	SystemSettings() {
@@ -86,6 +87,7 @@ struct SystemSettings
 
 }; typedef struct SystemSettings SystemSettings;
 
+//structure holding data from sensors sent to thingspeak
 class DataSet
 {
 public:
@@ -121,6 +123,7 @@ public:
 
 }; typedef class DataSet DataSet;
 
+//structure holding data for scheduling relays
 struct RelayScheduler
 {
 	byte CurrentInterval = 0;  //this is pointer to arrays enabled, time, value
@@ -144,19 +147,19 @@ struct RelayScheduler
 }; typedef struct RelayScheduler RelayScheduler;
 
 /*
-				MainDS			RemoteDS				SystemDS
-				TS size			8				8						8
-				mainTemperature	remoteTemperature		sysTemperature
-				mainHumidity	remoteHumidity			sysUptime
-				mainHumidex		remoteHumidex			relay1
-				mainPir			remoteSoilTemperature	relay2
-				pressure		remoteSoilHumidity		relay3
-				leftSocektPWR	remoteLight				relay4
-				rightSocektPWR	rainHour				remoteVoltage
-				mainsVoltage	rainDay					remoteUptime
-				not sent to TS					rainTicks				remoteFreeRam
-				not sent to TS											mainFreeRam
+                MainDS			RemoteDS				SystemDS
+TS size			8				8						8
+                mainTemperature	remoteTemperature		sysTemperature
+                mainHumidity	remoteHumidity			sysUptime
+                mainHumidex		remoteHumidex			relay1
+                mainPir			remoteSoilTemperature	relay2
+                pressure		remoteSoilHumidity		relay3
+                leftSocektPWR	remoteLight				relay4
+                rightSocektPWR	rainHour				remoteVoltage
+                mainsVoltage	rainDay					remoteUptime
+not sent to TS					rainTicks				remoteFreeRam
+not sent to TS											mainFreeRam
 
-				*/
+                */
 
 

@@ -1,6 +1,6 @@
 //************************************
 // Method:   	 updateThingSpeak
-// Description:  Creates string suitable for upload to Thingspeak, then actually uploads it. Handles also fail counters, leds, and debug msgs.
+// Description:  Upload ThingSpeak data. Handles also fail counters, leds, and debug msgs.
 // Access:   	 public 
 // Returns:  	 void
 // Qualifier:	
