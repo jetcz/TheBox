@@ -2,12 +2,10 @@
 // Method:   	 prepareDataSetArrays
 // Description:  Fills dataset with sensor readings.
 // Access:   	 public 
-// Returns:  	 void
+// Returns:  	 Payload
 // Qualifier:	
 //************************************
 void getPayload() {
-	ledLightDigital('g');
-	ledLightDigital('k');
 
 	//get DHT data
 	digitalWrite(DHT22_PWR_PIN, HIGH);
@@ -41,6 +39,11 @@ void getPayload() {
 	//get sys info
 	p.Uptime = getUptime();									//uptime
 	p.FreeRam = freeRam();									//freeRam
+
+#if DEBUG
+	p.print();
+#endif
+
 }
 
 

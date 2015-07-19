@@ -12,7 +12,7 @@ void weatherForecast() {
 	static float _fDP_dt;
 	// Algorithm found here
 	// http://www.freescale.com/files/sensors/doc/app_note/AN3914.pdf
-	//code ripped from here http://forum.micasaverde.com/index.php?topic=23394.0 and modified to use runnig median library to save ram
+	//code ripped from here http://forum.micasaverde.com/index.php?topic=23394.0 and modified to use runnig average library to save ram
 
 	if (_nMinuteCnt > 180)
 		_nMinuteCnt = 6;
@@ -104,7 +104,6 @@ void weatherForecast() {
 // Qualifier:	
 //************************************
 void getRainPerHour() {
-	if (!bReceivedRadioMsg) return;
 	static QueueArray <byte> q;
 	static unsigned int _nLastTickCnt = nRainTicks;
 	static unsigned int _nTicksPerLastHour = 0;
@@ -127,8 +126,6 @@ void getRainPerHour() {
 // Qualifier:	
 //************************************
 void getRainPerDay() {
-	if (!bReceivedRadioMsg) return;
-	Alarm.disable(getInitialTipCntAlarm);
 	static QueueArray <byte> q;
 	static unsigned int _nLastTickCnt = nRainTicks;
 	static unsigned int _nTicksPerLastDay = 0;

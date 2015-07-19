@@ -6,10 +6,10 @@
 // Qualifier:	
 //************************************
 void receiveData() {
-	byte pipeNo;
-	while (radio.available(&pipeNo)){ //receiving data
+	static byte pipeNo;
+	while (radio.available(&pipeNo)){ //receiving data		
 		ledLight(2, 'b');
-		Payload p;
+		Payload p; //my custom struct to hold radio data.
 		radio.read(&p, sizeof(p));
 
 		//apply offsets only for valid values (not -255)
@@ -28,9 +28,26 @@ void receiveData() {
 		sRemoteUptime = getUptimeString(TimeSpan(SystemDS.Data[7]));
 		bReceivedRadioMsg = true;
 
-		//p.print();
-	}
+		//this gets executed after first received radio msg
+		if (!Alarm.active(rainPerDayAlarm)) Alarm.enable(rainPerDayAlarm);
+		if (!Alarm.active(rainPerHourAlarm)) Alarm.enable(rainPerHourAlarm);
 
+		bool success = true;
+		success = success & p.AirTemp == 256;
+		success = success & p.AirHum == 615;
+		success = success & p.AirHumidex == 263;
+		success = success & p.SoilTemp == 221;
+		success = success & p.SoilHum == 802;
+		success = success & p.Light == 991;
+		success = success & p.RainTips == 15;
+		success = success & p.Uptime == 545341163;
+		success = success & p.FreeRam == 2111;
+		success = success & p.Vcc == 4990;
+
+
+		if (success) Serial.println("OK");
+		else Serial.println("FAILURE");
+	}
 }
 
 //************************************

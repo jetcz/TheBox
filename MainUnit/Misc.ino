@@ -34,7 +34,7 @@ void needRestart() {
 		Serial.println(F("Ethernet Shield needs to be restarted!"));
 		Serial.println();
 #endif
-		Alarm.disable(printLcdAlarm);
+		bLCDRefreshing = false;
 		lcd.clear();
 		lcd.backlight();
 		lcd.setCursor(0, 0);
@@ -51,7 +51,7 @@ void needRestart() {
 		Serial.println(F("Arduino needs to be restarted!"));
 		Serial.println();
 #endif
-		Alarm.disable(printLcdAlarm);
+		bLCDRefreshing = false;
 		lcd.clear();
 		lcd.backlight();
 		lcd.setCursor(0, 0);

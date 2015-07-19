@@ -53,7 +53,7 @@ void updateThingSpeak(DataSet ds){
 		else ledLight(3, 'y');
 		nFailedCounter++;
 		nFailedCntTSTotal++;
-		Alarm.disable(printLcdAlarm);
+		bLCDRefreshing = false;
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Connecting to"));

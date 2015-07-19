@@ -29,13 +29,13 @@ void setupPins(){
 
 	pinMode(PIR_PIN, INPUT);			//pir pin
 
-	pinMode(SD_SELECT_PIN, OUTPUT);       // SD chip select at pin 4
+	pinMode(SD_SELECT_PIN, OUTPUT);		// SD chip select at pin 4
 	digitalWrite(SD_SELECT_PIN, HIGH);
 
-	pinMode(ETH_SELECT_PIN, OUTPUT);     // W5100 chip select at pin 10
+	pinMode(ETH_SELECT_PIN, OUTPUT);    // W5100 chip select at pin 10
 	digitalWrite(ETH_SELECT_PIN, HIGH);
 
-	pinMode(LCD_SWITCH_PWR_PIN, OUTPUT); //lcd switch current sink
+	pinMode(LCD_SWITCH_PWR_PIN, OUTPUT);//lcd switch current sink
 	digitalWrite(LCD_SWITCH_PWR_PIN, LOW);
 
 	pinMode(PIR_PIN, INPUT);			//pir pin
@@ -139,54 +139,39 @@ void setupRTC(){
 	setSyncInterval(60);
 	dtSysStart = now();
 }
-/*
+
 void setupRadio(){
-	if (!nrf24.init()){
-#if DEBUG
-		Serial.println(F("Radion init failed!"));
-#endif
-		lcd.clear();
-		lcd.setCursor(0, 0);
-		lcd.print(F("Radion init failed!"));
-		Alarm.delay(2000);
-	}
-	else if (!nrf24.setChannel(8)) {
-#if DEBUG
-		Serial.println(F("Radio setChannel failed!"));
-#endif
-		lcd.clear();
-		lcd.setCursor(0, 0);
-		lcd.print(F("Radio setChannel"));
-		lcd.setCursor(0, 1);
-		lcd.print(F("failed!"));
-		Alarm.delay(2000);
-	}
-	else if (!nrf24.setRF(RH_NRF24::DataRate250kbps, RH_NRF24::TransmitPower0dBm))
-	{
-#if DEBUG
-		Serial.println(F("Radio setRF failed!"));
-#endif
-		lcd.clear();
-		lcd.setCursor(0, 0);
-		lcd.print(F("Radio setRF failed!"));
-		Alarm.delay(2000);
-	}
-	else Serial.println(F("Radio initialized!"));
-}
-*/
-void setupRadio(){
-	radio.begin();
+	bool _bSuccess = false;
+	_bSuccess = radio.begin();
 	radio.setAutoAck(1);                    // Ensure autoACK is enabled
 	//radio.setChannel(24);
 	radio.setCRCLength(RF24_CRC_8);
-	radio.setDataRate(RF24_250KBPS);
+	_bSuccess = _bSuccess | radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.enableAckPayload();               // Allow optional ack payloads
 	radio.setRetries(1, 15);                 // Smallest time between retries, max no. of retries
-	radio.setPayloadSize(22);              
+	radio.setPayloadSize(22);
 	radio.openWritingPipe(pipes[1]);
 	radio.openReadingPipe(1, pipes[0]);
 	radio.startListening();                 // Start listening	
+
+	if (_bSuccess)
+	{
+#if DEBUG
+		Serial.println(F("Radio initialized"));
+#endif
+	}
+	else {
+#if DEBUG
+		Serial.println(F("Radio failed to initialize or not present!"));
+#endif
+		lcd.clear();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Radio failed to"));
+		lcd.setCursor(0, 1);
+		lcd.print(F("initialize!"));
+		ledLight(2, 'm');
+		Alarm.delay(2000);
+	}
 }
 
 void setupEthernet() {
@@ -209,6 +194,7 @@ void setupEthernet() {
 			lcd.setCursor(0, 1);
 			lcd.print(F("ethernet using DHCP!"));
 			ledLight(1, 'm');
+			Alarm.delay(2000);
 		}
 		else {
 			ledLight(1, 'g');
@@ -265,27 +251,30 @@ void setupLCD(){
 
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
-	Alarm.timerOnce(180, syncRTCwithNTP);
+	Alarm.timerOnce(120, syncRTCwithNTP);
 	updateTSAlarm = Alarm.timerRepeat(Settings.UpdateThingSpeakInterval, thingSpeak);
-	failedRadioMessagesAlarm = Alarm.timerRepeat(Settings.RadioMsgInterval, getFailedRadioMessages); //count failed radio messages by default interval (gets reinitialized once we get first radio msg)
+	Alarm.timerRepeat(Settings.RadioMsgInterval, getFailedRadioMessages); //count failed radio messages by default interval (gets reinitialized once we get first radio msg)
 	Alarm.timerRepeat(1, system);
-	printLcdAlarm = Alarm.timerRepeat(1, printLcd);
+	Alarm.timerRepeat(1, printLcd);
 	Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
 	Alarm.timerRepeat(Settings.UpdatePWRSensorsInterval, getPWRData); //get sensor data every x ms
-	if (PRINT_SUMMARY) printSerialAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+	if (PRINT_SUMMARY) printSummaryAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
-	Alarm.timerRepeat(60, getRainPerHour);
-	getInitialTipCntAlarm = Alarm.timerRepeat(60, getRainPerDay);
-	Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay);
+	rainPerHourAlarm = Alarm.timerRepeat(60, getRainPerHour); //cumulative rainfall
+	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay); //cumulative rainfall
 	Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC every 24h
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
+
+	//these get enabled with first radio msg
+	Alarm.disable(rainPerHourAlarm);
+	Alarm.disable(rainPerDayAlarm);
 
 	if (!Settings.DHCP) Alarm.disable(dhcpAlarm);
 	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
 
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
-	//Alarm.timerRepeat(3, printDebug);
+	Alarm.timerRepeat(3, printDebug);
 #endif
 
 }

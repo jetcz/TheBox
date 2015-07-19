@@ -1,26 +1,24 @@
 //************************************
-// Method:   	 sendMessage
+// Method:   	 sendPayload
 // Description:  Send dataset through radio
 // Access:   	 public 
-// Returns:  	 void
+// Returns:  	 bool
 // Qualifier:	
+// Parameter:	 Payload p
 //************************************
-void sendPayload() {
-	bool bSucces = false;
+bool sendPayload() {
+	bool _bSucces;
 	digitalWrite(RADIO_PWR_PIN, HIGH);
 	Sleepy::loseSomeTime(250);
 
 	radio.stopListening();
 
 	if (!radio.write(&p, sizeof(p))){
-		bSucces = false;
+		_bSucces = false;
 	}
-	else bSucces = true;
+	else _bSucces = true;
 
 	digitalWrite(RADIO_PWR_PIN, LOW);
 
-	if (!bSucces) {
-		ledLightDigital('r');
-		ledLightDigital('k');
-	}
+	return _bSucces;
 }

@@ -149,6 +149,7 @@ struct RelayScheduler
 }; typedef struct RelayScheduler RelayScheduler;
 
 //structure holding data which came from remote unit
+//some values must be divided by 10 because we are transfering them as a whole number to save memory (int 2B vs float 4B)
 struct Payload
 {
 	int AirTemp; //must divide by 10

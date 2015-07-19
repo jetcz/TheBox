@@ -27,8 +27,8 @@ void setupPins() {
 
 	//tipping bucket
 	pinMode(2, INPUT_PULLUP);
-//	pinMode(7, OUTPUT);
-//	digitalWrite(7, LOW);
+	//	pinMode(7, OUTPUT);
+	//	digitalWrite(7, LOW);
 
 	//setup data pins
 	pinMode(DHT22_DATA_PIN, INPUT);
@@ -39,26 +39,36 @@ void setupPins() {
 	pinMode(RADIO_TX_PIN, OUTPUT);
 
 	//this stupid sensor must be on all the time otherwise it produces shitty readings
-//	digitalWrite(DS_PWR_PIN, HIGH);
+	//	digitalWrite(DS_PWR_PIN, HIGH);
 
-//	pinMode(10, OUTPUT);
-//	digitalWrite(10, HIGH);
+	//	pinMode(10, OUTPUT);
+	//	digitalWrite(10, HIGH);
 
 }
 
 void setupRadio(){
-	radio.begin();
+	bool _bSuccess = false;
+	_bSuccess = radio.begin();
 	radio.setAutoAck(1);                    // Ensure autoACK is enabled
 	//radio.setChannel(24);
 	radio.setCRCLength(RF24_CRC_8);
-	radio.setDataRate(RF24_250KBPS);
+	_bSuccess = _bSuccess | radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.enableAckPayload();               // Allow optional ack payloads
-	radio.setRetries(2, 10);                 // Smallest time between retries, max no. of retries
-	radio.setPayloadSize(22);                // Here we are sending 1-byte payloads to test the call-response speed
+	radio.setRetries(1, 15);                 // Smallest time between retries, max no. of retries
+	radio.setPayloadSize(22);
+	radio.openWritingPipe(pipes[1]);
+	radio.openReadingPipe(1, pipes[0]);
+	radio.startListening();                 // Start listening	
 
-	radio.openWritingPipe(pipes[0]);
-	radio.openReadingPipe(1, pipes[1]);
-
-	radio.startListening();                 // Start listening
+	if (_bSuccess)
+	{
+#if DEBUG
+		Serial.println(F("Radio initialized"));
+#endif
+	}
+	else {
+#if DEBUG
+		Serial.println(F("Radio failed to initialize or not present!"));
+#endif		
+	}
 }

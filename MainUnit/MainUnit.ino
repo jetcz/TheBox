@@ -74,10 +74,8 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
 EnergyMonitor emon;
-//RH_NRF24 nrf24(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
 RF24 radio(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
-const uint64_t pipes[2] = { 0x24CDABCD71LL, 0x244d52687CLL };              // Radio pipe addresses for the 2 nodes to communicate.
-
+const uint64_t pipes[2] = { 0x24CDABCD71LL, 0x244d52687CLL }; //addresses of the NRF24L01 modules
 float fVcc;
 
 //initialize custom structs
@@ -97,6 +95,7 @@ String sNow;							//current datetime string
 String sMainUptime;						//uptime string
 String sRemoteUptime;					//uptime string
 bool bReceivedRadioMsg = false;			//received at least one remote ds
+bool bLCDRefreshing = true;
 unsigned int nRainTicks;
 unsigned int nRemoteFreeRam;
 unsigned int nMainFreeRam;
@@ -136,13 +135,12 @@ float *TargetVarPtr[] = {
 	, &RemoteDS.Data[6] };
 
 //Alarm variables
-int printSerialAlarm;
-int printLcdAlarm;
+int printSummaryAlarm;
 int updateTSAlarm;
 int dhcpAlarm;
 int writeSDAlarm;
-int getInitialTipCntAlarm;
-int failedRadioMessagesAlarm;
+int rainPerHourAlarm;
+int rainPerDayAlarm;
 
 //reboot arduino
 void(*resetFunc) (void) = 0;
@@ -1084,9 +1082,9 @@ void setup()
 	setupLCD();
 	setupWire();
 	setupBMP();
-	setupRTC();
 	setupRadio();
 	setupEthernet();
+	setupRTC();
 	setupAlarms();
 
 	//add webduino commands
@@ -1123,7 +1121,6 @@ void setup()
 	SystemDS.APIkey = "GNQST00GBW05EYGC";
 	SystemDS.Size = 8;
 	SystemDS.isValid = true;
-
 
 	//Calibration process: attach a classic light bulb or heater and set the phase_shift constant so that the reported power factor is 1,
 	//then connect a multimeter and set the calibration constant so that the reported voltage is same as on multimeter

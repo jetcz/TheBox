@@ -1,15 +1,5 @@
 void printDebug() {
-	Serial.print("Voltage ");
-	Serial.println(MainDS.Data[7]);
-	Serial.print("Power left: ");
-	Serial.println(MainDS.Data[5]);
-	Serial.print("Power right: ");
-	Serial.println(MainDS.Data[6]);
-	Serial.print("Phasecal1: ");
-	Serial.println(emon.powerFactor1);
-	Serial.print("Phasecal2: ");
-	Serial.println(emon.powerFactor2);
-	Serial.println();
+
 }
 
 //************************************
@@ -24,7 +14,6 @@ void system() {
 	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(_dtNow);
 	sNow = getDateTimeString(_dtNow);
 	sMainUptime = getUptimeString(getUptime(_dtNow));
-	enableDisableAlarms();
 	for (int relay = 0; relay < 4; relay++)
 	{
 		if (Settings.RelayMode[relay] > 1) serviceSchedulers(_dtNow, relay);
@@ -186,11 +175,26 @@ void printSensorDataSerial(){
 //************************************
 void printLcd() {
 	static byte _byLastScreen;
+	static byte _bySecCnt = 0;
+
+	//do not refresh lcd for specified time if there is some message
+	if (!bLCDRefreshing && _bySecCnt < Settings.LcdMsgTimeout)
+	{
+		_bySecCnt++;
+		return;
+	}
+	else
+	{
+		_bySecCnt = 0;
+		bLCDRefreshing = true;
+	}
+
 	if (getMainPir())
 	{
 		lcd.backlight();
 
-		if (digitalRead(LCD_SWITCH[0]) == 0)
+		//which screen to display
+		if (!digitalRead(LCD_SWITCH[0]))
 		{
 			if (_byLastScreen != 1) {
 				lcd.clear();
@@ -198,7 +202,7 @@ void printLcd() {
 			printLcdScreen1();
 			_byLastScreen = 1;
 		}
-		else if (digitalRead(LCD_SWITCH[1]) == 0)
+		else if (!digitalRead(LCD_SWITCH[1]))
 		{
 			if (_byLastScreen != 2) {
 				lcd.clear();
@@ -206,7 +210,7 @@ void printLcd() {
 			printLcdScreen2();
 			_byLastScreen = 2;
 		}
-		else if (digitalRead(LCD_SWITCH[2]) == 0)
+		else if (!digitalRead(LCD_SWITCH[2]))
 		{
 			if (_byLastScreen != 3) {
 				lcd.clear();
@@ -229,15 +233,15 @@ void printLcd() {
 void thingSpeak(){
 	if (millis() < 100000) return;	//return if time is less than 1:40 (boot time of ovis)
 	static unsigned int _nCnt;
-	byte _byCurrentDS = _nCnt % 3;
+	byte CurrentDS = _nCnt % 3;
 
 	//before we update thingspeak, check if the dataset is valid 
-	if (!DataSetPtr[_byCurrentDS]->isValid)
+	if (!DataSetPtr[CurrentDS]->isValid)
 	{
 #if DEBUG
 		Serial.println();
 		Serial.print(F("DS "));
-		Serial.print(_byCurrentDS);
+		Serial.print(CurrentDS);
 		Serial.println(F(" not valid, aborting upload!"));
 #endif
 		_nCnt++;
@@ -245,39 +249,16 @@ void thingSpeak(){
 	}
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
 	SystemDS.Size = (RemoteDS.isValid) ? 8 : 6;
-	DataSetPtr[_byCurrentDS]->GetTSString();
+	DataSetPtr[CurrentDS]->GetTSString();
 
 #if DEBUG
 	Serial.println();
 	Serial.print(F("Update ThingSpeak with DS "));
-	Serial.println(_byCurrentDS);
+	Serial.println(CurrentDS);
 #endif
-	updateThingSpeak(*DataSetPtr[_byCurrentDS]);
+	updateThingSpeak(*DataSetPtr[CurrentDS]);
 	_nCnt++;
 	needRestart();
-}
-
-//************************************
-// Method:   	 enableDisableAlarms
-// Description:  Helper method to temporarily disable alarms (currently only LCD alarm to display some message)
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
-void enableDisableAlarms() {
-
-	//enable lcd refreshing after some msg shows up for x sec
-	static byte _bySecCnt = 0;
-	if (!Alarm.active(printLcdAlarm) && _bySecCnt > Settings.LcdMsgTimeout)
-	{
-		lcd.clear();
-		Alarm.enable(printLcdAlarm);
-		_bySecCnt = 0;
-	}
-	else if (!Alarm.active(printLcdAlarm) && _bySecCnt <= Settings.LcdMsgTimeout)
-	{
-		_bySecCnt++;
-	}
 }
 
 //************************************
@@ -288,7 +269,7 @@ void enableDisableAlarms() {
 // Qualifier:	
 //************************************
 void syncRTCwithNTP() {
-	Alarm.disable(printLcdAlarm);
+	bLCDRefreshing = false;
 	lcd.clear();
 	lcd.setCursor(0, 0);
 
@@ -321,7 +302,7 @@ void syncRTCwithNTP() {
 //************************************
 void dhcp() {
 	if (Ethernet.maintain() % 2 == 1) {  //renew dhcp lease
-		Alarm.disable(printLcdAlarm);
+		bLCDRefreshing = false;
 #if DEBUG
 		Serial.println();
 		Serial.println(F("Failed to obtain DHCP lease!"));
@@ -363,7 +344,7 @@ void writeSD() {
 #if DEBUG
 		Serial.println(F("Writing relay settings to SD card failed!"));
 #endif
-		Alarm.disable(printLcdAlarm);
+		bLCDRefreshing = false;
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Writing relay"));

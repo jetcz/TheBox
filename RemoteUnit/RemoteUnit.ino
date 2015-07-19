@@ -116,16 +116,14 @@ void setup() {
 	interrupts();
 }
 
-void loop() {	
+void loop() {
 	lLastTime = millis();
 
 	getPayload();
 
-#if DEBUG
-	p.print();
-#endif
-
-	sendPayload();
+	if (!sendPayload()) ledLightDigital('r');	
+	else ledLightDigital('g');
+	ledLightDigital('k');
 
 	lLastTime = millis() - lLastTime;
 	Sleepy::loseSomeTime(nMsgTimeout - lLastTime);
