@@ -21,7 +21,7 @@ void printDebug() {
 //************************************
 void system() {
 	DateTime _dtNow = now();
-	RemoteDS.Valid = isRemoteDataSetValid(_dtNow);
+	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(_dtNow);
 	sNow = getDateTimeString(_dtNow);
 	sMainUptime = getUptimeString(getUptime(_dtNow));
 	enableDisableAlarms();
@@ -29,7 +29,6 @@ void system() {
 	{
 		if (Settings.RelayMode[relay] > 1) serviceSchedulers(_dtNow, relay);
 	}
-	receiveData();
 }
 
 //************************************
@@ -40,8 +39,10 @@ void system() {
 // Qualifier:	
 //************************************
 void prepareDataSetArrays() {
+	static unsigned int nDHTFailures;
 	DateTime _dtNow = now();
 	sensors_event_t event;	//event for bmp180
+
 	//system DS
 	float _fVal;
 	_fVal = getSysTemperature(event);
@@ -54,30 +55,35 @@ void prepareDataSetArrays() {
 	nMainFreeRam = freeRam();
 
 	//main DS
-	dhtStatus = dht1.read22(DHT22_PIN);
-	if (dhtStatus != 0)
+	if (DHT.read22(DHT22_PIN) == 0)
+	{
+		*MainDS.Temperature = getMainTemperature();
+		*MainDS.Humidity = getMainHumidity();
+		*MainDS.Humidex = getMainHumidex();
+
+		nDHTFailures = 0;
+		ledLight(1, 'g');
+	}
+	else
 	{
 #if DEBUG
 		Serial.println(F("Failed to read from DHT22!"));
 #endif
-		dhtFailures++;
-		if (dhtFailures == 2) ledLight(1, 'y');
-		else if (dhtFailures > 2) ledLight(1, 'r');
+		nDHTFailures++;
+		if (nDHTFailures == 2) ledLight(1, 'y');
+		else if (nDHTFailures > 2)
+		{
+			ledLight(1, 'r');
+			*MainDS.Temperature = *MainDS.Humidity = *MainDS.Humidex = -255;
+		}
 	}
-	else
-	{
-		dhtFailures = 0;
-		ledLight(1, 'g');
-	}
-	MainDS.Data[0] = getMainTemperature();
-	MainDS.Data[1] = getMainHumidity();
-	MainDS.Data[2] = getMainHumidex();
+
 	MainDS.Data[3] = getMainPir();
 	_fVal = getPressure(event);
 	MainDS.Data[4] = (_fVal == -255) ? _fVal : _fVal + Settings.PressureOffset;
 
-	MainDS.Timestamp = _dtNow;
-	SystemDS.Timestamp = _dtNow;
+	MainDS.TimeStamp = _dtNow;
+	SystemDS.TimeStamp = _dtNow;
 }
 
 
@@ -90,7 +96,7 @@ void prepareDataSetArrays() {
 //************************************
 void getPWRData(){
 	float _fVal;
-	Vcc = readVcc();
+	fVcc = readVcc();
 	_fVal = getPower(0);
 	MainDS.Data[5] = (_fVal < 1) ? 0 : _fVal;
 	_fVal = getPower(3);
@@ -106,23 +112,23 @@ void getPWRData(){
 // Qualifier:	
 //************************************
 void printSensorDataSerial(){
-	if (MainDS.Valid == true)
+	if (MainDS.isValid)
 	{
 		Serial.println();
 		Serial.println(F("Main Unit"));
 		Serial.print(F("Temperature "));
-		Serial.print(MainDS.Data[0], 1);
+		Serial.print(*MainDS.Temperature, 1);
 		Serial.println(F("C"));
 		Serial.print(F("Humidity "));
-		Serial.print(MainDS.Data[1], 0);
+		Serial.print(*MainDS.Humidity, 0);
 		Serial.println(F("%RH"));
 		Serial.print(F("Humidex "));
-		Serial.print(MainDS.Data[2], 1);
+		Serial.print(*MainDS.Humidex, 1);
 		Serial.println(F("C"));
 		Serial.print(F("Weather forecast: "));
 		Serial.println(cWeather[byForecast]);
 		Serial.print(F("SysTemperature "));
-		Serial.print(SystemDS.Data[0], 1);
+		Serial.print(*SystemDS.Temperature, 1);
 		Serial.println(F("C"));
 		Serial.print(F("Pressure "));
 		Serial.print(MainDS.Data[4], 1);
@@ -136,17 +142,17 @@ void printSensorDataSerial(){
 	}
 	else Serial.println(F("Main Unit DataSet invalid!"));
 
-	if (RemoteDS.Valid == true)
+	if (RemoteDS.isValid)
 	{
 		Serial.println(F("Remote Unit"));
 		Serial.print(F("Temperature "));
-		Serial.print(RemoteDS.Data[0], 1);
+		Serial.print(*RemoteDS.Temperature, 1);
 		Serial.println(F("C"));
 		Serial.print(F("Humidity "));
-		Serial.print(RemoteDS.Data[1], 0);
+		Serial.print(*RemoteDS.Humidity, 0);
 		Serial.println(F("%RH"));
 		Serial.print(F("Humidex "));
-		Serial.print(RemoteDS.Data[2], 1);
+		Serial.print(*RemoteDS.Humidex, 1);
 		Serial.println(F("C"));
 		Serial.print(F("SoilTemperature "));
 		Serial.print(RemoteDS.Data[3], 1);
@@ -226,7 +232,7 @@ void thingSpeak(){
 	byte _byCurrentDS = _nCnt % 3;
 
 	//before we update thingspeak, check if the dataset is valid 
-	if (!DataSetPtr[_byCurrentDS]->Valid)
+	if (!DataSetPtr[_byCurrentDS]->isValid)
 	{
 #if DEBUG
 		Serial.println();
@@ -238,7 +244,7 @@ void thingSpeak(){
 		return; //cancel thingspeak update
 	}
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
-	SystemDS.Size = (RemoteDS.Valid) ? SystemDS.Size = 8 : SystemDS.Size = 6;
+	SystemDS.Size = (RemoteDS.isValid) ? 8 : 6;
 	DataSetPtr[_byCurrentDS]->GetTSString();
 
 #if DEBUG

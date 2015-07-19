@@ -5,79 +5,42 @@
 // Returns:  	 void
 // Qualifier:	
 //************************************
-void getDataSet() {
+void getPayload() {
+	ledLightDigital('g');
+	ledLightDigital('k');
+
+	//get DHT data
 	digitalWrite(DHT22_PWR_PIN, HIGH);
 	Sleepy::loseSomeTime(1500);
-	dhtStatus = dht1.read22(DHT22_DATA_PIN);
+	nDHTStatus = DHT.read22(DHT22_DATA_PIN);
 	digitalWrite(DHT22_PWR_PIN, LOW);
+	if (nDHTStatus == 0){
+		p.AirTemp = getAirTemperature() * 10;				//remoteTemperature
+		p.AirHum = getAirHumidity() * 10;					//remoteHumidity
+		p.AirHumidex = getAirHumidex() * 10;				//remoteHumidex
+	}
+	else
+		p.AirTemp = p.AirHum = p.AirHumidex = -255 * 10;	//remoteTemperature
 
-	DS[0] = getAirTemperature();				//remoteTemperature
-	DS[1] = getAirHumidity();					//remoteHumidity
-	DS[2] = getAirHumidex();					//remoteHumidex
-	DS[3] = getSoilTemperature();				//remoteSoilTemperature
+	//get DS data
+	float _fVal = getSoilTemperature();
+	p.SoilTemp = (_fVal == -255) ? -255 * 10 : _fVal * 10;	//remoteSoilTemperature
 
+	//get simple analog sensors data
 	powerSensors(true);
-	DS[7] = getVcc();
-	DS[4] = getSoilHumidity();					//remoteSoilHumidity
-	DS[5] = getLight();							//remoteLight
+	p.Vcc = getVcc();
+	p.SoilHum = getSoilHumidity() * 10;						//remoteSoilHumidity
+	p.Light = getLight() * 10;								//remoteLight
 	powerSensors(false);
 
+	//get rain
 	noInterrupts();
-	DS[6] = fRainTips;							//rain tips
+	p.RainTips = nRainTips;									//rain tips
 	interrupts();
 
-	DS[8] = getUptime();						//uptime
-	DS[9] = freeRam();							//freeRam
-}
-
-//************************************
-// Method:   	 printSensorData
-// Description:  Print sensor data to serial port.
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
-void printSensorData() {
-	Serial.print(F("Air temp: "));
-	Serial.print(DS[0], 1);
-	Serial.println(F("C"));
-
-	Serial.print(F("Air hum: "));
-	Serial.print(DS[1], 0);
-	Serial.println(F("%RH"));
-
-	Serial.print(F("Humidex: "));
-	Serial.print(DS[2], 1);
-	Serial.println(F("C"));
-
-	Serial.print(F("Soil temp: "));
-	Serial.print(DS[3], 1);
-	Serial.println(F("C"));
-
-	Serial.print(F("Soil hum: "));
-	Serial.print(DS[4], 0);
-	Serial.println(F("%"));
-
-	Serial.print(F("Light: "));
-	Serial.print(DS[5], 0);
-	Serial.println(F("%"));
-
-	Serial.print(F("RainTicks: "));
-	Serial.println(DS[6], 0);
-
-	Serial.print(F("Vcc: "));
-	Serial.print(DS[7], 0);
-	Serial.println(F("mV"));
-
-	Serial.print(F("Uptime: "));
-	Serial.print(DS[8], 0);
-	Serial.println("s");
-
-	Serial.print(F("Free ram: "));
-	Serial.print(freeRam());
-	Serial.println("b");
-
-	Serial.println();
+	//get sys info
+	p.Uptime = getUptime();									//uptime
+	p.FreeRam = freeRam();									//freeRam
 }
 
 
@@ -104,40 +67,29 @@ void powerSensors(bool state) {
 
 float getAirTemperature() {
 	static RunningAverage AirTemp(3);
-	if (dhtStatus == 0)
-	{
-		AirTemp.addValue(dht1.temperature);
-		return AirTemp.getAverage();
-	}
-	else return -255;
+	AirTemp.addValue(DHT.temperature);
+	return AirTemp.getAverage();
 }
 
 
 float getAirHumidity(){
 	static RunningAverage AirHum(3);
-	if (dhtStatus == 0)
-	{
-		AirHum.addValue(dht1.humidity);
-		return AirHum.getAverage();
-	}
-	else return -255;
+	AirHum.addValue(DHT.humidity);
+	return AirHum.getAverage();
 }
 
 float getAirHumidex() {
-	if ((DS[0] == -255) || (DS[1] == -255)) return -255;
-	else {
-		float e;
-		e = (6.112 * pow(10, (7.5 * DS[0] / (237.7 + DS[0]))) *  DS[1] / 100); //vapor pressure
-		float humidex = DS[0] + 0.55555555 * (e - 10.0); //humidex
-		return humidex;
-	}
+	float e;
+	e = (6.112 * pow(10, (7.5 * p.AirTemp / (237.7 + p.AirTemp))) *  p.AirHum / 100); //vapor pressure
+	float humidex = p.AirTemp + 0.55555555 * (e - 10.0); //humidex
+	return humidex;
 }
 
-byte getLight() {
+float getLight() {
 	static RunningAverage Light(3);
 	float _fLight = (analogRead(PHOTORESISTOR_DATA_PIN) + 0.5)*(*Vcc) / 1024.0;
-	byte _byLight = ((_fLight / *Vcc) * 100);
-	Light.addValue(_byLight);
+	_fLight = ((_fLight / *Vcc) * 100);
+	Light.addValue(_fLight);
 	return Light.getAverage();
 }
 
@@ -151,7 +103,7 @@ float getSoilTemperature() {
 }
 
 //returns soil humidity percentage 0 = air, 100 = salt water
-byte getSoilHumidity() {
+float getSoilHumidity() {
 	static RunningAverage SoilHum(3);
 	RunningAverage AnalogReadings(3);
 	for (int i = 0; i < 3; i++)
@@ -159,8 +111,8 @@ byte getSoilHumidity() {
 		AnalogReadings.addValue(analogRead(HUMIDITY_DATA_PIN));
 	}
 	float _fHum = (AnalogReadings.getAverage() + 0.5)*(*Vcc) / 1024.0;
-	byte hum = ((_fHum / *Vcc - 1)*-103);
-	SoilHum.addValue(hum);
+	_fHum = ((_fHum / *Vcc - 1)*-103);
+	SoilHum.addValue(_fHum);
 	return SoilHum.getAverage();
 }
 
@@ -178,5 +130,5 @@ float getVcc(){
 // Qualifier:	
 //************************************
 void ISRTipCnt() {
-	fRainTips++;
+	nRainTips++;
 }

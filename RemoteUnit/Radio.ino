@@ -5,12 +5,22 @@
 // Returns:  	 void
 // Qualifier:	
 //************************************
-void sendMessage() {
+void sendPayload() {
+	bool bSucces = false;
 	digitalWrite(RADIO_PWR_PIN, HIGH);
-	Sleepy::loseSomeTime(10);
+	Sleepy::loseSomeTime(250);
 
-	nrf24.send((uint8_t*)&DS, sizeof(DS));
-	nrf24.waitPacketSent();
+	radio.stopListening();
 
-	digitalWrite(RADIO_PWR_PIN, LOW);	
+	if (!radio.write(&p, sizeof(p))){
+		bSucces = false;
+	}
+	else bSucces = true;
+
+	digitalWrite(RADIO_PWR_PIN, LOW);
+
+	if (!bSucces) {
+		ledLightDigital('r');
+		ledLightDigital('k');
+	}
 }

@@ -106,16 +106,16 @@ void weatherForecast() {
 void getRainPerHour() {
 	if (!bReceivedRadioMsg) return;
 	static QueueArray <byte> q;
-	static float _fLastTickCnt = fRainTicks;
-	static unsigned int _fTicksPerLastHour = 0;
-	if (fRainTicks == 0) _fLastTickCnt = 0; //in case we restart the remote unit and main unit keeps runnig
+	static unsigned int _nLastTickCnt = nRainTicks;
+	static unsigned int _nTicksPerLastHour = 0;
+	if (nRainTicks == 0) _nLastTickCnt = 0; //in case we restart the remote unit and main unit keeps runnig
 
-	unsigned int _fTicks = fRainTicks - _fLastTickCnt;
-	_fTicksPerLastHour += _fTicks;
-	q.push(byte(_fTicks));
-	if (q.count() > 60) _fTicksPerLastHour -= q.pop();
-	_fLastTickCnt = fRainTicks;
-	RemoteDS.Data[6] = float(_fTicksPerLastHour) * 0.3;
+	unsigned int _nTicks = nRainTicks - _nLastTickCnt;
+	_nTicksPerLastHour += _nTicks;
+	q.push(byte(_nTicks));
+	if (q.count() > 60) _nTicksPerLastHour -= q.pop();
+	_nLastTickCnt = nRainTicks;
+	RemoteDS.Data[6] = float(_nTicksPerLastHour) * 0.3;
 };
 
 
@@ -130,16 +130,16 @@ void getRainPerDay() {
 	if (!bReceivedRadioMsg) return;
 	Alarm.disable(getInitialTipCntAlarm);
 	static QueueArray <byte> q;
-	static float _fLastTickCnt = fRainTicks;
-	static unsigned int _fTicksPerLastDay = 0;
-	if (fRainTicks == 0) _fLastTickCnt = 0;
+	static unsigned int _nLastTickCnt = nRainTicks;
+	static unsigned int _nTicksPerLastDay = 0;
+	if (nRainTicks == 0) _nLastTickCnt = 0;
 
-	unsigned int _fTicks = fRainTicks - _fLastTickCnt;
-	_fTicksPerLastDay += _fTicks;
-	q.push(byte(_fTicks));
-	if (q.count() > 86400 / Settings.UpdateRainPerDayInterval) _fTicksPerLastDay -= q.pop(); //if the interval is set to 10 min, fifo is 144 bytes long
-	_fLastTickCnt = fRainTicks;
-	RemoteDS.Data[7] = float(_fTicksPerLastDay) * 0.3;
+	unsigned int _nTicks = nRainTicks - _nLastTickCnt;
+	_nTicksPerLastDay += _nTicks;
+	q.push(byte(_nTicks));
+	if (q.count() > 86400 / Settings.UpdateRainPerDayInterval) _nTicksPerLastDay -= q.pop(); //if the interval is set to 10 min, fifo is 144 bytes long
+	_nLastTickCnt = nRainTicks;
+	RemoteDS.Data[7] = float(_nTicksPerLastDay) * 0.3;
 };
 
 

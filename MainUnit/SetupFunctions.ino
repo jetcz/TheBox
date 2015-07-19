@@ -56,16 +56,16 @@ void setupPins(){
 	}
 
 	//current sensor right socket
-	pinMode(59, OUTPUT);	//vcc
-	digitalWrite(59, HIGH);
-	pinMode(57, OUTPUT);	//gnd
-	digitalWrite(57, LOW);
+	pinMode(CURRENT_RIGHT_PWR_PIN, OUTPUT);	//vcc
+	digitalWrite(CURRENT_RIGHT_PWR_PIN, HIGH);
+	pinMode(CURRENT_RIGHT_GND_PIN, OUTPUT);	//gnd
+	digitalWrite(CURRENT_RIGHT_GND_PIN, LOW);
 
 	//current sensor left socket
-	pinMode(64, OUTPUT);	//vcc
-	digitalWrite(64, HIGH);
-	pinMode(62, OUTPUT);	//gnd
-	digitalWrite(62, LOW);
+	pinMode(CURRENT_LEFT_PWR_PIN, OUTPUT);	//vcc
+	digitalWrite(CURRENT_LEFT_PWR_PIN, HIGH);
+	pinMode(CURRENT_LEFT_GND_PIN, OUTPUT);	//gnd
+	digitalWrite(CURRENT_LEFT_GND_PIN, LOW);
 
 #if DEBUG
 	Serial.println(F("Pins initialized and set"));
@@ -92,7 +92,7 @@ void setupBMP(){
 		lcd.setCursor(0, 1);
 		lcd.print(F("or not present!"));
 		ledLight(1, 'r');
-		while (1);
+		Alarm.delay(3000);
 	}
 	else {
 #if DEBUG
@@ -115,7 +115,8 @@ void setupRTC(){
 		lcd.setCursor(0, 1);
 		lcd.print(F("or not present!"));
 		ledLight(1, 'r');
-		while (1);
+		rtc.adjust(DateTime(1970, 1, 1));
+		Alarm.delay(3000);
 	}
 	if (!rtc.isrunning()) {
 #if DEBUG
@@ -124,33 +125,68 @@ void setupRTC(){
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("RTC is not running!"));
-
+		rtc.adjust(DateTime(1970, 1, 1));
+		Alarm.delay(2000);
 	}
 	else {
 		//rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //set RTC clock to compile date MUST COMMENT OUT
 #if DEBUG
 		Serial.println(F("RTC initialized and clock adjusted"));
 #endif
-		setSyncProvider(syncProvider); //sync system clock from RTC module
-		setSyncInterval(60);
 		ledLight(1, 'g');
 	} //sync interval for system clock from RTC module
+	setSyncProvider(syncProvider); //sync system clock from RTC module
+	setSyncInterval(60);
 	dtSysStart = now();
 }
-
+/*
 void setupRadio(){
-	if (!nrf24.init())
+	if (!nrf24.init()){
 #if DEBUG
-		Serial.println(F("Radion init failed"));
+		Serial.println(F("Radion init failed!"));
 #endif
-	if (!nrf24.setChannel(8))
+		lcd.clear();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Radion init failed!"));
+		Alarm.delay(2000);
+	}
+	else if (!nrf24.setChannel(8)) {
 #if DEBUG
-		Serial.println(F("Radio setChannel failed"));
+		Serial.println(F("Radio setChannel failed!"));
 #endif
-	if (!nrf24.setRF(RH_NRF24::DataRate250kbps, RH_NRF24::TransmitPower0dBm))
+		lcd.clear();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Radio setChannel"));
+		lcd.setCursor(0, 1);
+		lcd.print(F("failed!"));
+		Alarm.delay(2000);
+	}
+	else if (!nrf24.setRF(RH_NRF24::DataRate250kbps, RH_NRF24::TransmitPower0dBm))
+	{
 #if DEBUG
-		Serial.println(F("Radio setRF failed"));
+		Serial.println(F("Radio setRF failed!"));
 #endif
+		lcd.clear();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Radio setRF failed!"));
+		Alarm.delay(2000);
+	}
+	else Serial.println(F("Radio initialized!"));
+}
+*/
+void setupRadio(){
+	radio.begin();
+	radio.setAutoAck(1);                    // Ensure autoACK is enabled
+	//radio.setChannel(24);
+	radio.setCRCLength(RF24_CRC_8);
+	radio.setDataRate(RF24_250KBPS);
+	radio.setPALevel(RF24_PA_MAX);
+	radio.enableAckPayload();               // Allow optional ack payloads
+	radio.setRetries(1, 15);                 // Smallest time between retries, max no. of retries
+	radio.setPayloadSize(22);              
+	radio.openWritingPipe(pipes[1]);
+	radio.openReadingPipe(1, pipes[0]);
+	radio.startListening();                 // Start listening	
 }
 
 void setupEthernet() {

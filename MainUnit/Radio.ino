@@ -5,42 +5,33 @@
 // Returns:  	 void
 // Qualifier:	
 //************************************
-
 void receiveData() {
-	const byte _byArrSize = 11; //how much float values are we sending
-	byte _byBuff[_byArrSize * 4];
-	byte _byBuffLen = sizeof(_byBuff);
-
-	if (nrf24.recv(_byBuff, &_byBuffLen)) // Non-blocking
-	{
+	byte pipeNo;
+	while (radio.available(&pipeNo)){ //receiving data
 		ledLight(2, 'b');
-		float temp[_byArrSize];
-		memcpy(&temp, _byBuff, _byBuffLen);
+		Payload p;
+		radio.read(&p, sizeof(p));
 
-		RemoteDS.Data[0] = (temp[0] == -255) ? temp[0] : temp[0] + Settings.RemoteTempOffset;		//remoteTemperature
-		RemoteDS.Data[1] = temp[1];																	//remoteHumidity
-		RemoteDS.Data[2] = temp[2];																	//remoteHumidex
-		RemoteDS.Data[3] = (temp[3] == -255) ? temp[3] : temp[3] + Settings.SoilTempOffset;			//remoteSoilTemperature
-		RemoteDS.Data[4] = temp[4];																	//remoteSoilHumidity
-		RemoteDS.Data[5] = temp[5];																	//remoteLight
-		//these get filled in weather sketch
-		//RemoteDS.Data[6]
-		//RemoteDS.Data[7]
-		fRainTicks = temp[6];										//total ticks 
-		RemoteDS.Timestamp = now();
+		//apply offsets only for valid values (not -255)
+		RemoteDS.Data[0] = (p.AirTemp == -255 * 10) ? (p.AirTemp / 10.0) : (p.AirTemp / 10.0 + Settings.RemoteTempOffset);		//remoteTemperature
+		RemoteDS.Data[1] = p.AirHumidex / 10.0;																					//remoteHumidity
+		RemoteDS.Data[2] = p.AirHumidex / 10.0;																					//remoteHumidex
+		RemoteDS.Data[3] = (p.SoilTemp == -255 * 10) ? (p.SoilTemp / 10.0) : (p.SoilTemp / 10.0 + Settings.SoilTempOffset);		//remoteSoilTemperature
+		RemoteDS.Data[4] = p.SoilHum / 10.0;																					//remoteSoilHumidity
+		RemoteDS.Data[5] = p.Light / 10.0;																						//remoteLight
+		SystemDS.Data[6] = p.Vcc;																								//vcc
+		SystemDS.Data[7] = p.Uptime;																							//uptime
 
-		SystemDS.Data[6] = temp[7];									//vcc
-		SystemDS.Data[7] = temp[8];									//uptime
-
-		nRemoteFreeRam = temp[9];									//remote free ram
-
-		Settings.RadioMsgInterval = temp[10];						//radio messages interval
-
+		nRainTicks = p.RainTips;
+		nRemoteFreeRam = p.FreeRam;
+		RemoteDS.TimeStamp = now();
 		sRemoteUptime = getUptimeString(TimeSpan(SystemDS.Data[7]));
 		bReceivedRadioMsg = true;
-	}
-}
 
+		//p.print();
+	}
+
+}
 
 //************************************
 // Method:   	 getFailedRadioMessages
@@ -50,7 +41,5 @@ void receiveData() {
 // Qualifier:	
 //************************************
 void getFailedRadioMessages(){
-	static bool bSetRadioMsgInterval = false;
-	if (now() - RemoteDS.Timestamp.unixtime() > Settings.RadioMsgInterval + 2) nFailedCntRadioTotal++;
-	if (bReceivedRadioMsg && !bSetRadioMsgInterval) Alarm.write(failedRadioMessagesAlarm, Settings.RadioMsgInterval);
+	if (now() - RemoteDS.TimeStamp.unixtime() > Settings.RadioMsgInterval + 1) nFailedCntRadioTotal++;
 }

@@ -73,7 +73,7 @@ void needRestart() {
 //************************************
 bool isRemoteDataSetValid(DateTime t) {
 	bool _bValid;
-	TimeSpan _tsDiff = t - RemoteDS.Timestamp;
+	TimeSpan _tsDiff = t - RemoteDS.TimeStamp;
 	if (_tsDiff.totalseconds() <= Settings.RadioMsgInterval)
 	{
 		_bValid = true;
@@ -112,7 +112,7 @@ int freeRam() {
 // Method:   	 readVcc
 // Description:  Exact measurement of 5V
 // Access:   	 public 
-// Returns:  	 long
+// Returns:  	 int
 // Qualifier:	
 //************************************
 float readVcc() {

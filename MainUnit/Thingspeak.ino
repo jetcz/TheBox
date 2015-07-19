@@ -26,7 +26,7 @@ void updateThingSpeak(DataSet ds){
 #if DEBUG
 		Serial.println(F("Connected to ThingSpeak"));
 		Serial.println(F("Sending data... "));
-		Serial.println(ds.ThingSpeakString);
+		Serial.println(ds.ThingSpeakStr);
 #endif
 		client.print(F("POST /update HTTP/1.1\n"));
 		client.print(F("Host: api.thingspeak.com\n"));
@@ -36,8 +36,8 @@ void updateThingSpeak(DataSet ds){
 		client.print(F("headers: false\n"));
 		client.print(F("Content-Type: application/x-www-form-urlencoded\n"));
 		client.print(F("Content-Length: "));
-		client.print(intToString(ds.ThingSpeakString.length()) + "\n\n");
-		client.println(ds.ThingSpeakString);
+		client.print(intToString(ds.ThingSpeakStr.length()) + "\n\n");
+		client.println(ds.ThingSpeakStr);
 		ledLight(3, 'g');
 	}
 	else

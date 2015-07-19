@@ -81,7 +81,7 @@ void serviceSchedulers(DateTime t, int relay){
 		}
 
 		//control relays (all the magic goes here)
-		if ((Sched[relay].Variable > 3 && RemoteDS.Valid) || (Sched[relay].Variable <= 3)) //if targer var is from remote unit, remote ds must be valid to be processed
+		if ((Sched[relay].Variable > 3 && RemoteDS.isValid) || (Sched[relay].Variable <= 3)) //if targer var is from remote unit, remote ds must be valid to be processed
 		{
 			if (Sched[relay].Value[Sched[relay].CurrentInterval][0] < Sched[relay].Value[Sched[relay].CurrentInterval][1]) //normal mode (heating...)
 			{

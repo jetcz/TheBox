@@ -47,16 +47,18 @@ void setupPins() {
 }
 
 void setupRadio(){
-	if (!nrf24.init())
-#if DEBUG
-		Serial.println(F("Radion init failed"));
-#endif
-	if (!nrf24.setChannel(8))
-#if DEBUG
-		Serial.println(F("Radio setChannel failed"));
-#endif
-	if (!nrf24.setRF(RH_NRF24::DataRate250kbps, RH_NRF24::TransmitPower0dBm));
-#if DEBUG
-	Serial.println(F("Radio setRF failed"));
-#endif
+	radio.begin();
+	radio.setAutoAck(1);                    // Ensure autoACK is enabled
+	//radio.setChannel(24);
+	radio.setCRCLength(RF24_CRC_8);
+	radio.setDataRate(RF24_250KBPS);
+	radio.setPALevel(RF24_PA_MAX);
+	radio.enableAckPayload();               // Allow optional ack payloads
+	radio.setRetries(2, 10);                 // Smallest time between retries, max no. of retries
+	radio.setPayloadSize(22);                // Here we are sending 1-byte payloads to test the call-response speed
+
+	radio.openWritingPipe(pipes[0]);
+	radio.openReadingPipe(1, pipes[1]);
+
+	radio.startListening();                 // Start listening
 }

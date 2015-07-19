@@ -20,13 +20,13 @@ float getPressure(sensors_event_t event) {
 
 float getMainTemperature() {
 	static RunningAverage _raMainTemp(6);
-	if (dhtStatus == 0)	_raMainTemp.addValue(dht1.temperature);
+	_raMainTemp.addValue(DHT.temperature);
 	return _raMainTemp.getAverage();
 }
 
 float getMainHumidity() {
 	static RunningAverage _raMainHumidity(6);
-	if (dhtStatus == 0)	_raMainHumidity.addValue(dht1.humidity);
+	_raMainHumidity.addValue(DHT.humidity);
 	return _raMainHumidity.getAverage();
 }
 

@@ -13,11 +13,12 @@
 #include <QueueArray.h>
 #include <RunningAverage.h>
 #include "avr/pgmspace.h"
+#include "nRF24L01.h"
+#include "RF24.h"
 //slightly modified libs, can use default
 #include <dht.h>
 #include <Ethernet.h>
 #include <WebServer.h>
-#include <RH_NRF24.h>
 //modified, cannot use default (refer to readme)
 #include <EmonLib.h>
 #include <TimeAlarms.h>
@@ -45,7 +46,11 @@ const int RADIO_SELECT_PIN = 18;
 const int RADIO_ENABLE_PIN = 17;
 const int VOLTAGE_PIN = 54;
 const int CURRENT_LEFT_PIN = 63;
+const int CURRENT_LEFT_PWR_PIN = 64;
+const int CURRENT_LEFT_GND_PIN = 62;
 const int CURRENT_RIGHT_PIN = 58;
+const int CURRENT_RIGHT_PWR_PIN = 59;
+const int CURRENT_RIGHT_GND_PIN = 57;
 
 //general buffers for various usages (datatypes conversion, reading ini settings etc)
 const int nBuffLen1 = 30;
@@ -60,7 +65,7 @@ TimeChangeRule CET = { "CET", Last, Sun, Oct, 3, 60 };		 //winter time = UTC + 1
 //global reference variables
 RTC_DS1307 rtc;
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
-dht dht1;
+dht DHT;
 EthernetClient client;
 EthernetUDP udp;
 File file;
@@ -69,8 +74,11 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
 EnergyMonitor emon;
-RH_NRF24 nrf24(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
-float Vcc;
+//RH_NRF24 nrf24(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
+RF24 radio(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
+const uint64_t pipes[2] = { 0x24CDABCD71LL, 0x244d52687CLL };              // Radio pipe addresses for the 2 nodes to communicate.
+
+float fVcc;
 
 //initialize custom structs
 SystemSettings Settings;			//here are all user configurables
@@ -89,11 +97,10 @@ String sNow;							//current datetime string
 String sMainUptime;						//uptime string
 String sRemoteUptime;					//uptime string
 bool bReceivedRadioMsg = false;			//received at least one remote ds
-float fRainTicks;
+unsigned int nRainTicks;
 unsigned int nRemoteFreeRam;
 unsigned int nMainFreeRam;
-int dhtStatus;
-unsigned int dhtFailures;
+
 
 //weather variables
 const char* cWeather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -141,6 +148,7 @@ int failedRadioMessagesAlarm;
 void(*resetFunc) (void) = 0;
 
 #pragma region webduino
+
 P(messageSDFail) =
 "<!DOCTYPE html><html><head>"
 "<meta http-equiv=\"refresh\" content=\"2\">"
@@ -194,7 +202,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.print(F("<?xml version = \"1.0\" ?>"));
 		server.print(F("<Inputs>"));
 		server.print(F("<OK>"));
-		server.print(RemoteDS.Valid); //remote data set valid?
+		server.print(RemoteDS.isValid); //remote data set valid?
 		server.print(F("</OK>"));
 		server.print(F("<Sen>"));
 
@@ -608,7 +616,7 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(Vcc, 0);
+		server.print(fVcc, 0);
 		server.print(F("mV / "));
 		server.print(MainDS.Data[7], 1);
 		server.print(F("V"));
@@ -620,11 +628,11 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(now() - MainDS.Timestamp.unixtime());
+		server.print(now() - MainDS.TimeStamp.unixtime());
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		if (bReceivedRadioMsg) server.print(now() - RemoteDS.Timestamp.unixtime());
+		if (bReceivedRadioMsg) server.print(now() - RemoteDS.TimeStamp.unixtime());
 		else server.print(F("9999"));
 		server.printP(tag_end_sensor);
 
@@ -1106,17 +1114,16 @@ void setup()
 	//datasets setup
 	MainDS.APIkey = "FNHSHUE6A3XKP71C";
 	MainDS.Size = 8;
-	MainDS.Valid = true;
-	MainDS.Timestamp = dtSysStart.unixtime();
+	MainDS.isValid = true;
 
 	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
 	RemoteDS.Size = 8;
-	RemoteDS.Valid = false;
+	RemoteDS.isValid = false;
 
 	SystemDS.APIkey = "GNQST00GBW05EYGC";
 	SystemDS.Size = 8;
-	SystemDS.Valid = true;
-	SystemDS.Timestamp = dtSysStart.unixtime();
+	SystemDS.isValid = true;
+
 
 	//Calibration process: attach a classic light bulb or heater and set the phase_shift constant so that the reported power factor is 1,
 	//then connect a multimeter and set the calibration constant so that the reported voltage is same as on multimeter
@@ -1132,7 +1139,8 @@ void setup()
 void loop()
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
+	receiveData();
 	webserver.processConnection();	//process webserver request as soon as possible		
-	emon.calcVI(100, Vcc);			//measure power consumption in outlets (non-blocking)
+	emon.calcVI(100, fVcc);			//measure power consumption in outlets (non-blocking)
 }
 
