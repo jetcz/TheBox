@@ -251,18 +251,17 @@ void setupLCD(){
 
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
-	Alarm.timerOnce(120, syncRTCwithNTP);
+	Alarm.timerOnce(60, syncRTCwithNTP);
 	updateTSAlarm = Alarm.timerRepeat(Settings.UpdateThingSpeakInterval, thingSpeak);
 	Alarm.timerRepeat(Settings.RadioMsgInterval, getFailedRadioMessages); //count failed radio messages by default interval (gets reinitialized once we get first radio msg)
 	Alarm.timerRepeat(1, system);
-	Alarm.timerRepeat(1, printLcd);
 	Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
 	Alarm.timerRepeat(Settings.UpdatePWRSensorsInterval, getPWRData); //get sensor data every x ms
 	if (PRINT_SUMMARY) printSummaryAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	rainPerHourAlarm = Alarm.timerRepeat(60, getRainPerHour); //cumulative rainfall
 	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay); //cumulative rainfall
-	Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC every 24h
+	Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC with NTP every 24h
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 
 	//these get enabled with first radio msg

@@ -27,7 +27,7 @@ struct SystemSettings
 
 	void setDefaultOffsetsSettings(){
 		SysTempOffset = -0.2;
-		PressureOffset = 24;
+		PressureOffset = 29;
 		MainTempOffset = -1.2;
 		RemoteTempOffset = -0.5;
 		SoilTempOffset = -0.2;

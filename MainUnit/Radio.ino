@@ -32,6 +32,7 @@ void receiveData() {
 		if (!Alarm.active(rainPerDayAlarm)) Alarm.enable(rainPerDayAlarm);
 		if (!Alarm.active(rainPerHourAlarm)) Alarm.enable(rainPerHourAlarm);
 
+		/*
 		bool success = true;
 		success = success & p.AirTemp == 256;
 		success = success & p.AirHum == 615;
@@ -44,9 +45,9 @@ void receiveData() {
 		success = success & p.FreeRam == 2111;
 		success = success & p.Vcc == 4990;
 
-
 		if (success) Serial.println("OK");
 		else Serial.println("FAILURE");
+		*/
 	}
 }
 

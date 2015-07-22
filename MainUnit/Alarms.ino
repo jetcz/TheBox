@@ -18,6 +18,7 @@ void system() {
 	{
 		if (Settings.RelayMode[relay] > 1) serviceSchedulers(_dtNow, relay);
 	}
+	printLcd();
 }
 
 //************************************
@@ -183,12 +184,14 @@ void printLcd() {
 		_bySecCnt++;
 		return;
 	}
-	else
+	else if (!bLCDRefreshing && _bySecCnt >= Settings.LcdMsgTimeout)
 	{
 		_bySecCnt = 0;
 		bLCDRefreshing = true;
+		lcd.clear();
 	}
-
+	
+	//refresh lcd only if PIR sees someone
 	if (getMainPir())
 	{
 		lcd.backlight();
@@ -231,17 +234,17 @@ void printLcd() {
 // Qualifier:	
 //************************************
 void thingSpeak(){
-	if (millis() < 100000) return;	//return if time is less than 1:40 (boot time of ovis)
+	if (millis() < 40000) return;	//return if time is less than 0:40 (boot time of the wifi router)
 	static unsigned int _nCnt;
-	byte CurrentDS = _nCnt % 3;
+	byte _byCurrentDS = _nCnt % 3;
 
 	//before we update thingspeak, check if the dataset is valid 
-	if (!DataSetPtr[CurrentDS]->isValid)
+	if (!DataSetPtr[_byCurrentDS]->isValid)
 	{
 #if DEBUG
 		Serial.println();
 		Serial.print(F("DS "));
-		Serial.print(CurrentDS);
+		Serial.print(_byCurrentDS);
 		Serial.println(F(" not valid, aborting upload!"));
 #endif
 		_nCnt++;
@@ -249,14 +252,14 @@ void thingSpeak(){
 	}
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
 	SystemDS.Size = (RemoteDS.isValid) ? 8 : 6;
-	DataSetPtr[CurrentDS]->GetTSString();
+	DataSetPtr[_byCurrentDS]->GetTSString();
 
 #if DEBUG
 	Serial.println();
 	Serial.print(F("Update ThingSpeak with DS "));
-	Serial.println(CurrentDS);
+	Serial.println(_byCurrentDS);
 #endif
-	updateThingSpeak(*DataSetPtr[CurrentDS]);
+	updateThingSpeak(*DataSetPtr[_byCurrentDS]);
 	_nCnt++;
 	needRestart();
 }
