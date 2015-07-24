@@ -31,7 +31,7 @@ unsigned long ntpUnixTime(UDP &udp)
 		return 0;				// sending request failed
 
 	// Wait for response; check every pollIntv ms up to maxPoll times
-	const int _nPollIntv = 150;		// poll every this many ms
+	const byte _nPollIntv = 150;		// poll every this many ms
 	const byte _byMaxPoll = 10;		// poll up to this many times
 	int _nPktLen;				// received packet length
 	for (byte i = 0; i < _byMaxPoll; i++) {
