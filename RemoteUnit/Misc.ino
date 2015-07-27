@@ -10,7 +10,7 @@ long readVcc() {
 #else
 	ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
 #endif
-	delay(1); // Wait for Vref to settle
+	delay(2); // Wait for Vref to settle
 	ADCSRA |= _BV(ADSC); // Start conversion
 	while (bit_is_set(ADCSRA, ADSC)); // measuring
 	uint8_t low = ADCL; // must read ADCL first - it then locks ADCH

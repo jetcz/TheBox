@@ -54,7 +54,7 @@ void setupRadio(){
 	radio.setCRCLength(RF24_CRC_8);
 	_bSuccess = _bSuccess | radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.setRetries(1, byRadioAutoRetransmits);              // Smallest time between retries, max no. of retries
+	radio.setRetries(1, 15);                 // Smallest time between retries, max no. of retries
 	radio.setPayloadSize(22);
 	radio.openWritingPipe(pipes[1]);
 	radio.openReadingPipe(1, pipes[0]);
@@ -67,8 +67,6 @@ void setupRadio(){
 #endif
 	}
 	else {
-		ledLight('r', false);
-		while(1);
 #if DEBUG
 		Serial.println(F("Radio failed to initialize or not present!"));
 #endif		

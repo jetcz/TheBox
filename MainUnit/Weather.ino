@@ -6,7 +6,7 @@
 // Qualifier:	
 //************************************
 void weatherForecast() {
-	static byte _nMinuteCnt = 0;
+	static int _nMinuteCnt = 0;
 	static bool _bFirstRound = true;
 	static float _fPressureAvg[7];
 	static float _fDP_dt;

@@ -83,8 +83,6 @@ const int RADIO_ENABLE_PIN = 15;
 const int RADIO_SELECT_PIN = 15;
 
 const int nMsgTimeout = 20000;		//timeout between messsages in ms
-const byte byRadioAutoRetransmits = 15;
-const byte byRadioManualRetransmits = 3;
 const long lVccCalibration = 1093800;
 
 char buffer[24];
@@ -94,11 +92,12 @@ dht DHT;
 int nDHTStatus;
 RF24 radio(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
 const uint64_t pipes[2] = { 0x24CDABCD71LL, 0x244d52687CLL };
-Payload payload;
+Payload p;
 
 volatile unsigned int nRainTips;
-int *Vcc = &payload.Vcc;
-unsigned long lDelay;
+int *Vcc = &p.Vcc;
+unsigned long lLastTime;
+
 
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
@@ -118,12 +117,14 @@ void setup() {
 }
 
 void loop() {
-	lDelay = millis();
+	lLastTime = millis();
 
-	getPayload(); //read sensor data
-	sendPayload(); //try to send data over the air; we use hardware auto ACK and retransmit AND manually retransmit few times if there is no success
+	getPayload();
 
-	//go to sleep again for 20 seconds minus the time it took to read and send data
-	lDelay = millis() - lDelay;
-	Sleepy::loseSomeTime(nMsgTimeout - lDelay);
+	if (!sendPayload()) ledLightDigital('r');	
+	else ledLightDigital('g');
+	ledLightDigital('k');
+
+	lLastTime = millis() - lLastTime;
+	Sleepy::loseSomeTime(nMsgTimeout - lLastTime);
 }

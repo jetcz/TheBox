@@ -36,7 +36,7 @@ struct SystemSettings
 	char ThingSpeakAddress[30];
 	//const char cThingSpeakAddress[] = "184.106.153.149";
 	byte UpdateThingSpeakInterval;
-	unsigned int RemoteDataSetTimeout;		//for how long is dataset valid and send to thingspeak (sec)
+	int RemoteDataSetTimeout;		//for how long is dataset valid and send to thingspeak (sec)
 	byte RestartEthernetThreshold;	//if thingspeak update fails x times -> ethernet shield reset
 	byte RestartArduinoThreshold;	//if thingspeak update fails x times -> arduino reset
 
@@ -52,7 +52,7 @@ struct SystemSettings
 	byte UpdateSensorsInterval;
 
 	int UpdateRainPerDayInterval;
-	byte UpdatePWRSensorsInterval;
+	int UpdatePWRSensorsInterval;
 
 	byte RadioMsgInterval;
 

@@ -13,40 +13,60 @@ void getPayload() {
 	nDHTStatus = DHT.read22(DHT22_DATA_PIN);
 	digitalWrite(DHT22_PWR_PIN, LOW);
 	if (nDHTStatus == 0){
-		payload.AirTemp = getAirTemperature() * 10;				//remoteTemperature
-		payload.AirHum = getAirHumidity() * 10;					//remoteHumidity
-		payload.AirHumidex = getAirHumidex() * 10;				//remoteHumidex
+		p.AirTemp = getAirTemperature() * 10;				//remoteTemperature
+		p.AirHum = getAirHumidity() * 10;					//remoteHumidity
+		p.AirHumidex = getAirHumidex() * 10;				//remoteHumidex
 	}
-	else payload.AirTemp = payload.AirHum = payload.AirHumidex = -255 * 10;	//remoteTemperature
+	else
+		p.AirTemp = p.AirHum = p.AirHumidex = -255 * 10;	//remoteTemperature
 
 	//get DS data
 	float _fVal = getSoilTemperature();
-	payload.SoilTemp = (_fVal == 85) ? -255 * 10 : _fVal * 10;	//remoteSoilTemperature
+	p.SoilTemp = (_fVal == -255) ? -255 * 10 : _fVal * 10;	//remoteSoilTemperature
 
 	//get simple analog sensors data
-	digitalWrite(PHOTORESISTOR_PWR_PIN, HIGH);
-	digitalWrite(HUMIDITY_PWR_PIN, HIGH);
-	payload.Vcc = getVcc();
-	payload.SoilHum = getSoilHumidity() * 10;						//remoteSoilHumidity
-	payload.Light = getLight() * 10;								//remoteLight
-	digitalWrite(PHOTORESISTOR_PWR_PIN, LOW);
-	digitalWrite(HUMIDITY_PWR_PIN, LOW);
+	powerSensors(true);
+	p.Vcc = getVcc();
+	p.SoilHum = getSoilHumidity() * 10;						//remoteSoilHumidity
+	p.Light = getLight() * 10;								//remoteLight
+	powerSensors(false);
 
 	//get rain
 	noInterrupts();
-	payload.RainTips = nRainTips;									//rain tips
+	p.RainTips = nRainTips;									//rain tips
 	interrupts();
 
 	//get sys info
-	payload.Uptime = getUptime();									//uptime
-	payload.FreeRam = freeRam();									//freeRam
+	p.Uptime = getUptime();									//uptime
+	p.FreeRam = freeRam();									//freeRam
 
 #if DEBUG
-	payload.print();
+	p.print();
 #endif
 
 }
 
+
+//************************************
+// Method:   	 powerSensors
+// Description:  Powers sensors if true. Disables sensors if false. (excluding DHT22 and DS18B20, these need to be handled separately)
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+// Parameter:	 bool state
+//************************************
+void powerSensors(bool state) {
+	if (state)
+	{
+		digitalWrite(PHOTORESISTOR_PWR_PIN, HIGH);
+		digitalWrite(HUMIDITY_PWR_PIN, HIGH);
+	}
+	else
+	{
+		digitalWrite(PHOTORESISTOR_PWR_PIN, LOW);
+		digitalWrite(HUMIDITY_PWR_PIN, LOW);
+	}
+}
 
 float getAirTemperature() {
 	static RunningAverage AirTemp(3);
@@ -63,8 +83,8 @@ float getAirHumidity(){
 
 float getAirHumidex() {
 	float e;
-	e = (6.112 * pow(10, (7.5 * payload.AirTemp / (237.7 + payload.AirTemp))) *  payload.AirHum / 100); //vapor pressure
-	float humidex = payload.AirTemp + 0.55555555 * (e - 10.0); //humidex
+	e = (6.112 * pow(10, (7.5 * p.AirTemp / (237.7 + p.AirTemp))) *  p.AirHum / 100); //vapor pressure
+	float humidex = p.AirTemp + 0.55555555 * (e - 10.0); //humidex
 	return humidex;
 }
 
@@ -80,8 +100,8 @@ float getSoilTemperature() {
 	static RunningAverage SoilTemp(3);
 	ds.requestTemperatures();
 	float _fTemp = ds.getTempCByIndex(0);
-	if (_fTemp == 85) return _fTemp;
-	else SoilTemp.addValue(_fTemp);
+	if (_fTemp == 85) return -255;
+	SoilTemp.addValue(_fTemp);
 	return SoilTemp.getAverage();
 }
 

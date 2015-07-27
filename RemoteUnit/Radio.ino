@@ -4,26 +4,21 @@
 // Access:   	 public 
 // Returns:  	 bool
 // Qualifier:	
+// Parameter:	 Payload p
 //************************************
-void sendPayload() {
-	bool _bSucces = false;
+bool sendPayload() {
+	bool _bSucces;
 	digitalWrite(RADIO_PWR_PIN, HIGH);
 	Sleepy::loseSomeTime(250);
 
-	for (int i = 0; i < byRadioManualRetransmits; i++)
-	{
-		radio.stopListening();
-		if (radio.write(&payload, sizeof(payload))){
-			_bSucces = true;
-			break;
-		}
-		else
-		{
-			ledLight('y', true);
-		}
+	radio.stopListening();
+
+	if (!radio.write(&p, sizeof(p))){
+		_bSucces = false;
 	}
-	if (_bSucces) ledLight('g', true);
-	else ledLight('r', true);
+	else _bSucces = true;
 
 	digitalWrite(RADIO_PWR_PIN, LOW);
+
+	return _bSucces;
 }

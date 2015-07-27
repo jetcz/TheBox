@@ -5,9 +5,7 @@
 // Returns:  	 void
 // Qualifier:	
 // Parameter:	 char color (r, g, b, c, m, y, k)
-// Parameter:	 bool flash - if true, the led will only flash very briefly
-//************************************
-void ledLight(char color, bool flash) {
+void ledLightDigital(char color) {
 
 	switch (color)
 	{
@@ -68,7 +66,23 @@ void ledLight(char color, bool flash) {
 		break;
 
 	default: return;
+	}
+}
 
-		if (flash) ledLight('k', false);
+void disco() {
+	for (int i = 0; i < 5; i++)
+	{
+		ledLightDigital('c');
+		delay(50);
+		ledLightDigital('m');
+		delay(50);
+		ledLightDigital('y');
+		delay(50);
+		ledLightDigital('r');
+		delay(50);
+		ledLightDigital('g');
+		delay(50);
+		ledLightDigital('b');
+		delay(50);
 	}
 }
