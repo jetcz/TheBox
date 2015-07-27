@@ -31,30 +31,30 @@
 const float lVccCalibration = 1100000;
 
 //setup pins
-const int RESET_ETH_SHIELD_PIN = 14;
-const int DHT22_PIN = 9;
-const int PIR_PIN = 19;
-const int ETH_SELECT_PIN = 10;
-const int SD_SELECT_PIN = 4;
-const int RELAY_PIN[4] = { 22, 24, 26, 28 };
-const int LED1[3] = { 44, 45, 46 };
-const int LED2[3] = { 5, 6, 7 };
-const int LED3[3] = { 11, 12, 13 };
-const int LCD_SWITCH[3] = { 32, 34, 36 };
-const int LCD_SWITCH_PWR_PIN = 30;
-const int RADIO_SELECT_PIN = 18;
-const int RADIO_ENABLE_PIN = 17;
-const int VOLTAGE_PIN = 54;
-const int CURRENT_LEFT_PIN = 63;
-const int CURRENT_LEFT_PWR_PIN = 64;
-const int CURRENT_LEFT_GND_PIN = 62;
-const int CURRENT_RIGHT_PIN = 58;
-const int CURRENT_RIGHT_PWR_PIN = 59;
-const int CURRENT_RIGHT_GND_PIN = 57;
+const byte RESET_ETH_SHIELD_PIN = 14;
+const byte DHT22_PIN = 9;
+const byte PIR_PIN = 19;
+const byte ETH_SELECT_PIN = 10;
+const byte SD_SELECT_PIN = 4;
+const byte RELAY_PIN[4] = { 22, 24, 26, 28 };
+const byte LED1[3] = { 44, 45, 46 };
+const byte LED2[3] = { 5, 6, 7 };
+const byte LED3[3] = { 11, 12, 13 };
+const byte LCD_SWITCH[3] = { 32, 34, 36 };
+const byte LCD_SWITCH_PWR_PIN = 30;
+const byte RADIO_SELECT_PIN = 18;
+const byte RADIO_ENABLE_PIN = 17;
+const byte VOLTAGE_PIN = 54;
+const byte CURRENT_LEFT_PIN = 63;
+const byte CURRENT_LEFT_PWR_PIN = 64;
+const byte CURRENT_LEFT_GND_PIN = 62;
+const byte CURRENT_RIGHT_PIN = 58;
+const byte CURRENT_RIGHT_PWR_PIN = 59;
+const byte CURRENT_RIGHT_GND_PIN = 57;
 
 //general buffers for various usages (datatypes conversion, reading ini settings etc)
-const int nBuffLen1 = 30;
-const int nBuffLen2 = 22;
+const byte nBuffLen1 = 30;
+const byte nBuffLen2 = 22;
 char cBuff1[nBuffLen1];
 char cBuff2[nBuffLen2];
 

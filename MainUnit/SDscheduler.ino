@@ -8,7 +8,9 @@
 boolean writeSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
-		String _sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
+		String _sPath;
+		_sPath.reserve(21);
+		_sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
 		_sPath.toCharArray(cBuff1, nBuffLen1);
 
 		SD.remove(cBuff1);
@@ -55,7 +57,10 @@ boolean readSDSched() {
 
 	for (int i = 0; i < 4; i++)
 	{
-		String _sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
+
+		String _sPath;
+		_sPath.reserve(21);
+		_sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
 		_sPath.toCharArray(cBuff2, nBuffLen2);
 
 		IniFile ini(cBuff2);
@@ -68,9 +73,11 @@ boolean readSDSched() {
 			}
 			else return false;
 
+			String sec;
+			sec.reserve(5);
 			for (int j = 0; j < 5; j++)
 			{
-				String sec = "int" + intToString(j);
+				sec = "int" + intToString(j);
 				sec.toCharArray(cBuff2, nBuffLen2);
 
 				if (ini.getValue(cBuff2, "enabled", cBuff1, nBuffLen1)) {
@@ -106,9 +113,11 @@ boolean readSDSched() {
 // Qualifier:	
 //************************************
 void deleteSDSched() {
+	String _sPath;
+	_sPath.reserve(21);
 	for (int i = 0; i < 4; i++)
 	{
-		String _sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
+		_sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
 		_sPath.toCharArray(cBuff1, nBuffLen1);
 		SD.remove(cBuff1);
 	}
