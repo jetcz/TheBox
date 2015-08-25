@@ -23,6 +23,7 @@
 #include <EmonLib.h>
 #include <TimeAlarms.h>
 #include "DataStructures.h"
+#include "printf.h"
 
 #define PRINT_SUMMARY false
 #define DEBUG true
@@ -1130,6 +1131,7 @@ void setup()
 
 #if DEBUG
 	Serial.println(F("Setup Done"));
+	radio.printDetails();
 #endif	
 }
 

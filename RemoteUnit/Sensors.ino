@@ -21,7 +21,7 @@ void getPayload() {
 
 	//get DS data
 	float _fVal = getSoilTemperature();
-	payload.SoilTemp = (_fVal == 85) ? -255 * 10 : _fVal * 10;	//remoteSoilTemperature
+	payload.SoilTemp = (_fVal == (85 || -127)) ? -255 * 10 : _fVal * 10;	//remoteSoilTemperature
 
 	//get simple analog sensors data
 	digitalWrite(PHOTORESISTOR_PWR_PIN, HIGH);
@@ -63,8 +63,8 @@ float getAirHumidity(){
 
 float getAirHumidex() {
 	float e;
-	e = (6.112 * pow(10, (7.5 * payload.AirTemp / (237.7 + payload.AirTemp))) *  payload.AirHum / 100); //vapor pressure
-	float humidex = payload.AirTemp + 0.55555555 * (e - 10.0); //humidex
+	e = (6.112 * pow(10, (7.5 * (payload.AirTemp / 10) / (237.7 + (payload.AirTemp / 10)))) *  (payload.AirHum / 10) / 100); //vapor pressure
+	float humidex = (payload.AirTemp / 10) + 0.55555555 * (e - 10.0); //humidex
 	return humidex;
 }
 
@@ -114,4 +114,5 @@ float getVcc(){
 //************************************
 void ISRTipCnt() {
 	nRainTips++;
+	ledLight('b', true);
 }

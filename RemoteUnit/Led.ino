@@ -67,8 +67,9 @@ void ledLight(char color, bool flash) {
 		//Serial.println("color " + color);
 		break;
 
-	default: return;
+	default: break;
 
-		if (flash) ledLight('k', false);
 	}
+
+	if (flash) ledLight('k', false);
 }

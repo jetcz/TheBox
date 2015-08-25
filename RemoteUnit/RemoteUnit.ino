@@ -8,7 +8,7 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 
-#define DEBUG false
+#define DEBUG true
 
 //structure holding data which came from remote unit
 struct Payload
@@ -23,8 +23,10 @@ struct Payload
 	unsigned long Uptime;
 	int FreeRam;
 	int Vcc;
+	unsigned int FailedMsgs = 0;
 
 	void print(){
+		Serial.println();
 		Serial.print(F("Air Temperature: "));
 		Serial.print(AirTemp / 10.0, 1);
 		Serial.println(F("C"));
@@ -55,6 +57,8 @@ struct Payload
 		Serial.print(F("Vcc: "));
 		Serial.print(Vcc);
 		Serial.println(F("mV"));
+		Serial.print(F("Failed messages: "));
+		Serial.print(FailedMsgs);
 		Serial.println();
 	}
 
@@ -68,23 +72,20 @@ a3	17
 a4	18
 a5	19
 */
-const int DHT22_DATA_PIN = 8;
-const int DHT22_PWR_PIN = 5;
-const int PHOTORESISTOR_DATA_PIN = 21;
-const int PHOTORESISTOR_PWR_PIN = 3;
-const int DS_DATA_PIN = 19;
-const int DS_PWR_PIN = 18;
-const int HUMIDITY_DATA_PIN = 20;
-const int HUMIDITY_PWR_PIN = 4;
-const int RADIO_TX_PIN = 15;
-const int RADIO_PWR_PIN = 6;
-const int LED[3] = { 13, 12, 11 };
-const int RADIO_ENABLE_PIN = 15;
-const int RADIO_SELECT_PIN = 15;
+const int DHT22_DATA_PIN = 3;
+const int DHT22_PWR_PIN = 4;
+const int PHOTORESISTOR_DATA_PIN = 16;
+const int PHOTORESISTOR_PWR_PIN = 17;
+const int DS_DATA_PIN = 5;
+const int HUMIDITY_DATA_PIN = 14;
+const int HUMIDITY_PWR_PIN = 15;
 
-const int nMsgTimeout = 20000;		//timeout between messsages in ms
+const int LED[3] = { 18, 8, 7 };
+const int RADIO_ENABLE_PIN = 9;
+const int RADIO_SELECT_PIN = 10;
+
+const int nMsgTimeout = 10000;		//timeout between messsages in ms 20000
 const byte byRadioAutoRetransmits = 15;
-const byte byRadioManualRetransmits = 3;
 const long lVccCalibration = 1093800;
 
 char buffer[24];
@@ -125,5 +126,11 @@ void loop() {
 
 	//go to sleep again for 20 seconds minus the time it took to read and send data
 	lDelay = millis() - lDelay;
+#if !DEBUG
 	Sleepy::loseSomeTime(nMsgTimeout - lDelay);
+#endif // !DEBUG
+#if DEBUG
+	delay(nMsgTimeout - lDelay);
+#endif // !DEBUG
+
 }

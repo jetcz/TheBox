@@ -162,8 +162,10 @@ struct Payload
 	unsigned long Uptime;
 	int FreeRam;
 	int Vcc;
+	unsigned int FailedMsgs = 0;
 
 	void print(){
+		Serial.println();
 		Serial.print(F("Air Temperature: "));
 		Serial.print(AirTemp / 10.0, 1);
 		Serial.println(F("C"));
@@ -194,6 +196,8 @@ struct Payload
 		Serial.print(F("Vcc: "));
 		Serial.print(Vcc);
 		Serial.println(F("mV"));
+		Serial.print(F("Failed messages: "));
+		Serial.print(FailedMsgs);
 		Serial.println();
 	}
 

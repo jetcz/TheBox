@@ -234,7 +234,7 @@ void printLcd() {
 // Qualifier:	
 //************************************
 void thingSpeak(){
-	if (millis() < 40000) return;	//return if time is less than 0:40 (boot time of the wifi router)
+	if (millis() < 41000) return;	//return if time is less than 0:40 (boot time of the wifi router)
 	static unsigned int _nCnt;
 	byte _byCurrentDS = _nCnt % 3;
 

@@ -22,6 +22,7 @@ void receiveData() {
 		SystemDS.Data[6] = p.Vcc;																								//vcc
 		SystemDS.Data[7] = p.Uptime;																							//uptime
 
+		nFailedCntRadioTotal = p.FailedMsgs;
 		nRainTicks = p.RainTips;
 		nRemoteFreeRam = p.FreeRam;
 		RemoteDS.TimeStamp = now();

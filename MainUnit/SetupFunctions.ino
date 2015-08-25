@@ -149,7 +149,7 @@ void setupRadio(){
 	_bSuccess = _bSuccess | radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
 	radio.setRetries(1, 15);                 // Smallest time between retries, max no. of retries
-	radio.setPayloadSize(22);
+	radio.setPayloadSize(sizeof(Payload));
 	radio.openWritingPipe(pipes[1]);
 	radio.openReadingPipe(1, pipes[0]);
 	radio.startListening();                 // Start listening	
