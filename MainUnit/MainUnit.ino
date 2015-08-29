@@ -12,7 +12,7 @@
 #include <IniFile.h>
 #include <QueueArray.h>
 #include <RunningAverage.h>
-#include "avr/pgmspace.h"f
+#include "avr/pgmspace.h"
 #include "nRF24L01.h"
 #include "RF24.h"
 //slightly modified libs, can use default
