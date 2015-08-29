@@ -8,7 +8,7 @@ float getSysTemperature(sensors_event_t event) {
 	float _fSysTemp;
 	bmp.getEvent(&event);
 	bmp.getTemperature(&_fSysTemp);
-	if (_fSysTemp == 85) return -255;
+	if (_fSysTemp == 85) return Settings.InvalidValue;
 	_raSysTemp.addValue(_fSysTemp);
 	return _raSysTemp.getAverage();
 }
@@ -19,7 +19,7 @@ float getSysTemperature(sensors_event_t event) {
 /// <param name="event"></param>
 /// <returns></returns>
 float getPressure(sensors_event_t event) {
-	if (*SystemDS.Temperature == -255) return -255;
+	if (*SystemDS.Temperature == Settings.InvalidValue) return Settings.InvalidValue;
 	static RunningAverage _raPressure(6);
 	bmp.getEvent(&event);
 	_raPressure.addValue(event.pressure);
@@ -52,7 +52,7 @@ float getMainHumidity() {
 /// <returns></returns>
 float getMainHumidex() {
 	float e;
-	e = (6.112 * pow(10, (7.5 * *MainDS.Temperature / (237.7 + *MainDS.Temperature))) *  *MainDS.Humidity / 100); //vapor pressure
+	e = (6.112 * pow(10, (7.5 * *MainDS.Temperature / (237.7 + *MainDS.Temperature))) *  *MainDS.Humidity / 100.0); //vapor pressure
 	float humidex = *MainDS.Temperature + 0.55555555 * (e - 10.0); //humidex
 	return humidex;
 }

@@ -92,8 +92,30 @@ void setupPins() {
 /// </summary>
 void setupWire() {
 	Wire.begin();
+
+	TWSR &= 0xFC;                                // set I2C frequency of 400K
+
+	//I2C bus speed [kHz]
+	//0=1000
+	//1=888
+	//2=800
+	//4=666
+	//8=500
+	//10=444
+	//12=400
+	//16=333
+	//24=250
+	//32=200
+	//72=100 (default)
+	TWBR = 72;
+
 #if DEBUG
+	long i2c_prescaler = pow(4, TWSR & 0x03);
+	long i2c_freq = 16000000L / (16 + 2 * TWBR * i2c_prescaler);
 	Serial.println(F("Wire initialized"));
+	Serial.print(F("I2C clock: "));
+	Serial.print(i2c_freq / 1000.0);
+	Serial.println(F("kHz"));
 #endif
 }
 

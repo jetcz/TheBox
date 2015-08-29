@@ -84,18 +84,21 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portModeRegister(P)
 #include <MainUnit.ino>
 #include <Alarms.ino>
-#include <DataStructures.h>
+#include <DataSet.h>
 #include <DataTypesConversion.ino>
 #include <Lcd.ino>
 #include <Led.ino>
 #include <Misc.ino>
 #include <Ntp.ino>
+#include <Payload.h>
 #include <Radio.ino>
+#include <RelayScheduler.h>
 #include <Relays.ino>
 #include <SDscheduler.ino>
 #include <SDsettings.ino>
 #include <Sensors.ino>
 #include <SetupFunctions.ino>
+#include <SystemSettings.h>
 #include <ThingSpeak.ino>
 #include <Weather.ino>
 #endif

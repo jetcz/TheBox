@@ -86,6 +86,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <RemoteUnit.ino>
 #include <Led.ino>
 #include <Misc.ino>
+#include <Payload.h>
 #include <Radio.ino>
 #include <Sensors.ino>
 #include <SetupFunctions.ino>

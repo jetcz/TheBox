@@ -75,7 +75,7 @@ void serviceSchedulers(DateTime t, int relay){
 		{
 			if (Sched[relay].Value[Sched[relay].CurrentInterval][0] < Sched[relay].Value[Sched[relay].CurrentInterval][1]) //normal mode (heating...)
 			{
-				if (*TargetVarPtr[Sched[relay].Variable] != -255) //do something only if current value is valid
+				if (*TargetVarPtr[Sched[relay].Variable] != Settings.InvalidValue) //do something only if current value is valid
 				{
 					//switch relays according to target var
 					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {
@@ -88,7 +88,7 @@ void serviceSchedulers(DateTime t, int relay){
 				}
 			}
 			else { //reversed mode (cooling...)			
-				if (*TargetVarPtr[Sched[relay].Variable] != -255)
+				if (*TargetVarPtr[Sched[relay].Variable] != Settings.InvalidValue)
 				{
 					//switch relays according to target var
 					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {

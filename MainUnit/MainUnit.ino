@@ -1,3 +1,6 @@
+#define PRINT_SUMMARY false
+#define DEBUG true
+
 #include <Wire.h>
 #include <SPI.h>
 #include <RTClib.h>
@@ -23,10 +26,12 @@
 //modified, cannot use default (refer to readme)
 #include <EmonLib.h>
 #include <TimeAlarms.h>
-#include "DataStructures.h"
+//my structs and classes
+#include "DataSet.h"
+#include "Payload.h"
+#include "SystemSettings.h"
+#include "RelayScheduler.h"
 
-#define PRINT_SUMMARY false
-#define DEBUG true
 
 //my arduino specific calibration constant for reading vcc
 const float lVccCalibration = 1100000;
@@ -1093,6 +1098,7 @@ void setup()
 	wdt_disable(); //disable watchdog
 
 	setupSerial();
+	setupWire();
 	setupPins();
 	setupSD();
 	readSDSettings(Settings.RelaysPath);
@@ -1102,7 +1108,7 @@ void setup()
 	readSDSettings(Settings.OffsetsPath);
 	if (!readSDSettings(Settings.EthernetPath)) Settings.DHCP = true; //reading ethernet settings must for some reason take place much earlier than ethernet.begin
 	setupLCD();
-	setupWire();
+	//setupWire();
 	setupBMP();
 	setupRadio();
 	setupEthernet();

@@ -14,8 +14,7 @@ void system() {
 	for (int relay = 0; relay < 4; relay++)
 	{
 		if (Settings.RelayMode[relay] > 1) serviceSchedulers(_dtNow, relay);
-	}
-	printLcd();
+	}	
 }
 /// <summary>
 /// Fill datasets and apply offsets
@@ -28,7 +27,7 @@ void prepareDataSetArrays() {
 	//system DS
 	float _fVal;
 	_fVal = getSysTemperature(event);
-	SystemDS.Data[0] = (_fVal == -255) ? _fVal : _fVal + Settings.SysTempOffset;
+	SystemDS.Data[0] = (_fVal == Settings.InvalidValue) ? _fVal : _fVal + Settings.SysTempOffset;
 	SystemDS.Data[1] = getUptime(_dtNow).totalseconds();
 	for (int i = 0; i < 4; i++)
 	{
@@ -56,13 +55,13 @@ void prepareDataSetArrays() {
 		else if (nDHTFailures > 2)
 		{
 			ledLight(1, 'r');
-			*MainDS.Temperature = *MainDS.Humidity = *MainDS.Humidex = -255;
+			*MainDS.Temperature = *MainDS.Humidity = *MainDS.Humidex = Settings.InvalidValue;
 		}
 	}
 
 	MainDS.Data[3] = getMainPir();
 	_fVal = getPressure(event);
-	MainDS.Data[4] = (_fVal == -255) ? _fVal : _fVal + Settings.PressureOffset;
+	MainDS.Data[4] = (_fVal == Settings.InvalidValue) ? _fVal : _fVal + Settings.PressureOffset;
 
 	MainDS.TimeStamp = _dtNow;
 	SystemDS.TimeStamp = _dtNow;
@@ -305,8 +304,7 @@ void dhcp() {
 /// Helper method to call with delay, writes relay settings to SD card
 /// </summary>
 void writeSD() {
-	bool _bSucces = writeSDRelaySettings();
-	if (!_bSucces)
+	if (!writeSDRelaySettings())
 	{
 #if DEBUG
 		Serial.println(F("Writing relay settings to SD card failed!"));
