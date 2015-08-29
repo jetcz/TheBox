@@ -33,22 +33,6 @@ void receiveData() {
 		if (!Alarm.active(rainPerDayAlarm)) Alarm.enable(rainPerDayAlarm);
 		if (!Alarm.active(rainPerHourAlarm)) Alarm.enable(rainPerHourAlarm);
 
-		/*
-		bool success = true;
-		success = success & p.AirTemp == 256;
-		success = success & p.AirHum == 615;
-		success = success & p.AirHumidex == 263;
-		success = success & p.SoilTemp == 221;
-		success = success & p.SoilHum == 802;
-		success = success & p.Light == 991;
-		success = success & p.RainTips == 15;
-		success = success & p.Uptime == 545341163;
-		success = success & p.FreeRam == 2111;
-		success = success & p.Vcc == 4990;
-
-		if (success) Serial.println("OK");
-		else Serial.println("FAILURE");
-		*/
 	}
 }
 
@@ -60,5 +44,5 @@ void receiveData() {
 // Qualifier:	
 //************************************
 void getFailedRadioMessages(){
-	if (now() - RemoteDS.TimeStamp.unixtime() > Settings.RadioMsgInterval + 1) nFailedCntRadioTotal++;
+	if (now() - RemoteDS.TimeStamp.unixtime() > Settings.RadioMsgInterval + 2) nFailedCntRadioTotal++;
 }

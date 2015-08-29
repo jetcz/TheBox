@@ -147,6 +147,7 @@ void setupRTC() {
 }
 
 void setupRadio() {
+	ledLight(1, 'y');
 	bool _bSuccess = false;
 	_bSuccess = radio.begin();
 	radio.setAutoAck(1);                    // Ensure autoACK is enabled
@@ -164,6 +165,7 @@ void setupRadio() {
 	{
 #if DEBUG
 		Serial.println(F("Radio initialized"));
+		ledLight(1, 'g');
 #endif
 	}
 	else {

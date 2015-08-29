@@ -6,12 +6,13 @@ struct SystemSettings
 		setDefaultOffsetsSettings();
 	}
 
-	void setDefaultSystemSettings(){
+	void setDefaultSystemSettings() {
 		strncpy(ThingSpeakAddress, "api.thingspeak.com", 30);
 		UpdateThingSpeakInterval = 20;
 		RemoteDataSetTimeout = 180;
 		RestartEthernetThreshold = 10;
-		RestartArduinoThreshold = 42;
+		RestartWifiThreshold = 30;
+		RestartArduinoThreshold = 45;
 		strncpy(NTPServer, "tik.cesnet.cz", 30);
 		LcdMsgTimeout = 4;
 		LightIntensity[0] = 6; //R
@@ -25,7 +26,7 @@ struct SystemSettings
 		RadioMsgInterval = 20;
 	}
 
-	void setDefaultOffsetsSettings(){
+	void setDefaultOffsetsSettings() {
 		SysTempOffset = -0.2;
 		PressureOffset = 29;
 		MainTempOffset = -1.2;
@@ -38,6 +39,7 @@ struct SystemSettings
 	byte UpdateThingSpeakInterval;
 	unsigned int RemoteDataSetTimeout;		//for how long is dataset valid and send to thingspeak (sec)
 	byte RestartEthernetThreshold;	//if thingspeak update fails x times -> ethernet shield reset
+	byte RestartWifiThreshold;		//if thingspeak update fails x times -> wifi reset
 	byte RestartArduinoThreshold;	//if thingspeak update fails x times -> arduino reset
 
 	/* ntp server */
@@ -50,10 +52,10 @@ struct SystemSettings
 
 	/* sensor polling settings */
 	byte UpdateSensorsInterval;
-
-	int UpdateRainPerDayInterval;
 	byte UpdatePWRSensorsInterval;
 
+	/* Other settings*/
+	int UpdateRainPerDayInterval;
 	byte RadioMsgInterval;
 
 	/* sensor offsets */
@@ -111,7 +113,7 @@ public:
 	float *Humidex = &Data[2]; //not for system DS
 
 	//get thinkgspeak string
-	void GetTSString(){
+	void GetTSString() {
 		ThingSpeakStr = "";
 		for (int i = 0; i < this->Size; i++)
 		{
@@ -164,7 +166,7 @@ struct Payload
 	int Vcc;
 	unsigned int FailedMsgs = 0;
 
-	void print(){
+	void print() {
 		Serial.println();
 		Serial.print(F("Air Temperature: "));
 		Serial.print(AirTemp / 10.0, 1);

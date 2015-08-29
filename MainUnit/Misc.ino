@@ -11,9 +11,9 @@ void resetEthShield() {
 	Serial.println(F("Reseting Ethernet Shield"));
 #endif
 	digitalWrite(RESET_ETH_SHIELD_PIN, LOW);
-	delay(1);
+	Alarm.delay(1);
 	digitalWrite(RESET_ETH_SHIELD_PIN, HIGH);
-	delay(250);
+	Alarm.delay(250);
 }
 
 
@@ -29,10 +29,10 @@ void resetWifi() {
 	Serial.println(F("Reseting Wifi"));
 #endif
 	digitalWrite(RESET_WIFI_PIN, LOW);
-	delay(100);
+	Alarm.delay(100);
 	digitalWrite(RESET_WIFI_PIN, HIGH);
-	delay(35000);
-	resetEthShield();
+	Alarm.delay(35000);
+	setupEthernet();
 }
 
 
@@ -46,6 +46,7 @@ void resetWifi() {
 void needRestart() {
 	// Check if Ethernet needs to be restarted
 	if ((nFailedCounter % Settings.RestartEthernetThreshold) == 0 && nFailedCounter != 0){
+		ledLight(1, 'r');
 		ledLight(3, 'r');
 #if DEBUG
 		Serial.println(F("Ethernet Shield needs to be restarted!"));
@@ -57,12 +58,33 @@ void needRestart() {
 		lcd.setCursor(0, 0);
 		lcd.print(F("Ethernet Shield"));
 		lcd.setCursor(0, 1);
-		lcd.print(F("must be restarted!"));
+		lcd.print(F("needs to be"));
+		lcd.setCursor(0, 2);
+		lcd.print(F("restarted!"));
 		setupEthernet();
 	}
+
+	if ((nFailedCounter % Settings.RestartWifiThreshold) == 0 && nFailedCounter != 0) {
+		ledLight(1, 'r');
+		ledLight(3, 'r');
+#if DEBUG
+		Serial.println(F("Wifi needs to be restarted!"));
+		Serial.println();
+#endif
+		bLCDRefreshing = false;
+		lcd.clear();
+		lcd.backlight();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Wifi needs to be"));
+		lcd.setCursor(0, 1);
+		lcd.print(F("restarted!"));
+		resetWifi();
+	}
+
 	// Check if Arduino needs to be restarted
 	if ((nFailedCounter % Settings.RestartArduinoThreshold) == 0 && nFailedCounter != 0) {
 		ledLight(1, 'r');
+		ledLight(2, 'r');
 		ledLight(3, 'r');
 #if DEBUG
 		Serial.println(F("Arduino needs to be restarted!"));
@@ -72,9 +94,9 @@ void needRestart() {
 		lcd.clear();
 		lcd.backlight();
 		lcd.setCursor(0, 0);
-		lcd.print(F("Arduino needs to"));
+		lcd.print(F("Arduino needs"));
 		lcd.setCursor(0, 1);
-		lcd.print(F("be restarted"));
+		lcd.print(F("to be restarted!"));
 		Alarm.delay(3000);
 		resetFunc(); //reboot arduino
 	}

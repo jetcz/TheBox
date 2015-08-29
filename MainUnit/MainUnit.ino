@@ -23,7 +23,6 @@
 #include <EmonLib.h>
 #include <TimeAlarms.h>
 #include "DataStructures.h"
-#include "printf.h"
 
 #define PRINT_SUMMARY false
 #define DEBUG true
@@ -172,7 +171,7 @@ void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/index.htm");        // open web page file
-		if (file)   {
+		if (file) {
 			int16_t c;
 			while ((c = file.read()) >= 0) {
 				server.print((char)c);
@@ -319,7 +318,7 @@ void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/graphs1.htm");        // open web page file
-		if (file)   {
+		if (file) {
 			int16_t c;
 			while ((c = file.read()) >= 0) {
 				server.print((char)c);
@@ -337,7 +336,7 @@ void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/graphs2.htm");        // open web page file
-		if (file)   {
+		if (file) {
 			int16_t c;
 			while ((c = file.read()) >= 0) {
 				server.print((char)c);
@@ -355,7 +354,7 @@ void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/sched.htm");        // open web page file
-		if (file)   {
+		if (file) {
 			int16_t c;
 			while ((c = file.read()) >= 0) {
 				server.print((char)c);
@@ -552,7 +551,7 @@ void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 	if (type == WebServer::GET)
 	{
 		file = SD.open("/www/system.htm");        // open web page file
-		if (file)   {
+		if (file) {
 			int16_t c;
 			while ((c = file.read()) >= 0) {
 				server.print((char)c);
@@ -563,7 +562,7 @@ void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 	}
 	ledLight(1, 'g');
 };
-void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool){
+void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool) {
 	ledLight(1, 'c');
 
 	if (type == WebServer::POST)
@@ -1149,21 +1148,20 @@ void setup()
 	SystemDS.isValid = true;
 
 	//Calibration process: attach a classic light bulb or heater and set the phase_shift constant so that the reported power factor is 1,
-	//then connect a multimeter and set the calibration constant so that the reported voltage is same as on multimeter
+	//then connect a multimeter and set the calibration constant so that the reported voltage is same as on the multimeter
 	emon.voltage(VOLTAGE_PIN, 939, -0.24);  // Voltage: input pin, calibration, phase_shift
 	//Calibration process: connect a known load and adjust the calibration constants so the reported wattage is the same as the load
 	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 18, 17.25); //Current: input pin, input pin, calibration, calibration
 
 #if DEBUG
 	Serial.println(F("Setup Done"));
-	radio.printDetails();
 #endif	
 }
 
 void loop()
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
-	receiveData();
+	receiveData();					//receive radio messages from remote unit if available
 	webserver.processConnection();	//process webserver request as soon as possible		
 	emon.calcVI(100, fVcc);			//measure power consumption in outlets (non-blocking)
 }
