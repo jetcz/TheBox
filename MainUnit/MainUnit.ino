@@ -190,7 +190,7 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		server.httpFail();
 		return;
 	}
-	server.httpSuccess("text/xml", "Connection: keep-alive"CRLF);
+	server.httpSuccess("text/xml", "Connection: keep-alive" CRLF);
 
 	if (type == WebServer::GET)
 	{
@@ -570,7 +570,7 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.httpFail();
 		return;
 	}
-	server.httpSuccess("text/xml", "Connection: keep-alive"CRLF);
+	server.httpSuccess("text/xml", "Connection: keep-alive" CRLF);
 
 	if (type == WebServer::GET)
 	{

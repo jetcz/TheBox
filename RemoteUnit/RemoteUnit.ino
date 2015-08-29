@@ -6,7 +6,7 @@
 #include <JeeLib.h>
 #include <Ports.h>
 #include <nRF24L01.h>
-#include <RF24.h>
+#include <RF24.h> 
 
 #define DEBUG true
 
@@ -104,7 +104,7 @@ unsigned long lDelay;
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
 void setup() {
-
+	
 	noInterrupts();
 #if DEBUG
 	Serial.begin(9600);
@@ -115,7 +115,7 @@ void setup() {
 	ds.begin();
 	ds.requestTemperatures();
 	nRainTips = 0;
-	interrupts();
+	interrupts();	
 }
 
 void loop() {
