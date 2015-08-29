@@ -1,11 +1,19 @@
-//structure for holding all the settings
+/// <summary>
+/// Structure for holding all the settings
+/// </summary>
 struct SystemSettings
 {
+	/// <summary>
+	/// Constructor
+	/// </summary>
 	SystemSettings() {
 		setDefaultSystemSettings();
 		setDefaultOffsetsSettings();
 	}
 
+	/// <summary>
+	/// Set default values for the settings
+	/// </summary>
 	void setDefaultSystemSettings() {
 		strncpy(ThingSpeakAddress, "api.thingspeak.com", 30);
 		UpdateThingSpeakInterval = 20;
@@ -26,6 +34,9 @@ struct SystemSettings
 		RadioMsgInterval = 20;
 	}
 
+	/// <summary>
+	/// Set default offsets values
+	/// </summary>
 	void setDefaultOffsetsSettings() {
 		SysTempOffset = -0.2;
 		PressureOffset = 29;
@@ -88,11 +99,15 @@ struct SystemSettings
 	char* OffsetsPath = "/settings/offsets.ini";
 }; typedef struct SystemSettings SystemSettings;
 
-//structure holding data from sensors sent to thingspeak
+/// <summary>
+/// Structure holding data from sensors sent to thingspeak
+/// </summary>
 class DataSet
 {
 public:
-	//constructor
+	/// <summary>
+	/// constructor
+	/// </summary>
 	DataSet() {
 		TimeStamp = 0;
 		ThingSpeakStr.reserve(70);
@@ -111,7 +126,9 @@ public:
 	float *Humidity = &Data[1]; //not for system DS
 	float *Humidex = &Data[2]; //not for system DS
 
-	//get thinkgspeak string
+	/// <summary>
+	/// Create ThingSpeak string
+	/// </summary>
 	void GetTSString() {
 		ThingSpeakStr = "";
 		for (int i = 0; i < this->Size; i++)
@@ -125,7 +142,9 @@ public:
 	}
 }; typedef class DataSet DataSet;
 
-//structure holding data for scheduling relays
+/// <summary>
+/// structure holding data for scheduling relays
+/// </summary>
 struct RelayScheduler
 {
 	byte CurrentInterval = 0;  //this is pointer to arrays enabled, time, value
@@ -148,8 +167,10 @@ struct RelayScheduler
 	}
 }; typedef struct RelayScheduler RelayScheduler;
 
-//structure holding data which came from remote unit
-//some values must be divided by 10 because we are transfering them as a whole number to save memory (int 2B vs float 4B)
+/// <summary>
+/// Structure holding data which came from remote unit - this must be the same as Payload in Remote unit
+/// Some values must be divided by 10 because we are transfering them as a whole number to save memory (int 2B vs float 4B)
+/// </summary>
 struct Payload
 {
 	int AirTemp; //must divide by 10
@@ -164,6 +185,9 @@ struct Payload
 	int Vcc;
 	unsigned int FailedMsgs = 0;
 
+	/// <summary>
+	/// Print the payload values
+	/// </summary>
 	void print() {
 		Serial.println();
 		Serial.print(F("Air Temperature: "));
