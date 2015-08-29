@@ -30,7 +30,6 @@
     <None Include="MainUnit.ino" />
     <None Include="Misc.ino" />
     <None Include="Sensors.ino" />
-    <None Include="Thingspeak.ino" />
     <None Include="Relays.ino" />
     <None Include="SetupFunctions.ino" />
     <None Include="DataTypesConversion.ino" />
@@ -60,6 +59,7 @@
     <None Include="sample\ini\ETHERNET.INI" />
     <None Include="sample\ini\GENERAL.INI" />
     <None Include="sample\ini\RELAYS.INI" />
+    <None Include="ThingSpeak.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">

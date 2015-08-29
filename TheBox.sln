@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MainUnit", "MainUnit\MainUnit.vcxproj", "{DF62DDF0-AB03-4ECD-B718-588BADC5EAF4}"
 EndProject
@@ -9,15 +9,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteUnit", "RemoteUnit\Re
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
 		Debug|Win32 = Debug|Win32
+		Release|AVR = Release|AVR
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF62DDF0-AB03-4ECD-B718-588BADC5EAF4}.Debug|AVR.ActiveCfg = Debug|Win32
 		{DF62DDF0-AB03-4ECD-B718-588BADC5EAF4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DF62DDF0-AB03-4ECD-B718-588BADC5EAF4}.Release|AVR.ActiveCfg = Release|Win32
 		{DF62DDF0-AB03-4ECD-B718-588BADC5EAF4}.Release|Win32.ActiveCfg = Release|Win32
 		{DF62DDF0-AB03-4ECD-B718-588BADC5EAF4}.Release|Win32.Build.0 = Release|Win32
+		{BB5C91F5-2649-48E1-A603-42F5813CEF17}.Debug|AVR.ActiveCfg = Debug|Win32
 		{BB5C91F5-2649-48E1-A603-42F5813CEF17}.Debug|Win32.ActiveCfg = Debug|Win32
 		{BB5C91F5-2649-48E1-A603-42F5813CEF17}.Debug|Win32.Build.0 = Debug|Win32
+		{BB5C91F5-2649-48E1-A603-42F5813CEF17}.Release|AVR.ActiveCfg = Release|Win32
 		{BB5C91F5-2649-48E1-A603-42F5813CEF17}.Release|Win32.ActiveCfg = Release|Win32
 		{BB5C91F5-2649-48E1-A603-42F5813CEF17}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection

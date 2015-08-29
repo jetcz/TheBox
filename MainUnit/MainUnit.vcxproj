@@ -64,7 +64,7 @@
       <ForcedIncludeFiles>C:\Users\Jiří\Documents\Arduino\TheBox\MainUnit\Visual Micro\.MainUnit.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>__AVR_ATmega2560__;F_CPU=16000000L;ARDUINO=165;ARDUINO_AVR_MEGA2560;ARDUINO_ARCH_AVR;__cplusplus;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__AVR_ATmega2560__;F_CPU=16000000L;ARDUINO=164;ARDUINO_AVR_MEGA2560;ARDUINO_ARCH_AVR;__cplusplus;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -112,12 +112,10 @@
     <None Include="SetupFunctions.ino">
       <FileType>CppCode</FileType>
     </None>
-    <None Include="Thingspeak.ino">
-      <FileType>CppCode</FileType>
-    </None>
     <None Include="Alarms.ino">
       <FileType>CppCode</FileType>
     </None>
+    <None Include="ThingSpeak.ino" />
     <None Include="Weather.ino">
       <FileType>CppCode</FileType>
     </None>

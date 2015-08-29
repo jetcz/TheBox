@@ -96,6 +96,6 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <SDsettings.ino>
 #include <Sensors.ino>
 #include <SetupFunctions.ino>
-#include <Thingspeak.ino>
+#include <ThingSpeak.ino>
 #include <Weather.ino>
 #endif
