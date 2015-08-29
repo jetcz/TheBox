@@ -1,20 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="sample xml">
-      <UniqueIdentifier>{7630c559-cdc0-493f-9f3c-f41614c123ac}</UniqueIdentifier>
     </Filter>
     <Filter Include="www">
       <UniqueIdentifier>{7a0e081a-799e-48fe-9841-bcb22f264376}</UniqueIdentifier>
@@ -24,6 +13,15 @@
     </Filter>
     <Filter Include="www\js">
       <UniqueIdentifier>{d383c2b2-9fff-4a78-b5c2-2670f30366cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sample">
+      <UniqueIdentifier>{9434f786-7af9-4d22-bd21-a62c1470c553}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sample\xml">
+      <UniqueIdentifier>{32e29c59-ec30-4133-9b4a-7aa14f9835d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sample\ini">
+      <UniqueIdentifier>{e5d75767-7063-4f46-b9ed-c185b6385882}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -41,25 +39,61 @@
     <None Include="Alarms.ino" />
     <None Include="Ntp.ino" />
     <None Include="SDscheduler.ino" />
-    <None Include="www\graphs1.htm" />
-    <None Include="www\graphs2.htm" />
-    <None Include="www\index.htm" />
-    <None Include="www\sched.htm" />
-    <None Include="www\system.htm" />
-    <None Include="www\css\table.css" />
-    <None Include="www\css\general.css" />
-    <None Include="www\css\graph.css" />
-    <None Include="www\css\loader.css" />
-    <None Include="www\css\menu.css" />
-    <None Include="www\js\graph1.js" />
-    <None Include="www\js\graph2.js" />
-    <None Include="www\js\index.js" />
-    <None Include="www\js\sched.js" />
-    <None Include="www\js\system.js" />
-    <None Include="sample\ini\ETHERNET.INI" />
-    <None Include="sample\ini\GENERAL.INI" />
-    <None Include="sample\ini\RELAYS.INI" />
     <None Include="ThingSpeak.ino" />
+    <None Include="www\js\graph1.js">
+      <Filter>www\js</Filter>
+    </None>
+    <None Include="www\js\graph2.js">
+      <Filter>www\js</Filter>
+    </None>
+    <None Include="www\js\index.js">
+      <Filter>www\js</Filter>
+    </None>
+    <None Include="www\js\sched.js">
+      <Filter>www\js</Filter>
+    </None>
+    <None Include="www\js\system.js">
+      <Filter>www\js</Filter>
+    </None>
+    <None Include="www\css\general.css">
+      <Filter>www\css</Filter>
+    </None>
+    <None Include="www\css\graph.css">
+      <Filter>www\css</Filter>
+    </None>
+    <None Include="www\css\loader.css">
+      <Filter>www\css</Filter>
+    </None>
+    <None Include="www\css\menu.css">
+      <Filter>www\css</Filter>
+    </None>
+    <None Include="www\css\table.css">
+      <Filter>www\css</Filter>
+    </None>
+    <None Include="www\graphs1.htm">
+      <Filter>www</Filter>
+    </None>
+    <None Include="www\graphs2.htm">
+      <Filter>www</Filter>
+    </None>
+    <None Include="www\index.htm">
+      <Filter>www</Filter>
+    </None>
+    <None Include="www\system.htm">
+      <Filter>www</Filter>
+    </None>
+    <None Include="www\sched.htm">
+      <Filter>www</Filter>
+    </None>
+    <None Include="sample\ini\RELAYS.INI">
+      <Filter>sample\ini</Filter>
+    </None>
+    <None Include="sample\ini\GENERAL.INI">
+      <Filter>sample\ini</Filter>
+    </None>
+    <None Include="sample\ini\ETHERNET.INI">
+      <Filter>sample\ini</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">
@@ -73,9 +107,17 @@
     <Text Include="readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="sample\xml\sensors.xml" />
-    <Xml Include="sample\xml\settings.xml" />
-    <Xml Include="sample\xml\sched.xml" />
-    <Xml Include="sample\xml\stats.xml" />
+    <Xml Include="sample\xml\sensors.xml">
+      <Filter>sample\xml</Filter>
+    </Xml>
+    <Xml Include="sample\xml\settings.xml">
+      <Filter>sample\xml</Filter>
+    </Xml>
+    <Xml Include="sample\xml\sched.xml">
+      <Filter>sample\xml</Filter>
+    </Xml>
+    <Xml Include="sample\xml\stats.xml">
+      <Filter>sample\xml</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
