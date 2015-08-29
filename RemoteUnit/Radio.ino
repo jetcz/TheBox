@@ -1,10 +1,6 @@
-//************************************
-// Method:   	 sendPayload
-// Description:  Send dataset through radio
-// Access:   	 public 
-// Returns:  	 bool
-// Qualifier:	
-//************************************
+/// <summary>
+/// Send dataset through radio
+/// </summary>
 void sendPayload() {
 	radio.powerUp();
 	radio.stopListening();

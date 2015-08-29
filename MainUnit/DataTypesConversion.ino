@@ -1,9 +1,18 @@
+/// <summary>
+/// Convert float to string
+/// </summary>
+/// <param name="val">float value to convert</param>
+/// <returns>number with 1 decimals in string format</returns>
 String floatToString(float val) {
 	dtostrf(val, 1, 1, cBuff1);  //1 is mininum width, 1 is precision; float value is copied onto buff
 	return cBuff1;
 }
 
-//convert int to string using registers, supposed to be fast and memory friendly
+/// <summary>
+/// Convert int to string using registers, supposed to be fast and memory friendly
+/// </summary>
+/// <param name="i">int value to convert</param>
+/// <returns>number in string format</returns>
 String intToString(register int i) {
 	register unsigned char L = 1;
 	register char c;
@@ -86,7 +95,11 @@ String intToString(register int i) {
 	return cBuff1;
 }
 
-//c = input char array, b = output byte array
+/// <summary>
+/// Convert delimited char array to byte array
+/// </summary>
+/// <param name="c">input char array</param>
+/// <param name="b">output byte array</param>
 void chArrToByteArr(char* c, byte* b) {
 
 	//replace all , . : with white character space for strtol function

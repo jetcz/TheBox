@@ -1,10 +1,6 @@
-//************************************
-// Method:   	 switchRelays
-// Description:  Switch relays according to current values in Settings
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Switch relays according to current values in Settings
+/// </summary>
 void switchRelays() {
 #if DEBUG
 	Serial.print(F("Setting relays:"));
@@ -39,26 +35,20 @@ void switchRelays() {
 #endif
 }
 
-//************************************
-// Method:   	 getRelayState
-// Description:  Return current relay state true/false (must be inverted because HIGH = off)
-// Access:   	 public 
-// Returns:  	 bool
-// Qualifier:	
-// Parameter:	 int relay
-//************************************
+/// <summary>
+/// Return current relay state true/false (must be inverted because HIGH = off)
+/// </summary>
+/// <param name="relay">relay</param>
+/// <returns>on/off</returns>
 bool getRelayState(int relay){
 	return !digitalRead(RELAY_PIN[relay]);
 }
 
-//************************************
-// Method:   	 serviceSchedulers
-// Description:  This method is turning relays on or off according to scheduler settings. Must be called every second or so.
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-// Parameter:	 int relay
-//************************************
+/// <summary>
+/// This method is turning relays on or off according to scheduler settings. Must be called every second or so.
+/// </summary>
+/// <param name="t">Current date time</param>
+/// <param name="relay">relay</param>
 void serviceSchedulers(DateTime t, int relay){
 
 	if (Sched[relay].Variable != 0) //is not pir

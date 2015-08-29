@@ -1,3 +1,6 @@
+/// <summary>
+/// Setup serial
+/// </summary>
 void setupSerial() {
 #if DEBUG
 	Serial.begin(9600);
@@ -5,6 +8,9 @@ void setupSerial() {
 #endif
 }
 
+/// <summary>
+/// Setup SD card
+/// </summary>
 void setupSD() {
 	ledLight(1, 'y');
 	if (!SD.begin(SD_SELECT_PIN)) {
@@ -25,6 +31,9 @@ void setupSD() {
 	ledLight(1, 'g');
 }
 
+/// <summary>
+/// Setup pins
+/// </summary>
 void setupPins() {
 
 	pinMode(RESET_ETH_SHIELD_PIN, OUTPUT);
@@ -78,6 +87,9 @@ void setupPins() {
 #endif
 }
 
+/// <summary>
+/// Setup wire
+/// </summary>
 void setupWire() {
 	Wire.begin();
 #if DEBUG
@@ -85,6 +97,9 @@ void setupWire() {
 #endif
 }
 
+/// <summary>
+/// Setup BMP180
+/// </summary>
 void setupBMP() {
 	ledLight(1, 'y');
 	if (!bmp.begin())
@@ -108,6 +123,9 @@ void setupBMP() {
 	ledLight(1, 'g');
 }
 
+/// <summary>
+/// Setup RTC DS1307
+/// </summary>
 void setupRTC() {
 	ledLight(1, 'y');
 	if (!rtc.begin())
@@ -146,6 +164,9 @@ void setupRTC() {
 	dtSysStart = now();
 }
 
+/// <summary>
+/// Setup radio NRF24
+/// </summary>
 void setupRadio() {
 	ledLight(1, 'y');
 	bool _bSuccess = false;
@@ -182,6 +203,9 @@ void setupRadio() {
 	}
 }
 
+/// <summary>
+/// Setup ethernet shield W5100
+/// </summary>
 void setupEthernet() {
 
 	resetEthShield();	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
@@ -249,6 +273,9 @@ void setupEthernet() {
 	W5100.setRetransmissionCount(3);
 }
 
+/// <summary>
+/// Setup LCD 20x4 on SPI bus
+/// </summary>
 void setupLCD() {
 	lcd.begin(20, 4);
 	lcd.clear();
@@ -257,6 +284,9 @@ void setupLCD() {
 #endif
 }
 
+/// <summary>
+/// Setup scheduler which controls the whole program
+/// </summary>
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
 	Alarm.timerOnce(60, syncRTCwithNTP);

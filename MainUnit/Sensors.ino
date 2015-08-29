@@ -1,4 +1,8 @@
-
+/// <summary>
+/// Get running average of system temperature
+/// </summary>
+/// <param name="event"></param>
+/// <returns></returns>
 float getSysTemperature(sensors_event_t event) {
 	static RunningAverage _raSysTemp(6);
 	float _fSysTemp;
@@ -9,6 +13,11 @@ float getSysTemperature(sensors_event_t event) {
 	return _raSysTemp.getAverage();
 }
 
+/// <summary>
+/// Get running average of atmospheric pressure
+/// </summary>
+/// <param name="event"></param>
+/// <returns></returns>
 float getPressure(sensors_event_t event) {
 	if (*SystemDS.Temperature == -255) return -255;
 	static RunningAverage _raPressure(6);
@@ -17,19 +26,30 @@ float getPressure(sensors_event_t event) {
 	return _raPressure.getAverage();
 }
 
-
+/// <summary>
+/// Get running average of main temperature
+/// </summary>
+/// <returns></returns>
 float getMainTemperature() {
 	static RunningAverage _raMainTemp(6);
 	_raMainTemp.addValue(DHT.temperature);
 	return _raMainTemp.getAverage();
 }
 
+/// <summary>
+/// Get running average of main humidity
+/// </summary>
+/// <returns></returns>
 float getMainHumidity() {
 	static RunningAverage _raMainHumidity(6);
 	_raMainHumidity.addValue(DHT.humidity);
 	return _raMainHumidity.getAverage();
 }
 
+/// <summary>
+/// Get running average of main humidex
+/// </summary>
+/// <returns></returns>
 float getMainHumidex() {
 	float e;
 	e = (6.112 * pow(10, (7.5 * *MainDS.Temperature / (237.7 + *MainDS.Temperature))) *  *MainDS.Humidity / 100); //vapor pressure
@@ -37,10 +57,19 @@ float getMainHumidex() {
 	return humidex;
 }
 
+/// <summary>
+/// Get main PIR
+/// </summary>
+/// <returns></returns>
 bool getMainPir() {
 	return digitalRead(PIR_PIN);
 }
 
+/// <summary>
+/// Get running average of power consumptions in the socekts
+/// </summary>
+/// <param name="relay">relay</param>
+/// <returns></returns>
 float getPower(int relay){
 	static RunningAverage _raCurr0(5);
 	static RunningAverage _raCurr3(5);
@@ -72,6 +101,10 @@ float getPower(int relay){
 	return 0;
 }
 
+/// <summary>
+/// Get running average of mains voltage
+/// </summary>
+/// <returns></returns>
 float getVoltage(){
 	static RunningAverage _raVoltage(10);
 	_raVoltage.addValue((emon.Vrms));

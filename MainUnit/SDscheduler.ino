@@ -1,10 +1,7 @@
-//************************************
-// Method:   	 writeSDSched
-// Description:  Write current scheduler settings to SD card.
-// Access:   	 public 
-// Returns:  	 boolean
-// Qualifier:	
-//************************************
+/// <summary>
+/// Write current scheduler settings to SD card.
+/// </summary>
+/// <returns>true if writing succeeded, otherwise false</returns>
 boolean writeSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
@@ -46,13 +43,10 @@ boolean writeSDSched() {
 	return true;
 }
 
-//************************************
-// Method:   	 readSDSched
-// Description:  Read scheduler settings from SD card. Returns true if succeeded.
-// Access:   	 public 
-// Returns:  	 boolean
-// Qualifier:	
-//************************************
+/// <summary>
+/// Read scheduler settings from SD card.
+/// </summary>
+/// <returns>true if reading succeeded, otherwise false</returns>
 boolean readSDSched() {
 
 	for (int i = 0; i < 4; i++)
@@ -105,13 +99,9 @@ boolean readSDSched() {
 	return true;
 }
 
-//************************************
-// Method:   	 deleteSDSched
-// Description:  Deletes scheduler settings from SD card
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Deletes scheduler settings from SD card.
+/// </summary>
 void deleteSDSched() {
 	String _sPath;
 	_sPath.reserve(21);

@@ -10,7 +10,9 @@
 
 #define DEBUG true
 
-//structure holding data which came from remote unit
+/// <summary>
+/// Structure holding data which came from remote unit - this must be the same as Payload class in Main unit
+/// </summary>
 struct Payload
 {
 	int AirTemp; //must divide by 10

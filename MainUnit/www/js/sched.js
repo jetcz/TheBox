@@ -11,7 +11,6 @@ $(document).ready(function () {
                 disableForm(i);
             }
         }
-
     });
 });
 
@@ -47,7 +46,6 @@ function xmlParser(xml) {
             $(".From").eq(j).val(parseFloat(From));
             $(".To").eq(j).val(parseFloat(To));
         })
-
     })
     for (var i = 0; i < 4; i++) {
         disableCbs(i);
@@ -55,7 +53,6 @@ function xmlParser(xml) {
     }
     syncHiddenFields();
 }
-
 
 //disable relay form if variable is set to pir
 function disableForm(i) {
@@ -95,7 +92,6 @@ function disableCbs(i) {
                 $(s).eq(i).attr('disabled', false);
             else $(s).eq(i).attr('disabled', true);
         })
-
     })
 }
 
@@ -134,7 +130,6 @@ function setHiddenField(i) {
     else cb.next().val(0);
 }
 
-
 function validateForm() {
     var valid = true;
     $(document).find(".datagrid").each(function (i) {
@@ -156,7 +151,6 @@ function validateForm() {
 }
 
 $(document).ready(function () {
-
     //handler for comboboxes
     $(".cmb").change(function () {
         var i = $('.cmb').index(this);
@@ -193,8 +187,6 @@ $(document).ready(function () {
     $('.time.H').jStepper({ minValue: 0, maxValue: 23 });
     $('.time.M').jStepper({ minValue: 0, maxValue: 59 });
 
-
-
     //validator for numeric values
     $(document).on('keyup', '.decimal, .time', function (event) {
         var v = this.value;
@@ -203,5 +195,4 @@ $(document).ready(function () {
             this.value = this.value.slice(0, -1);
         }
     });
-
 })

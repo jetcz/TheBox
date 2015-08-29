@@ -1,3 +1,6 @@
+/// <summary>
+/// Setup pins
+/// </summary>
 void setupPins() {
 	//setup led
 	for (int i = 0; i < 3; i++)			//setup led pins and switch pins
@@ -27,6 +30,9 @@ void setupPins() {
 
 }
 
+/// <summary>
+/// Setup radio NRF24
+/// </summary>
 void setupRadio(){
 	bool _bSuccess = false;
 	_bSuccess = radio.begin();

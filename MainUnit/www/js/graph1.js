@@ -44,7 +44,6 @@ function HideAll() {
         //window.console && console.log('Series Number:',index,' Name:',dynamicChart.series[index].name);
     }
     //});
-
 }
 
 //  This is where the chart is generated.
@@ -75,7 +74,6 @@ $(document).ready(function () {
     {
         channelKeys[channelIndex].loaded = false;
         loadThingSpeakChannel(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList);
-
     }
     //window.console && console.log('Channel Keys',channelKeys);
 
@@ -161,8 +159,6 @@ $(document).ready(function () {
                                             //window.console && console.log('update series name:',dynamicChart.series[chartSeriesName].name);
                                             //window.console && console.log('channel keys name:',channelKeys[channelIndex].fieldList[fieldIndex].name);
                                         }
-
-
                                     });
                                 })(channelIndex);
                             }
@@ -288,7 +284,6 @@ $(document).ready(function () {
             {
                 window.console && console.log('Channel ' + channelIndex + ' field ' + fieldIndex);
 
-
                 if (channelIndex == 0 && (fieldIndex == 1 || fieldIndex == 2 || fieldIndex == 3 || fieldIndex == 4 || fieldIndex == 5 || fieldIndex == 6)) {
                     chartOptions.series.push({
                         data: channelKeys[channelIndex].fieldList[fieldIndex].data,
@@ -299,7 +294,7 @@ $(document).ready(function () {
                     });
                 }
                 else
-                    if (channelIndex == 1 && (fieldIndex == 1 || fieldIndex == 2 || fieldIndex == 3) || fieldIndex == 5 || fieldIndex == 6 || fieldIndex == 7) { 
+                    if (channelIndex == 1 && (fieldIndex == 1 || fieldIndex == 2 || fieldIndex == 3) || fieldIndex == 5 || fieldIndex == 6 || fieldIndex == 7) {
                         chartOptions.series.push({
                             data: channelKeys[channelIndex].fieldList[fieldIndex].data,
                             index: channelKeys[channelIndex].fieldList[fieldIndex].series,

@@ -2,7 +2,6 @@ $(document).ready(function () {
     getStats();
     getSettings();
 
-
     //handler for dhcp radio
     $("input[name=DHCP]:radio").change(function () {
         if ($(this).val() == 1) {
@@ -81,7 +80,7 @@ function xmlParseStats(xml) {
                 $('.tdVal').eq(i - offset).css("background-color", "#c70000");
             }
         }
-        //preset ds age  
+        //preset ds age
         if (i == offset + 2) {
             if (parseInt(value) < 12) {
                 $('.tdVal').eq(i - offset).css("background-color", "green");

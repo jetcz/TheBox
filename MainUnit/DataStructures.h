@@ -86,7 +86,6 @@ struct SystemSettings
 	char* RelaysPath = "/settings/relays.ini";
 	char* SettingsPath = "/settings/settings.ini";
 	char* OffsetsPath = "/settings/offsets.ini";
-
 }; typedef struct SystemSettings SystemSettings;
 
 //structure holding data from sensors sent to thingspeak
@@ -124,7 +123,6 @@ public:
 			}
 		}
 	}
-
 }; typedef class DataSet DataSet;
 
 //structure holding data for scheduling relays
@@ -202,7 +200,6 @@ struct Payload
 		Serial.print(FailedMsgs);
 		Serial.println();
 	}
-
 }; typedef struct Payload Payload;
 
 /*
@@ -220,5 +217,3 @@ not sent to TS					rainTicks				remoteFreeRam
 not sent to TS											mainFreeRam
 
 				*/
-
-

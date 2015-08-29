@@ -2,13 +2,9 @@ void printDebug() {
 
 }
 
-//************************************
-// Method:   	 system
-// Description:  Helper method - service call which could be in main loop(), but executing every seconds is good enough
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Helper method - service call which could be in main loop(), but executing every seconds is good enough
+/// </summary>
 void system() {
 	DateTime _dtNow = now();
 	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(_dtNow);
@@ -20,14 +16,9 @@ void system() {
 	}
 	printLcd();
 }
-
-//************************************
-// Method:   	 prepareDataSetArrays
-// Description:  Fill datasets and apply offsets
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Fill datasets and apply offsets
+/// </summary>
 void prepareDataSetArrays() {
 	static unsigned int nDHTFailures;
 	DateTime _dtNow = now();
@@ -77,13 +68,9 @@ void prepareDataSetArrays() {
 }
 
 
-//************************************
-// Method:   	 getPWRData
-// Description:  Get power data (mains voltage, power consumption of appliances connected to sockets)
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Get power data (mains voltage, power consumption of appliances connected to sockets)
+/// </summary>
 void getPWRData(){
 	float _fVal;
 	fVcc = readVcc();
@@ -94,13 +81,9 @@ void getPWRData(){
 	MainDS.Data[7] = getVoltage();
 }
 
-//************************************
-// Method:   	 printSensorDataSerial
-// Description:  Print some sensor data to serial port, disabled if DEBUG=false
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Print some sensor data to serial port, disabled if DEBUG=false
+/// </summary>
 void printSensorDataSerial(){
 	if (MainDS.isValid)
 	{
@@ -167,13 +150,9 @@ void printSensorDataSerial(){
 	else Serial.println(F("Remote Unit DataSet invalid!"));
 }
 
-//************************************
-// Method:   	 printLcd
-// Description:  Responsible for printing stuff to LCD every second
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Responsible for printing stuff to LCD every second
+/// </summary>
 void printLcd() {
 	static byte _byLastScreen;
 	static byte _bySecCnt = 0;
@@ -226,13 +205,9 @@ void printLcd() {
 }
 
 
-//************************************
-// Method:   	 thingSpeak
-// Description:  Helper method to call Thingspeak upload, rotate datasets and restart arduino if there problems uploading
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Helper method to call Thingspeak upload, rotate datasets and restart arduino if there problems uploading
+/// </summary>
 void thingSpeak(){
 	if (millis() < 41000) return;	//return if time is less than 0:40 (boot time of the wifi router)
 	static unsigned int _nCnt;
@@ -264,13 +239,9 @@ void thingSpeak(){
 	needRestart();
 }
 
-//************************************
-// Method:   	 syncRTCwithNTP
-// Description:  Helper method to call NTP sync
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Helper method to call NTP sync
+/// </summary>
 void syncRTCwithNTP() {
 	bLCDRefreshing = false;
 	lcd.clear();
@@ -296,13 +267,9 @@ void syncRTCwithNTP() {
 }
 
 
-//************************************
-// Method:   	 dhcp
-// Description:  Maintain DHCP lease if used
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Maintain DHCP lease if used
+/// </summary>
 void dhcp() {
 	if (Ethernet.maintain() % 2 == 1) {  //renew dhcp lease
 		bLCDRefreshing = false;
@@ -333,13 +300,9 @@ void dhcp() {
 }
 
 
-//************************************
-// Method:   	 writeSD
-// Description:  Helper method to call with delay, writes relay settings to SD card
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Helper method to call with delay, writes relay settings to SD card
+/// </summary>
 void writeSD() {
 	bool _bSucces = writeSDRelaySettings();
 	if (!_bSucces)

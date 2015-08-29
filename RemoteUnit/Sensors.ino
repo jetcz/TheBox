@@ -1,10 +1,6 @@
-//************************************
-// Method:   	 prepareDataSetArrays
-// Description:  Fills dataset with sensor readings.
-// Access:   	 public 
-// Returns:  	 Payload
-// Qualifier:	
-//************************************
+/// <summary>
+/// Fills dataset with sensor readings.
+/// </summary>
 void getPayload() {
 
 	//get DHT data
@@ -47,20 +43,30 @@ void getPayload() {
 
 }
 
-
+/// <summary>
+/// Get running average of remote air temperature
+/// </summary>
+/// <returns></returns>
 float getAirTemperature() {
 	static RunningAverage AirTemp(3);
 	AirTemp.addValue(DHT.temperature);
 	return AirTemp.getAverage();
 }
 
-
+/// <summary>
+/// Get running average of remote air humidity
+/// </summary>
+/// <returns></returns>
 float getAirHumidity(){
 	static RunningAverage AirHum(3);
 	AirHum.addValue(DHT.humidity);
 	return AirHum.getAverage();
 }
 
+/// <summary>
+/// Get running average of remote humidex
+/// </summary>
+/// <returns></returns>
 float getAirHumidex() {
 	float e;
 	e = (6.112 * pow(10, (7.5 * (payload.AirTemp / 10) / (237.7 + (payload.AirTemp / 10)))) *  (payload.AirHum / 10) / 100); //vapor pressure
@@ -68,6 +74,10 @@ float getAirHumidex() {
 	return humidex;
 }
 
+/// <summary>
+/// Get running average of light intensity
+/// </summary>
+/// <returns></returns>
 float getLight() {
 	static RunningAverage Light(3);
 	float _fLight = (analogRead(PHOTORESISTOR_DATA_PIN) + 0.5)*(*Vcc) / 1024.0;
@@ -76,6 +86,10 @@ float getLight() {
 	return Light.getAverage();
 }
 
+/// <summary>
+/// Get running average of remote soil temperature
+/// </summary>
+/// <returns></returns>
 float getSoilTemperature() {
 	static RunningAverage SoilTemp(3);
 	ds.requestTemperatures();
@@ -85,7 +99,11 @@ float getSoilTemperature() {
 	return SoilTemp.getAverage();
 }
 
-//returns soil humidity percentage 0 = air, 100 = salt water
+/// <summary>
+/// Get running average of remote soil humidity
+/// 0 = air, 100 = salt water
+/// </summary>
+/// <returns></returns>
 float getSoilHumidity() {
 	static RunningAverage SoilHum(3);
 	RunningAverage AnalogReadings(3);
@@ -99,19 +117,19 @@ float getSoilHumidity() {
 	return SoilHum.getAverage();
 }
 
+/// <summary>
+/// Get running average of reference voltage (5V)
+/// </summary>
+/// <returns></returns>
 float getVcc(){
 	static RunningAverage _raVcc(3);
 	_raVcc.addValue(float(readVcc()));
 	return _raVcc.getAverage();
 }
 
-//************************************
-// Method:   	 ISRTipCnt
-// Description:  Interrupt method to gather tipping bucket tip count.
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Interrupt method to gather tipping bucket tip count.
+/// </summary>
 void ISRTipCnt() {
 	nRainTips++;
 	ledLight('b', true);

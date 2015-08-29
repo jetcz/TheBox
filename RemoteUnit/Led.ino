@@ -1,12 +1,8 @@
-//************************************
-// Method:   	 ledLight
-// Description:  Lights up led with specified color
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-// Parameter:	 char color (r, g, b, c, m, y, k)
-// Parameter:	 bool flash - if true, the led will only flash very briefly
-//************************************
+/// <summary>
+/// Lights up led with specified color
+/// </summary>
+/// <param name="color">char color (r, g, b, c, m, y, k)</param>
+/// <param name="flash">if true, the led will only flash very briefly</param>
 void ledLight(char color, bool flash) {
 
 	switch (color)

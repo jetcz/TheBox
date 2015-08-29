@@ -1,11 +1,6 @@
-
-//************************************
-// Method:   	 resetEthShield
-// Description:  Performs hardware reset of the ethernet shield
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Performs hardware reset of the ethernet shield
+/// </summary>
 void resetEthShield() {
 #if DEBUG
 	Serial.println(F("Reseting Ethernet Shield"));
@@ -16,14 +11,9 @@ void resetEthShield() {
 	Alarm.delay(250);
 }
 
-
-//************************************
-// Method:   	 resetEthShield
-// Description:  Performs hardware reset of the wifi router
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Performs hardware reset of the wifi router
+/// </summary>
 void resetWifi() {
 #if DEBUG
 	Serial.println(F("Reseting Wifi"));
@@ -35,17 +25,12 @@ void resetWifi() {
 	setupEthernet();
 }
 
-
-//************************************
-// Method:   	 needRestart
-// Description:  Check whether ethernet shiled and arduino needs to be restared
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Check whether ethernet shiled and arduino needs to be restared
+/// </summary>
 void needRestart() {
 	// Check if Ethernet needs to be restarted
-	if ((nFailedCounter % Settings.RestartEthernetThreshold) == 0 && nFailedCounter != 0){
+	if ((nFailedCounter % Settings.RestartEthernetThreshold) == 0 && nFailedCounter != 0) {
 		ledLight(1, 'r');
 		ledLight(3, 'r');
 #if DEBUG
@@ -64,6 +49,7 @@ void needRestart() {
 		setupEthernet();
 	}
 
+	// Check if Wifi needs to be restarted
 	if ((nFailedCounter % Settings.RestartWifiThreshold) == 0 && nFailedCounter != 0) {
 		ledLight(1, 'r');
 		ledLight(3, 'r');
@@ -102,14 +88,11 @@ void needRestart() {
 	}
 }
 
-
-//************************************
-// Method:   	 isRemoteDataSetValid
-// Description:  Whether or not is the remote dataset valid, also lights up led accordingly
-// Access:   	 public 
-// Returns:  	 bool
-// Qualifier:	
-//************************************
+/// <summary>
+/// Whether or not is the remote dataset valid, also lights up led accordingly
+/// </summary>
+/// <param name="t">Current time</param>
+/// <returns></returns>
 bool isRemoteDataSetValid(DateTime t) {
 	bool _bValid;
 	TimeSpan _tsDiff = t - RemoteDS.TimeStamp;
@@ -133,27 +116,20 @@ bool isRemoteDataSetValid(DateTime t) {
 	return _bValid;
 }
 
-//************************************
-// Method:   	 freeRam
-// Description:  Amount of free RAM in Bytes
-// Access:   	 public 
-// Returns:  	 int
-// Qualifier:	
-//************************************
+/// <summary>
+/// Amount of free RAM in Bytes
+/// </summary>
+/// <returns></returns>
 int freeRam() {
 	extern int __heap_start, *__brkval;
 	int _nVal;
 	return (int)&_nVal - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
 }
 
-
-//************************************
-// Method:   	 readVcc
-// Description:  Exact measurement of 5V
-// Access:   	 public 
-// Returns:  	 int
-// Qualifier:	
-//************************************
+/// <summary>
+/// Exact measurement of reference voltage (5V)
+/// </summary>
+/// <returns></returns>
 float readVcc() {
 	static RunningAverage _raVcc(6);
 	// Read 1.1V reference against AVcc
@@ -179,46 +155,41 @@ float readVcc() {
 	return _raVcc.getAverage();
 }
 
-
-//************************************
-// Method:   	 getDateTimeString
-// Description:  Creates string of supplied DateTime
-// Access:   	 public 
-// Returns:  	 String
-// Qualifier:	
-// Parameter:	 DateTime t
-//************************************
+/// <summary>
+/// Creates string from supplied DateTime
+/// </summary>
+/// <param name="t">Current date time</param>
+/// <returns></returns>
 String getDateTimeString(DateTime t)
 {
 	sprintf(cBuff1, "%02d.%02d.%04d  %02d:%02d:%02d", t.day(), t.month(), t.year(), t.hour(), t.minute(), t.second());
 	return cBuff1;
 }
 
-//************************************
-// Method:   	 getUptime
-// Description:  Returns uptime of the system
-// Access:   	 public 
-// Returns:  	 TimeSpan
-// Qualifier:	
-//************************************
-TimeSpan getUptime(DateTime t){
+/// <summary>
+/// Returns uptime of the system
+/// </summary>
+/// <param name="t"></param>
+/// <returns>Datetime</returns>
+TimeSpan getUptime(DateTime t) {
 	return t - dtSysStart;
 }
 
-//************************************
-// Method:   	 getUptimeString
-// Description:  Returns uptime of the system as a string
-// Access:   	 public 
-// Returns:  	 String
-// Qualifier:	
-// Parameter:	 TimeSpan ts
-//************************************
+/// <summary>
+/// Returns uptime of the system
+/// </summary>
+/// <param name="ts"></param>
+/// <returns>String</returns>
 String getUptimeString(TimeSpan ts) {
 	sprintf(cBuff1, "%dd %02d:%02d:%02d", ts.days(), ts.hours(), ts.minutes(), ts.seconds());
 	return cBuff1;
 }
 
-time_t syncProvider()     //this does the same thing as RTC_DS1307::get() + gets the local time (respecting timezone and dalylight saving time)
+/// <summary>
+/// This does the same thing as RTC_DS1307::get() + gets the local time (respecting timezone and dalylight saving time)
+/// </summary>
+/// <returns></returns>
+time_t syncProvider()
 {
 	return myTZ.toLocal(rtc.now().unixtime(), &tcr);
 }

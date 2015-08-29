@@ -1,3 +1,7 @@
+/// <summary>
+/// Exact measurement of reference voltage (5V)
+/// </summary>
+/// <returns></returns>
 long readVcc() {
 	// Read 1.1V reference against AVcc
 	// set the reference to Vcc and the measurement to the internal 1.1V reference
@@ -21,29 +25,29 @@ long readVcc() {
 	return result; // Vcc in millivolts
 }
 
-//************************************
-// Method:   	 freeRam
-// Description:  Amount of free RAM in Bytes
-// Access:   	 public 
-// Returns:  	 int
-// Qualifier:	
-//************************************
+/// <summary>
+/// Amount of free RAM in Bytes
+/// </summary>
+/// <returns></returns>
 int freeRam() {
 	extern int __heap_start, *__brkval;
 	int _nVal;
 	return (int)&_nVal - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
 }
 
+/// <summary>
+///  Get the current millis() value for how long the microcontroller has been running
+///	 To avoid any possiblity of missing the rollover, we use a bool toggle that gets flipped
+///	 off any time during the first half of the total millis period and
+///	 then on during the second half of the total millis period.
+///	 This would work even if the function were only run once every 4.5 hours, though typically,
+///	 the function should be called as frequently as possible to capture the actual moment of rollover.
+///	 The rollover counter is good for over 35 years of runtime.
+///  Rob Faludi http ://rob.faludi.com
+/// </summary>
+/// <returns></returns>
 int millisRollover() {
-	// get the current millis() value for how long the microcontroller has been running
-	//
-	// To avoid any possiblity of missing the rollover, we use a bool toggle that gets flipped
-	//   off any time during the first half of the total millis period and
-	//   then on during the second half of the total millis period.
-	// This would work even if the function were only run once every 4.5 hours, though typically,
-	//   the function should be called as frequently as possible to capture the actual moment of rollover.
-	// The rollover counter is good for over 35 years of runtime. --Rob Faludi http://rob.faludi.com
-	//
+
 	static int _nNumRollovers = 0; // variable that permanently holds the number of rollovers since startup
 	static bool _bReadyToRoll = false; // tracks whether we've made it halfway to rollover
 	unsigned long _lNow = millis(); // the time right now
@@ -64,13 +68,10 @@ int millisRollover() {
 }
 
 
-//************************************
-// Method:   	 getUptime
-// Description:  Returns uptime of the system in seconds
-// Access:   	 public 
-// Returns:  	 float
-// Qualifier:	
-//************************************
+/// <summary>
+/// Returns uptime of the system in seconds
+/// </summary>
+/// <returns></returns>
 unsigned long getUptime() {
 	static unsigned long _lUptime;
 	_lUptime = 4294967 * millisRollover() + round(millis() / 1000);

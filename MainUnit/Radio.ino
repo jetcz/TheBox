@@ -1,10 +1,6 @@
-//************************************
-// Method:   	 receiveData
-// Description:  Receive data from radio module and fill our datasets
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Receive data from radio module and fill our datasets and related variables
+/// </summary>
 void receiveData() {
 	static byte pipeNo;
 	while (radio.available(&pipeNo)){ //receiving data		
@@ -36,13 +32,10 @@ void receiveData() {
 	}
 }
 
-//************************************
-// Method:   	 getFailedRadioMessages
-// Description:  Calculate how many radio transmissions failed since main unit startup presuming that the remote unit. This needs to be called every radio msg interval
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Calculate how many radio transmissions failed since main unit startup presuming that the remote unit.
+/// This needs to be called every radio msg interval
+/// </summary>
 void getFailedRadioMessages(){
 	if (now() - RemoteDS.TimeStamp.unixtime() > Settings.RadioMsgInterval + 2) nFailedCntRadioTotal++;
 }

@@ -1,11 +1,7 @@
-
-//************************************
-// Method:   	 updateThingSpeak
-// Description:  Upload ThingSpeak data. Handles also fail counters, leds, and debug msgs.
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-// Parameter:	 DataSet ds
+/// <summary>
+/// Upload ThingSpeak data. Handles also fail counters, leds, and debug msgs.
+/// </summary>
+/// <param name="ds">dataset</param>
 void updateThingSpeak(DataSet ds){
 //************************************
 	ledLight(3, 'b');

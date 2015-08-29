@@ -44,7 +44,6 @@ function HideAll() {
         //window.console && console.log('Series Number:',index,' Name:',dynamicChart.series[index].name);
     }
     //});
-
 }
 
 //  This is where the chart is generated.
@@ -75,7 +74,6 @@ $(document).ready(function () {
     {
         channelKeys[channelIndex].loaded = false;
         loadThingSpeakChannel(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList);
-
     }
     //window.console && console.log('Channel Keys',channelKeys);
 
@@ -161,8 +159,6 @@ $(document).ready(function () {
                                             //window.console && console.log('update series name:',dynamicChart.series[chartSeriesName].name);
                                             //window.console && console.log('channel keys name:',channelKeys[channelIndex].fieldList[fieldIndex].name);
                                         }
-
-
                                     });
                                 })(channelIndex);
                             }
@@ -228,7 +224,6 @@ $(document).ready(function () {
                 }
             },
             tooltip: {
-
                 valueDecimals: 1,
                 valueSuffix: '',
                 xDateFormat: '%d.%m.%Y<br/>%H:%M:%S'
@@ -240,67 +235,43 @@ $(document).ready(function () {
                 //}
             },
             xAxis: {
-
                 type: 'datetime',
                 ordinal: false,
                 min: Date.UTC(2013, 02, 28),
                 dateTimeLabelFormats: {
-
                     hour: '%H',
                     minute: '%H:%M'
-
                 },
                 title: {
-
                     text: 'test'
-
                 }
-
             },
             yAxis: [{
-
                 title: {
-
                     text: 'Temperature C'
-
                 },
                 id: 'T'
-
             }, {
-
                 title: {
-
                     text: 'Other'
-
                 },
                 opposite: true,
                 id: 'O'
-
             }],
             exporting: {
-
                 enabled: true,
                 csv: {
-
                     dateFormat: '%d.%m.%Y %H:%M:%S'
-
                 }
-
             },
             legend: {
-
                 enabled: true
-
             },
             navigator: {
-
                 baseSeries: 0,  //select which series to show in history navigator, First series is 0
                 series: {
-
                     includeInCSVExport: false
-
                 }
-
             },
             series: []
             //series: [{data:[[getChartDate("2013-06-16T00:32:40Z"),75]]}]
@@ -312,7 +283,6 @@ $(document).ready(function () {
             for (var fieldIndex = 0; fieldIndex < channelKeys[channelIndex].fieldList.length; fieldIndex++)  // add each field
             {
                 window.console && console.log('Channel ' + channelIndex + ' field ' + fieldIndex);
-
 
                 if (channelIndex == 0 && (fieldIndex == 1 || fieldIndex > 5)) {  //hide uptime
                     chartOptions.series.push({

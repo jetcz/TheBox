@@ -1,4 +1,6 @@
-
+/// <summary>
+/// Prints sensor values to lcd
+/// </summary>
 void printLcdScreen1() {
 	//this is to know lengths of printed strings so we dont have to refresh whole screen (causes flicker)
 	static byte _byLastLenMainData0;
@@ -62,6 +64,9 @@ void printLcdScreen1() {
 	lcd.print(sNow);
 }
 
+/// <summary>
+/// Prints sensor values to lcd
+/// </summary>
 void printLcdScreen2() {
 
 	static byte _byLastLenRemoteData2;
@@ -178,6 +183,9 @@ void printLcdScreen2() {
 
 }
 
+/// <summary>
+/// Prints system values to lcd
+/// </summary>
 void printLcdScreen3() {
 	//line 1
 	lcd.setCursor(0, 0);

@@ -1,18 +1,14 @@
-//************************************
-// Method:   	 weatherForecast
-// Description:  Calculates weather forecast from relative changes in atmospheric pressure. This needs to be called every 60s.
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Calculates weather forecast from relative changes in atmospheric pressure.
+/// This needs to be called every 60s.
+/// Algorithm found here http://www.freescale.com/files/sensors/doc/app_note/AN3914.pdf
+/// Code ripped from here http://forum.micasaverde.com/index.php?topic=23394.0 and modified to use runnig average library to save ram
+/// </summary>
 void weatherForecast() {
 	static byte _nMinuteCnt = 0;
 	static bool _bFirstRound = true;
 	static float _fPressureAvg[7];
 	static float _fDP_dt;
-	// Algorithm found here
-	// http://www.freescale.com/files/sensors/doc/app_note/AN3914.pdf
-	//code ripped from here http://forum.micasaverde.com/index.php?topic=23394.0 and modified to use runnig average library to save ram
 
 	if (_nMinuteCnt > 180)
 		_nMinuteCnt = 6;
@@ -85,11 +81,11 @@ void weatherForecast() {
 		byForecast = 4; // Quickly falling LP, Thunderstorm, not stable
 	else if (_fDP_dt > 0.25)
 		byForecast = 3; // Quickly rising HP, not stable weather
-	else if ((_fDP_dt > (-0.25)) && (_fDP_dt < (-0.05)))
+	else if ((_fDP_dt >(-0.25)) && (_fDP_dt < (-0.05)))
 		byForecast = 2; // Slowly falling Low Pressure System, stable rainy weather
 	else if ((_fDP_dt > 0.05) && (_fDP_dt < 0.25))
 		byForecast = 1; // Slowly rising HP stable good weather
-	else if ((_fDP_dt >(-0.05)) && (_fDP_dt < 0.05))
+	else if ((_fDP_dt > (-0.05)) && (_fDP_dt < 0.05))
 		byForecast = 0; // Stable weather
 	else
 		byForecast = 5; // Unknown

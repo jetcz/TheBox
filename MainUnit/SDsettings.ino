@@ -1,5 +1,10 @@
 
 #if DEBUG
+/// <summary>
+/// Helper method for handling error messages while reading ini's from SD card
+/// </summary>
+/// <param name="e"></param>
+/// <param name="eol"></param>
 void printErrorMessage(uint8_t e, bool eol = true)
 {
 	switch (e) {
@@ -39,15 +44,11 @@ void printErrorMessage(uint8_t e, bool eol = true)
 }
 #endif
 
-
-//************************************
-// Method:   	 readSDSettings
-// Description:  Universal method for reading various setting files from SD card (ethernet, relays, offsets, general). Returns true if reading succeeded.
-// Access:   	 public 
-// Returns:  	 bool
-// Qualifier:	
-// Parameter:	 char * path
-//************************************
+/// <summary>
+/// Universal method for reading various setting files from SD card (ethernet, relays, offsets, general).
+/// </summary>
+/// <param name="path">Path to the ini</param>
+/// <returns>true if reading succeeded, otherwise false</returns>
 bool readSDSettings(char *path) {
 
 	IniFile ini(path);
@@ -252,13 +253,10 @@ bool readSDSettings(char *path) {
 	}
 }
 
-//************************************
-// Method:   	 writeSDRelaySettings
-// Description:  Writes current relay settings to SD card
-// Access:   	 public 
-// Returns:  	 bool
-// Qualifier:	
-//************************************
+/// <summary>
+/// Writes current relay settings to SD card
+/// </summary>
+/// <returns>true if writing succeeded, otherwise false</returns>
 bool writeSDRelaySettings() {
 	SD.remove(Settings.RelaysPath);
 	file = SD.open(Settings.RelaysPath, FILE_WRITE);
@@ -280,13 +278,10 @@ bool writeSDRelaySettings() {
 	}
 }
 
-//************************************
-// Method:   	 writeSDEthernetSettings
-// Description:  Writes current ethernet settings to SD card
-// Access:   	 public 
-// Returns:  	 bool
-// Qualifier:	
-//************************************
+/// <summary>
+/// Writes current ethernet settings to SD card
+/// </summary>
+/// <returns>true if writing succeeded, otherwise false</returns>
 bool writeSDEthernetSettings() {
 	SD.remove(Settings.EthernetPath);
 	file = SD.open(Settings.EthernetPath, FILE_WRITE);
@@ -344,13 +339,10 @@ bool writeSDEthernetSettings() {
 	}
 }
 
-//************************************
-// Method:   	 writeSDSettings
-// Description:  Writes general settings to SD card
-// Access:   	 public 
-// Returns:  	 bool
-// Qualifier:	
-//************************************
+/// <summary>
+/// Writes general settings to SD card
+/// </summary>
+/// <returns>true if writing succeeded, otherwise false</returns>
 bool writeSDSettings() {
 	SD.remove(Settings.SettingsPath);
 	file = SD.open(Settings.SettingsPath, FILE_WRITE);
@@ -374,13 +366,10 @@ bool writeSDSettings() {
 	}
 }
 
-//************************************
-// Method:   	 writeSDOffsets
-// Description:  Writes sensor offsets settings to SD card.
-// Access:   	 public 
-// Returns:  	 bool
-// Qualifier:	
-//************************************
+/// <summary>
+/// Writes sensor offsets settings to SD card.
+/// </summary>
+/// <returns>true if writing succeeded, otherwise false</returns>
 bool writeSDOffsets() {
 	SD.remove(Settings.OffsetsPath);
 	file = SD.open(Settings.OffsetsPath, FILE_WRITE);

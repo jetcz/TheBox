@@ -90,7 +90,7 @@ RelayScheduler Sched[4];			//scheduler settings
 unsigned int nFailedCounter;			//failed thingspeak uploads
 unsigned int nFailedCntTSTotal;			//total failed thing speak messages
 unsigned int nFailedCntRadioTotal;		//total failed radio messages
-DateTime dtSysStart;					//time of system start for uptime 
+DateTime dtSysStart;					//time of system start for uptime
 DateTime dtLastNTPsync;					//time of last ntp sync
 String sNow;							//current datetime string
 String sMainUptime;						//uptime string
@@ -100,7 +100,6 @@ bool bLCDRefreshing = true;
 unsigned int nRainTicks;
 unsigned int nRemoteFreeRam;
 unsigned int nMainFreeRam;
-
 
 //weather variables
 const char* cWeather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -194,7 +193,6 @@ void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 
 	if (type == WebServer::GET)
 	{
-
 		P(tag_start_sensor) = "<V>";
 		P(tag_end_sensor) = "</V>";
 
@@ -455,7 +453,6 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 				{
 					Sched[_relay].Value[_interval][1] = atof(cBuff2);
 				}
-
 			}
 		}
 	}
@@ -660,7 +657,6 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 
 	if (type == WebServer::GET)
 	{
-
 		P(tag_start_sensor) = "<V>";
 		P(tag_end_sensor) = "</V>";
 
@@ -1047,7 +1043,6 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			else sNewIP += "/";
 		}
 
-
 		P(saveNetSucces1) =
 			"<!DOCTYPE html><html><head>"
 			"<script language=\"javascript\">"
@@ -1155,14 +1150,13 @@ void setup()
 
 #if DEBUG
 	Serial.println(F("Setup Done"));
-#endif	
+#endif
 }
 
 void loop()
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
 	receiveData();					//receive radio messages from remote unit if available
-	webserver.processConnection();	//process webserver request as soon as possible		
+	webserver.processConnection();	//process webserver request as soon as possible
 	emon.calcVI(100, fVcc);			//measure power consumption in outlets (non-blocking)
 }
-

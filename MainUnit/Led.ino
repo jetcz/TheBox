@@ -1,12 +1,8 @@
-//************************************
-// Method:   	 ledLight
-// Description:  Lights up specified led with specified color
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-// Parameter:	 int led (1, 2, 3)
-// Parameter:	 char color (r, g, b, c, m, y, k)
-//************************************
+/// <summary>
+/// Lights up specified led with specified color
+/// </summary>
+/// <param name="led">int led (1, 2, 3)</param>
+/// <param name="color">char color (r, g, b, c, m, y, k)</param>
 void ledLight(int led, char color) {
 	if (led == 1)
 	{
@@ -179,23 +175,5 @@ void ledLight(int led, char color) {
 		default:
 			return;
 		}
-	}
-}
-
-void disco() {
-	for (int i = 0; i < 5; i++)
-	{
-		ledLight(1, 'c');
-		ledLight(2, 'm');
-		ledLight(3, 'y');
-		delay(50);
-		ledLight(1, 'y');
-		ledLight(2, 'c');
-		ledLight(3, 'm');
-		delay(50);
-		ledLight(1, 'm');
-		ledLight(2, 'y');
-		ledLight(3, 'c');
-		delay(50);
 	}
 }
