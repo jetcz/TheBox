@@ -14,7 +14,8 @@ void system() {
 	for (int relay = 0; relay < 4; relay++)
 	{
 		if (Settings.RelayMode[relay] > 1) serviceSchedulers(_dtNow, relay);
-	}	
+	}
+	printLcd();
 }
 /// <summary>
 /// Fill datasets and apply offsets
