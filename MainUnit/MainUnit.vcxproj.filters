@@ -13,17 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="www">
-      <UniqueIdentifier>{c3714f80-4fb7-4690-bcbe-c6c9645b7244}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="www\css">
-      <UniqueIdentifier>{94cb7f53-1fc7-450b-a6de-3226356e56c6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="sample xml">
       <UniqueIdentifier>{7630c559-cdc0-493f-9f3c-f41614c123ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="www">
+      <UniqueIdentifier>{7a0e081a-799e-48fe-9841-bcb22f264376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="www\css">
+      <UniqueIdentifier>{2901400b-0f5a-40cf-a74f-9c5050bbf150}</UniqueIdentifier>
+    </Filter>
     <Filter Include="www\js">
-      <UniqueIdentifier>{b0873bf7-659d-4078-93fc-0c2a57eb4733}</UniqueIdentifier>
+      <UniqueIdentifier>{d383c2b2-9fff-4a78-b5c2-2670f30366cd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -41,52 +41,25 @@
     <None Include="SDsettings.ino" />
     <None Include="Alarms.ino" />
     <None Include="Ntp.ino" />
-    <None Include="index.htm">
-      <Filter>www</Filter>
-    </None>
-    <None Include="graphs1.htm">
-      <Filter>www</Filter>
-    </None>
-    <None Include="graphs2.htm">
-      <Filter>www</Filter>
-    </None>
-    <None Include="menu.css">
-      <Filter>www\css</Filter>
-    </None>
-    <None Include="sched.htm">
-      <Filter>www</Filter>
-    </None>
-    <None Include="system.htm">
-      <Filter>www</Filter>
-    </None>
-    <None Include="index.js">
-      <Filter>www\js</Filter>
-    </None>
-    <None Include="table.css">
-      <Filter>www\css</Filter>
-    </None>
-    <None Include="general.css">
-      <Filter>www\css</Filter>
-    </None>
-    <None Include="graph.css">
-      <Filter>www\css</Filter>
-    </None>
-    <None Include="sched.js">
-      <Filter>www\js</Filter>
-    </None>
-    <None Include="system.js">
-      <Filter>www\js</Filter>
-    </None>
     <None Include="SDscheduler.ino" />
-    <None Include="loader.css">
-      <Filter>www\css</Filter>
-    </None>
-    <None Include="graph2.js">
-      <Filter>www\js</Filter>
-    </None>
-    <None Include="graph1.js">
-      <Filter>www\js</Filter>
-    </None>
+    <None Include="www\graphs1.htm" />
+    <None Include="www\graphs2.htm" />
+    <None Include="www\index.htm" />
+    <None Include="www\sched.htm" />
+    <None Include="www\system.htm" />
+    <None Include="www\css\table.css" />
+    <None Include="www\css\general.css" />
+    <None Include="www\css\graph.css" />
+    <None Include="www\css\loader.css" />
+    <None Include="www\css\menu.css" />
+    <None Include="www\js\graph1.js" />
+    <None Include="www\js\graph2.js" />
+    <None Include="www\js\index.js" />
+    <None Include="www\js\sched.js" />
+    <None Include="www\js\system.js" />
+    <None Include="sample\ini\ETHERNET.INI" />
+    <None Include="sample\ini\GENERAL.INI" />
+    <None Include="sample\ini\RELAYS.INI" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.MainUnit.vsarduino.h">
@@ -100,17 +73,9 @@
     <Text Include="readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="sensors.xml">
-      <Filter>sample xml</Filter>
-    </Xml>
-    <Xml Include="sched.xml">
-      <Filter>sample xml</Filter>
-    </Xml>
-    <Xml Include="stats.xml">
-      <Filter>sample xml</Filter>
-    </Xml>
-    <Xml Include="settings.xml">
-      <Filter>sample xml</Filter>
-    </Xml>
+    <Xml Include="sample\xml\sensors.xml" />
+    <Xml Include="sample\xml\settings.xml" />
+    <Xml Include="sample\xml\sched.xml" />
+    <Xml Include="sample\xml\stats.xml" />
   </ItemGroup>
 </Project>

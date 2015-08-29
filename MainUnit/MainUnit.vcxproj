@@ -60,7 +60,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;C:\Users\Jiří\Documents\Arduino\TheBox\MainUnit;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_BMP085_U;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_BMP085_U\utility;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_Sensor;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_Sensor\utility;C:\Users\Jiří\Documents\Arduino\libraries\DHT;C:\Users\Jiří\Documents\Arduino\libraries\DHT\utility;C:\Users\Jiří\Documents\Arduino\libraries\EmonLib;C:\Users\Jiří\Documents\Arduino\libraries\EmonLib\utility;C:\Program Files (x86)\Arduino\libraries\Ethernet\src;C:\Program Files (x86)\Arduino\libraries\Ethernet\src\utility;C:\Users\Jiří\Documents\Arduino\libraries\IniFile;C:\Users\Jiří\Documents\Arduino\libraries\IniFile\utility;C:\Users\Jiří\Documents\Arduino\libraries\LiquidCrystal_I2C;C:\Users\Jiří\Documents\Arduino\libraries\LiquidCrystal_I2C\utility;C:\Users\Jiří\Documents\Arduino\libraries\QueueArray;C:\Users\Jiří\Documents\Arduino\libraries\QueueArray\utility;C:\Users\Jiří\Documents\Arduino\libraries\RF24;C:\Users\Jiří\Documents\Arduino\libraries\RF24\utility;C:\Users\Jiří\Documents\Arduino\libraries\RTClib;C:\Users\Jiří\Documents\Arduino\libraries\RTClib\utility;C:\Users\Jiří\Documents\Arduino\libraries\RunningAverage;C:\Users\Jiří\Documents\Arduino\libraries\RunningAverage\utility;C:\Program Files (x86)\Arduino\libraries\SD\src;C:\Program Files (x86)\Arduino\libraries\SD\src\utility;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SPI;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SPI\utility;C:\Users\Jiří\Documents\Arduino\libraries\Time;C:\Users\Jiří\Documents\Arduino\libraries\Time\utility;C:\Users\Jiří\Documents\Arduino\libraries\TimeAlarms;C:\Users\Jiří\Documents\Arduino\libraries\TimeAlarms\utility;C:\Users\Jiří\Documents\Arduino\libraries\Timezone;C:\Users\Jiří\Documents\Arduino\libraries\Timezone\utility;C:\Users\Jiří\Documents\Arduino\libraries\Webduino;C:\Users\Jiří\Documents\Arduino\libraries\Webduino\utility;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\jjincb0y.pci\Micro Platforms\default\debuggers;C:\Users\Jiří\Documents\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\tools\avr/avr/include/;C:\Program Files (x86)\Arduino\hardware\tools\avr//avr/include/avr/;C:\Program Files (x86)\Arduino\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;C:\Users\Jiří\Documents\Arduino\TheBox\MainUnit;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_BMP085_U;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_BMP085_U\utility;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_Sensor;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_Sensor\utility;C:\Users\Jiří\Documents\Arduino\libraries\DHT;C:\Users\Jiří\Documents\Arduino\libraries\DHT\utility;C:\Users\Jiří\Documents\Arduino\libraries\EmonLib;C:\Users\Jiří\Documents\Arduino\libraries\EmonLib\utility;C:\Program Files (x86)\Arduino\libraries\Ethernet\src;C:\Program Files (x86)\Arduino\libraries\Ethernet\src\utility;C:\Users\Jiří\Documents\Arduino\libraries\IniFile;C:\Users\Jiří\Documents\Arduino\libraries\IniFile\utility;C:\Users\Jiří\Documents\Arduino\libraries\LiquidCrystal_I2C;C:\Users\Jiří\Documents\Arduino\libraries\LiquidCrystal_I2C\utility;C:\Users\Jiří\Documents\Arduino\libraries\QueueArray;C:\Users\Jiří\Documents\Arduino\libraries\QueueArray\utility;C:\Users\Jiří\Documents\Arduino\libraries\RF24;C:\Users\Jiří\Documents\Arduino\libraries\RF24\utility;C:\Users\Jiří\Documents\Arduino\libraries\RTClib;C:\Users\Jiří\Documents\Arduino\libraries\RTClib\utility;C:\Users\Jiří\Documents\Arduino\libraries\RunningAverage;C:\Users\Jiří\Documents\Arduino\libraries\RunningAverage\utility;C:\Program Files (x86)\Arduino\libraries\SD\src;C:\Program Files (x86)\Arduino\libraries\SD\src\utility;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SPI;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SPI\utility;C:\Users\Jiří\Documents\Arduino\libraries\Time;C:\Users\Jiří\Documents\Arduino\libraries\Time\utility;C:\Users\Jiří\Documents\Arduino\libraries\TimeAlarms;C:\Users\Jiří\Documents\Arduino\libraries\TimeAlarms\utility;C:\Users\Jiří\Documents\Arduino\libraries\Timezone;C:\Users\Jiří\Documents\Arduino\libraries\Timezone\utility;C:\Users\Jiří\Documents\Arduino\libraries\Webduino;C:\Users\Jiří\Documents\Arduino\libraries\Webduino\utility;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\jjincb0y.pci\Micro Platforms\default\debuggers;C:\Users\Jiří\Documents\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_BMP085_U;C:\Users\Jiří\Documents\Arduino\libraries\Adafruit_Sensor;C:\Users\Jiří\Documents\Arduino\libraries\DHT;C:\Users\Jiří\Documents\Arduino\libraries\EmonLib;C:\Program Files (x86)\Arduino\libraries\Ethernet\src;C:\Users\Jiří\Documents\Arduino\libraries\IniFile;C:\Users\Jiří\Documents\Arduino\libraries\LiquidCrystal_I2C;C:\Users\Jiří\Documents\Arduino\libraries\QueueArray;C:\Users\Jiří\Documents\Arduino\libraries\RF24;C:\Users\Jiří\Documents\Arduino\libraries\RTClib;C:\Users\Jiří\Documents\Arduino\libraries\RunningAverage;C:\Program Files (x86)\Arduino\libraries\SD\src;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SPI;C:\Users\Jiří\Documents\Arduino\libraries\Time;C:\Users\Jiří\Documents\Arduino\libraries\TimeAlarms;C:\Users\Jiří\Documents\Arduino\libraries\Timezone;C:\Users\Jiří\Documents\Arduino\libraries\Webduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\jjincb0y.pci\Micro Platforms\default\debuggers;C:\Users\Jiří\Documents\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\utility;C:\Program Files (x86)\Arduino\hardware\tools\avr/avr/include/;C:\Program Files (x86)\Arduino\hardware\tools\avr//avr/include/avr/;C:\Program Files (x86)\Arduino\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>C:\Users\Jiří\Documents\Arduino\TheBox\MainUnit\Visual Micro\.MainUnit.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -76,31 +76,15 @@
     <None Include="DataTypesConversion.ino">
       <FileType>CppCode</FileType>
     </None>
-    <None Include="general.css" />
-    <None Include="graph.css" />
-    <None Include="graph1.js" />
-    <None Include="graph2.js" />
-    <None Include="graphs1.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="graphs2.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="index.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="index.js" />
     <None Include="Lcd.ino">
       <FileType>CppCode</FileType>
     </None>
     <None Include="Led.ino">
       <FileType>CppCode</FileType>
     </None>
-    <None Include="loader.css" />
     <None Include="MainUnit.ino">
       <FileType>CppCode</FileType>
     </None>
-    <None Include="menu.css" />
     <None Include="Misc.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -113,10 +97,9 @@
     <None Include="Relays.ino">
       <FileType>CppCode</FileType>
     </None>
-    <None Include="sched.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="sched.js" />
+    <None Include="sample\ini\ETHERNET.INI" />
+    <None Include="sample\ini\GENERAL.INI" />
+    <None Include="sample\ini\RELAYS.INI" />
     <None Include="SDscheduler.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -129,11 +112,6 @@
     <None Include="SetupFunctions.ino">
       <FileType>CppCode</FileType>
     </None>
-    <None Include="system.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="system.js" />
-    <None Include="table.css" />
     <None Include="Thingspeak.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -142,6 +120,31 @@
     </None>
     <None Include="Weather.ino">
       <FileType>CppCode</FileType>
+    </None>
+    <None Include="www\css\general.css" />
+    <None Include="www\css\graph.css" />
+    <None Include="www\css\loader.css" />
+    <None Include="www\css\menu.css" />
+    <None Include="www\css\table.css" />
+    <None Include="www\graphs1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="www\graphs2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="www\index.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="www\js\graph1.js" />
+    <None Include="www\js\graph2.js" />
+    <None Include="www\js\index.js" />
+    <None Include="www\js\sched.js" />
+    <None Include="www\js\system.js" />
+    <None Include="www\sched.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="www\system.htm">
+      <DeploymentContent>true</DeploymentContent>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -152,10 +155,10 @@
     <Text Include="readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="settings.xml" />
-    <Xml Include="sched.xml" />
-    <Xml Include="sensors.xml" />
-    <Xml Include="stats.xml" />
+    <Xml Include="sample\xml\sched.xml" />
+    <Xml Include="sample\xml\sensors.xml" />
+    <Xml Include="sample\xml\settings.xml" />
+    <Xml Include="sample\xml\stats.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

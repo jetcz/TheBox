@@ -12,7 +12,7 @@
 #include <IniFile.h>
 #include <QueueArray.h>
 #include <RunningAverage.h>
-#include "avr/pgmspace.h"
+#include "avr/pgmspace.h"f
 #include "nRF24L01.h"
 #include "RF24.h"
 //slightly modified libs, can use default
@@ -33,6 +33,7 @@ const float lVccCalibration = 1100000;
 
 //setup pins
 const byte RESET_ETH_SHIELD_PIN = 14;
+const byte RESET_WIFI_PIN = 15;
 const byte DHT22_PIN = 9;
 const byte PIR_PIN = 19;
 const byte ETH_SELECT_PIN = 10;
@@ -961,6 +962,29 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 	server.flushBuf();
 	resetFunc();
 }
+
+void rebootWifiCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+	ledLight(1, 'c');
+	server.httpSuccess();
+	P(message) =
+		"<!DOCTYPE html><html><head>"
+		"<meta http-equiv=\"refresh\" content=\"35; url=system.htm\">"
+		"<script language=\"javascript\">"
+		"setTimeout(function(){ location.href = \"system.htm\" }, 35000);"
+		"</script>"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"</head>"
+		"<body>"
+		"<div class=\"content\" style=\"font-weight:bold\">"
+		"Rebooting wifi, please wait..."
+		"</div>"
+		"</body>"
+		"</html>";
+	server.printP(message);
+	server.flushBuf();
+	resetWifi();
+}
 void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	const static char DHCP[] PROGMEM = "DHCP";
@@ -1108,6 +1132,7 @@ void setup()
 	webserver.addCommand("offsets.default", offsetsDefaultCmd);		//delete settings data from sd
 	webserver.addCommand("network.data", networkDataCmd);			//post data
 	webserver.addCommand("reboot", rebootCmd);						//reboot arduino
+	webserver.addCommand("rebootwifi", rebootWifiCmd);				//reboot wifi
 	webserver.begin();
 
 	//datasets setup

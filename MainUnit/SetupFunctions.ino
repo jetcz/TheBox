@@ -25,7 +25,13 @@ void setupSD() {
 	ledLight(1, 'g');
 }
 
-void setupPins(){
+void setupPins() {
+
+	pinMode(RESET_ETH_SHIELD_PIN, OUTPUT);
+	digitalWrite(RESET_ETH_SHIELD_PIN, HIGH);
+
+	pinMode(RESET_WIFI_PIN, OUTPUT);
+	digitalWrite(RESET_WIFI_PIN, HIGH);
 
 	pinMode(PIR_PIN, INPUT);			//pir pin
 
@@ -79,7 +85,7 @@ void setupWire() {
 #endif
 }
 
-void setupBMP(){
+void setupBMP() {
 	ledLight(1, 'y');
 	if (!bmp.begin())
 	{
@@ -102,7 +108,7 @@ void setupBMP(){
 	ledLight(1, 'g');
 }
 
-void setupRTC(){
+void setupRTC() {
 	ledLight(1, 'y');
 	if (!rtc.begin())
 	{
@@ -140,7 +146,7 @@ void setupRTC(){
 	dtSysStart = now();
 }
 
-void setupRadio(){
+void setupRadio() {
 	bool _bSuccess = false;
 	_bSuccess = radio.begin();
 	radio.setAutoAck(1);                    // Ensure autoACK is enabled
@@ -175,8 +181,8 @@ void setupRadio(){
 }
 
 void setupEthernet() {
-	resetEthShield(RESET_ETH_SHIELD_PIN);	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
 
+	resetEthShield();	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
 	if (Settings.DHCP)
 	{
 		ledLight(1, 'y');
@@ -241,7 +247,7 @@ void setupEthernet() {
 	W5100.setRetransmissionCount(3);
 }
 
-void setupLCD(){
+void setupLCD() {
 	lcd.begin(20, 4);
 	lcd.clear();
 #if DEBUG

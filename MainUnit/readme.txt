@@ -5,9 +5,6 @@ Changes:
 Webduino library - WebServer.h:
 change WEBDUINO_COMMANDS_COUNT to 16
 
-TimeAlarms library
-Implement Alarm.active() function
-
 EmonLib library
 Completely custom implementation (non-blocking behaviour, calculate two outlets at once)
 

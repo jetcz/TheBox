@@ -5,17 +5,34 @@
 // Access:   	 public 
 // Returns:  	 void
 // Qualifier:	
-// Parameter:	 int pin
 //************************************
-void resetEthShield(int pin) {
-	pinMode(pin, OUTPUT);
+void resetEthShield() {
 #if DEBUG
 	Serial.println(F("Reseting Ethernet Shield"));
 #endif
-	digitalWrite(pin, LOW);
+	digitalWrite(RESET_ETH_SHIELD_PIN, LOW);
 	delay(1);
-	digitalWrite(pin, HIGH);
+	digitalWrite(RESET_ETH_SHIELD_PIN, HIGH);
 	delay(250);
+}
+
+
+//************************************
+// Method:   	 resetEthShield
+// Description:  Performs hardware reset of the wifi router
+// Access:   	 public 
+// Returns:  	 void
+// Qualifier:	
+//************************************
+void resetWifi() {
+#if DEBUG
+	Serial.println(F("Reseting Wifi"));
+#endif
+	digitalWrite(RESET_WIFI_PIN, LOW);
+	delay(100);
+	digitalWrite(RESET_WIFI_PIN, HIGH);
+	delay(35000);
+	resetEthShield();
 }
 
 
