@@ -1,8 +1,9 @@
 /// <summary>
-/// Calculates weather forecast from relative changes in atmospheric pressure.
-/// This needs to be called every 60s.
-/// Algorithm found here http://www.freescale.com/files/sensors/doc/app_note/AN3914.pdf
-/// Code ripped from here http://forum.micasaverde.com/index.php?topic=23394.0 and modified to use runnig average library to save ram
+/// Calculates weather forecast from relative changes in atmospheric pressure. This needs to be
+/// called every 60s. Algorithm found here
+/// http://www.freescale.com/files/sensors/doc/app_note/AN3914.pdf Code ripped from here
+/// http://forum.micasaverde.com/index.php?topic=23394.0 and modified to use runnig average library
+/// to save ram
 /// </summary>
 void weatherForecast() {
 	static byte _nMinuteCnt = 0;

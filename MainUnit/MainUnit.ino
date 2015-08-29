@@ -15,6 +15,7 @@
 #include "avr/pgmspace.h"
 #include "nRF24L01.h"
 #include "RF24.h"
+#include <avr/wdt.h>
 //slightly modified libs, can use default
 #include <dht.h>
 #include <Ethernet.h>
@@ -34,7 +35,7 @@ const float lVccCalibration = 1100000;
 const byte RESET_ETH_SHIELD_PIN = 14;
 const byte RESET_WIFI_PIN = 15;
 const byte DHT22_PIN = 9;
-const byte PIR_PIN = 19;
+const byte PIR_PIN = 41;
 const byte ETH_SELECT_PIN = 10;
 const byte SD_SELECT_PIN = 4;
 const byte RELAY_PIN[4] = { 22, 24, 26, 28 };
@@ -43,8 +44,8 @@ const byte LED2[3] = { 5, 6, 7 };
 const byte LED3[3] = { 11, 12, 13 };
 const byte LCD_SWITCH[3] = { 32, 34, 36 };
 const byte LCD_SWITCH_PWR_PIN = 30;
-const byte RADIO_SELECT_PIN = 18;
-const byte RADIO_ENABLE_PIN = 17;
+const byte RADIO_SELECT_PIN = 49;
+const byte RADIO_ENABLE_PIN = 47;
 const byte VOLTAGE_PIN = 54;
 const byte CURRENT_LEFT_PIN = 63;
 const byte CURRENT_LEFT_PWR_PIN = 64;
@@ -1089,6 +1090,8 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 
 void setup()
 {
+	wdt_disable(); //disable watchdog
+
 	setupSerial();
 	setupPins();
 	setupSD();
@@ -1147,6 +1150,8 @@ void setup()
 	emon.voltage(VOLTAGE_PIN, 939, -0.24);  // Voltage: input pin, calibration, phase_shift
 	//Calibration process: connect a known load and adjust the calibration constants so the reported wattage is the same as the load
 	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 18, 17.25); //Current: input pin, input pin, calibration, calibration
+
+	wdt_enable(WDTO_8S); //enable watchdog
 
 #if DEBUG
 	Serial.println(F("Setup Done"));

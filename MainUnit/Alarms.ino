@@ -6,6 +6,7 @@ void printDebug() {
 /// Helper method - service call which could be in main loop(), but executing every seconds is good enough
 /// </summary>
 void system() {
+	wdt_reset();	//reset watchdog
 	DateTime _dtNow = now();
 	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(_dtNow);
 	sNow = getDateTimeString(_dtNow);
