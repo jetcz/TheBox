@@ -23,11 +23,10 @@ void setupPins() {
 	digitalWrite(6, LOW);
 
 	//setup data pins
-	pinMode(DHT22_DATA_PIN, INPUT);
+	//pinMode(DHT22_DATA_PIN, INPUT); //not needed, setting up is done each time when powering up the sensor, refer to powerSensors()
 	pinMode(PHOTORESISTOR_DATA_PIN, INPUT);
 	pinMode(DS_DATA_PIN, INPUT);
 	pinMode(HUMIDITY_DATA_PIN, INPUT);
-
 }
 
 /// <summary>

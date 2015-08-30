@@ -1,4 +1,4 @@
-#define DEBUG true
+#define DEBUG false
 
 #include <RunningAverage.h>
 #include <SPI.h>
@@ -9,7 +9,7 @@
 #include <Ports.h>
 #include <nRF24L01.h>
 #include <RF24.h> 
-#include "Payload.h" //this must the same struct as in main unit
+#include "Payload.h" //this must the same struct as in the main unit
 
 /* pin mappings
 a0	14
@@ -65,6 +65,7 @@ void setup() {
 	ds.requestTemperatures();
 	nRainTips = 0;
 	interrupts();	
+
 }
 
 void loop() {
@@ -83,3 +84,4 @@ void loop() {
 #endif // DEBUG
 
 }
+

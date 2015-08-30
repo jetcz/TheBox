@@ -5,20 +5,19 @@ void sendPayload() {
 	radio.powerUp();
 	radio.stopListening();
 
-	if (radio.write(&payload, sizeof(payload))){
+	if (radio.write(&payload, sizeof(payload))) {
+		ledLight('g', true);
 #if DEBUG
 		Serial.println(F("Radio message sent, ACK OK"));
 #endif
-		ledLight('g', true);
-
 	}
 	else
 	{
 		payload.FailedMsgs++;
+		ledLight('r', true);
 #if DEBUG
 		Serial.println(F("Radio message sent, NO ACK!"));
 #endif
-		ledLight('r', true);
 	}
 
 	radio.powerDown();

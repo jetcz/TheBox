@@ -4,11 +4,10 @@
 void getPayload() {
 
 	//get DHT data
-	digitalWrite(DHT22_PWR_PIN, HIGH);
-	Sleepy::loseSomeTime(1500);
+	powerSensors(true, true);
 	nDHTStatus = DHT.read22(DHT22_DATA_PIN);
-	digitalWrite(DHT22_PWR_PIN, LOW);
-	if (nDHTStatus == 0){
+	powerSensors(false, true);
+	if (nDHTStatus == 0) {
 		payload.AirTemp = getAirTemperature() * 10;				//remoteTemperature
 		payload.AirHum = getAirHumidity() * 10;					//remoteHumidity
 		payload.AirHumidex = getAirHumidex() * 10;				//remoteHumidex
@@ -20,13 +19,11 @@ void getPayload() {
 	payload.SoilTemp = (_fVal == (85 || -127)) ? InvalidValue * 10 : _fVal * 10;	//remoteSoilTemperature
 
 	//get simple analog sensors data
-	digitalWrite(PHOTORESISTOR_PWR_PIN, HIGH);
-	digitalWrite(HUMIDITY_PWR_PIN, HIGH);
+	powerSensors(true, false);
 	payload.Vcc = getVcc();
 	payload.SoilHum = getSoilHumidity() * 10;						//remoteSoilHumidity
 	payload.Light = getLight() * 10;								//remoteLight
-	digitalWrite(PHOTORESISTOR_PWR_PIN, LOW);
-	digitalWrite(HUMIDITY_PWR_PIN, LOW);
+	powerSensors(false, false);
 
 	//get rain
 	noInterrupts();
@@ -44,6 +41,43 @@ void getPayload() {
 }
 
 /// <summary>
+/// Power up/down the sensors.
+/// DHT22 notes:
+/// For some reason we have to put the data pin low aswell otherwise the idle amperage is about 1.8mA.
+/// If we put the data pin low, total amperage is about 12.7uA.
+/// This method also handles the necessary delay after powering up the DHT22, which is empirically about 1500ms, otherwise readings are unsuccessful.
+/// </summary>
+/// <param name="pwr">on/off</param>
+/// <param name="dht">power DHT22 separetely</param>
+void powerSensors(bool pwr, bool dht) {
+	if (dht)
+	{
+		if (pwr)
+		{
+			pinMode(DHT22_DATA_PIN, INPUT);
+			digitalWrite(DHT22_PWR_PIN, HIGH);
+			Sleepy::loseSomeTime(1500);
+		}
+		else {
+			pinMode(DHT22_DATA_PIN, OUTPUT);	//for some reason we have to put the data pin low or the idle power consumption is about 1.8mA
+			digitalWrite(DHT22_DATA_PIN, LOW);
+			digitalWrite(DHT22_PWR_PIN, LOW);
+		}
+	}
+	else {
+		if (pwr)
+		{
+			digitalWrite(PHOTORESISTOR_PWR_PIN, HIGH);
+			digitalWrite(HUMIDITY_PWR_PIN, HIGH);
+		}
+		else {
+			digitalWrite(PHOTORESISTOR_PWR_PIN, LOW);
+			digitalWrite(HUMIDITY_PWR_PIN, LOW);
+		}
+	}
+}
+
+/// <summary>
 /// Get running average of remote air temperature
 /// </summary>
 /// <returns></returns>
@@ -57,7 +91,7 @@ float getAirTemperature() {
 /// Get running average of remote air humidity
 /// </summary>
 /// <returns></returns>
-float getAirHumidity(){
+float getAirHumidity() {
 	static RunningAverage AirHum(3);
 	AirHum.addValue(DHT.humidity);
 	return AirHum.getAverage();
@@ -121,7 +155,7 @@ float getSoilHumidity() {
 /// Get running average of reference voltage (5V)
 /// </summary>
 /// <returns></returns>
-float getVcc(){
+float getVcc() {
 	static RunningAverage _raVcc(3);
 	_raVcc.addValue(float(readVcc()));
 	return _raVcc.getAverage();
