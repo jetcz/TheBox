@@ -29,7 +29,7 @@ long readVcc() {
 /// Amount of free RAM in Bytes
 /// </summary>
 /// <returns></returns>
-int freeRam() {
+int getFreeRam() {
 	extern int __heap_start, *__brkval;
 	int _nVal;
 	return (int)&_nVal - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);

@@ -69,3 +69,14 @@ void ledLight(char color, bool flash) {
 
 	if (flash) ledLight('k', false);
 }
+
+/// <summary>
+/// Lights up specified led for specified duration in ms
+/// </summary>
+/// <param name="color"></param>
+/// <param name="time"></param>
+void ledLight(char color, int time) {
+	ledLight(color, false);
+	delay(time);
+	ledLight('k', false);
+}

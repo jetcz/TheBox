@@ -65,14 +65,14 @@ void setup() {
 	ds.requestTemperatures();
 	nRainTips = 0;
 	interrupts();	
-
+	ledLight('w', 500);
 }
 
 void loop() {
 	lDelay = millis();
 
 	getPayload();	//read sensor data
-	sendPayload();	//try to send data over the air; we use hardware auto ACK and retransmit AND manually retransmit few times if there is no success
+	sendPayload();	//try to send data over the air; we use hardware auto ACK and retransmit
 
 	//go to sleep again for 20 seconds minus the time it took to read and send data
 	lDelay = millis() - lDelay;

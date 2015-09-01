@@ -93,7 +93,7 @@ void setupPins() {
 void setupWire() {
 	Wire.begin();
 
-	TWSR &= 0xFC;                                // set I2C frequency of 400K
+	TWSR &= 0xFC;
 
 	//I2C bus speed [kHz]
 	//0=1000
@@ -316,14 +316,12 @@ void setupAlarms() {
 	Alarm.timerRepeat(Settings.RadioMsgInterval, getFailedRadioMessages); //count failed radio messages by default interval (gets reinitialized once we get first radio msg)
 	Alarm.timerRepeat(1, system);
 	Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
-	Alarm.timerRepeat(Settings.UpdatePWRSensorsInterval, getPWRData); //get sensor data every x ms
-	if (PRINT_SUMMARY) printSummaryAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+	Alarm.timerRepeat(Settings.UpdatePWRSensorsInterval, getPWRData); //get sensor data every x ms	
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	rainPerHourAlarm = Alarm.timerRepeat(60, getRainPerHour); //cumulative rainfall
 	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay); //cumulative rainfall
 	Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC with NTP every 24h
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
-
 	//these get enabled with first radio msg
 	Alarm.disable(rainPerHourAlarm);
 	Alarm.disable(rainPerDayAlarm);
@@ -331,6 +329,9 @@ void setupAlarms() {
 	if (!Settings.DHCP) Alarm.disable(dhcpAlarm);
 	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
 
+#if PRINT_SUMMARY && DEBUG
+	printSummaryAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
+#endif
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
 	Alarm.timerRepeat(3, printDebug);

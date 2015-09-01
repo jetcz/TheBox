@@ -32,7 +32,7 @@ void getPayload() {
 
 	//get sys info
 	payload.Uptime = getUptime();									//uptime
-	payload.FreeRam = freeRam();									//freeRam
+	payload.FreeRam = getFreeRam();									//freeRam
 
 #if DEBUG
 	payload.print();

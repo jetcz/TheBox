@@ -52,7 +52,6 @@ void setupRadio(){
 #if DEBUG
 		Serial.println(F("Radio initialized"));
 #endif
-		ledLight('g', true);
 	}
 	else {
 #if DEBUG
