@@ -31,6 +31,7 @@
 #include "Payload.h"
 #include "SystemSettings.h"
 #include "RelayScheduler.h"
+#include "PrivateData.h" //this is not in source control - it contains my API keys
 
 
 //my arduino specific calibration constant for reading vcc
@@ -1138,16 +1139,18 @@ void setup()
 	webserver.addCommand("rebootwifi", rebootWifiCmd);				//reboot wifi
 	webserver.begin();
 
+	PrivateData pd;
+
 	//datasets setup
-	MainDS.APIkey = "FNHSHUE6A3XKP71C";
+	MainDS.APIkey = &pd.MainDSAPIKey;
 	MainDS.Size = 8;
 	MainDS.isValid = true;
 
-	RemoteDS.APIkey = "OL1GVYUB2HFK7E2M";
+	RemoteDS.APIkey = &pd.RemoteUnitAPIKey;
 	RemoteDS.Size = 8;
 	RemoteDS.isValid = false;
 
-	SystemDS.APIkey = "GNQST00GBW05EYGC";
+	SystemDS.APIkey = &pd.SystemAPIKey;
 	SystemDS.Size = 8;
 	SystemDS.isValid = true;
 

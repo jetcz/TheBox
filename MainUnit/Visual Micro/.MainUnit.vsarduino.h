@@ -91,6 +91,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <Misc.ino>
 #include <Ntp.ino>
 #include <Payload.h>
+#include <PrivateData.h>
 #include <Radio.ino>
 #include <RelayScheduler.h>
 #include <Relays.ino>

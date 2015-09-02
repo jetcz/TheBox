@@ -29,7 +29,7 @@ void updateThingSpeak(DataSet ds){
 		client.print(F("Host: api.thingspeak.com\n"));
 		client.print(F("Connection: Keep-Alive\n"));
 		client.print(F("X-THINGSPEAKAPIKEY: "));
-		client.print(ds.APIkey + "\n");
+		client.print(*ds.APIkey + "\n");
 		client.print(F("headers: false\n"));
 		client.print(F("Content-Type: application/x-www-form-urlencoded\n"));
 		client.print(F("Content-Length: "));
