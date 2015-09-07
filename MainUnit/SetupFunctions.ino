@@ -218,7 +218,6 @@ void setupRadio() {
 /// Setup ethernet shield W5100
 /// </summary>
 void setupEthernet() {
-
 	resetEthShield();	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
 	if (Settings.DHCP)
 	{
@@ -226,7 +225,7 @@ void setupEthernet() {
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Obtaining DHCP lease"));
-
+		
 		if (Ethernet.begin(Settings.MAC) == 0) {
 #if DEBUG
 			Serial.println(F("Failed to initialize ethernet using DHCP"));
@@ -309,7 +308,7 @@ void setupAlarms() {
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	rainPerHourAlarm = Alarm.timerRepeat(60, getRainPerHour); //cumulative rainfall
 	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay); //cumulative rainfall
-	Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC with NTP every 24h
+	Alarm.timerRepeat(3600, syncRTCwithNTP); //sync RTC with NTP every hour
 	//dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 	//these get enabled with first radio msg
 	Alarm.disable(rainPerHourAlarm);

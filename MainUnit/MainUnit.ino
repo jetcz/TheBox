@@ -1,5 +1,9 @@
-#define PRINT_SUMMARY true
-#define DEBUG true
+#define PRINT_SUMMARY true	//print sensor summary every reading
+#define DEBUG true			//other debug messages
+
+//this is where are stored aditional css and js files
+//if you change the host, dont forget to update also html files on SD card
+#define HOST "http://jet.php5.cz/thebox/"
 
 #include <Wire.h>
 #include <SPI.h>
@@ -155,7 +159,7 @@ P(messageSDFail) =
 "<script language=\"javascript\">"
 "setTimeout(function(){ location.reload(); }, 2000);"
 "</script>"
-"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 "</head>"
 "<body>"
 "<div class=\"content\" style=\"color:red;font-weight:bold\">"
@@ -486,7 +490,7 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 		"<script language=\"javascript\">"
 		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"color:green;font-weight:bold\">"
@@ -501,7 +505,7 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 		"<script language=\"javascript\">"
 		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"color:red;font-weight:bold\">"
@@ -526,7 +530,7 @@ void schedDeleteCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		"<script language=\"javascript\">"
 		"setTimeout(function(){ location.href = \"sched.htm\" }, 1000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -778,7 +782,7 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 			"<script language=\"javascript\">"
 			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
@@ -793,7 +797,7 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 			"<script language=\"javascript\">"
 			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:red;font-weight:bold\">"
@@ -861,7 +865,7 @@ void offsetsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			"<script language=\"javascript\">"
 			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
@@ -876,7 +880,7 @@ void offsetsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			"<script language=\"javascript\">"
 			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:red;font-weight:bold\">"
@@ -901,7 +905,7 @@ void offsetsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char *
 		"<script language=\"javascript\">"
 		"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -924,7 +928,7 @@ void settingsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char 
 		"<script language=\"javascript\">"
 		"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -947,7 +951,7 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 		"<script language=\"javascript\">"
 		"setTimeout(function(){ location.href = \"system.htm\" }, 3000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -957,6 +961,7 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 		"</html>";
 	server.printP(message);
 	server.flushBuf();
+	Alarm.delay(100);
 	resetFunc();
 }
 
@@ -966,11 +971,11 @@ void rebootWifiCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 	server.httpSuccess();
 	P(message) =
 		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"35; url=system.htm\">"
+		"<meta http-equiv=\"refresh\" content=\"36; url=system.htm\">"
 		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"system.htm\" }, 35000);"
+		"setTimeout(function(){ location.href = \"system.htm\" }, 36000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -980,6 +985,7 @@ void rebootWifiCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 		"</html>";
 	server.printP(message);
 	server.flushBuf();
+	Alarm.delay(100);
 	resetWifi();
 }
 void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -1051,7 +1057,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			"setTimeout(function(){ location.href = \"http://";
 		P(saveNetSucces2) = "system.htm\" }, 3000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
@@ -1065,7 +1071,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			"<script language=\"javascript\">"
 			"setTimeout(function(){ location.href = \"system.htm\" }, 4000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"http://jet.php5.cz/thebox/css/general.css\">"
+			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:red;font-weight:bold\">"

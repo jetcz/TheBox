@@ -6,27 +6,30 @@ void resetEthShield() {
 	Serial.println(F("Reseting Ethernet Shield"));
 #endif
 	digitalWrite(RESET_ETH_SHIELD_PIN, LOW);
-	Alarm.delay(1);
+	delay(1);
 	digitalWrite(RESET_ETH_SHIELD_PIN, HIGH);
-	Alarm.delay(250);
+	delay(250);
 }
 
 /// <summary>
 /// Performs hardware reset of the wifi router
 /// </summary>
 void resetWifi() {
+	ledLight(3, 'k');
 #if DEBUG
 	Serial.println(F("Reseting Wifi"));
 #endif
+	if (Alarm.active(updateTSAlarm)) Alarm.disable(updateTSAlarm);
 	digitalWrite(RESET_WIFI_PIN, LOW);
 	Alarm.delay(100);
 	digitalWrite(RESET_WIFI_PIN, HIGH);
-	Alarm.delay(35000);
+	Alarm.delay(36000);
 	setupEthernet();
+	if (Settings.TSenabled) Alarm.enable(updateTSAlarm);
 }
 
 /// <summary>
-/// Check whether ethernet shiled and arduino needs to be restared
+/// Check whether ethernet shield and arduino needs to be restared
 /// </summary>
 void needRestart() {
 	// Check if Ethernet needs to be restarted
