@@ -50,9 +50,6 @@ void setupPins() {
 	pinMode(ETH_SELECT_PIN, OUTPUT);    // W5100 chip select at pin 10
 	digitalWrite(ETH_SELECT_PIN, HIGH);
 
-	pinMode(LCD_SWITCH_PWR_PIN, OUTPUT);//lcd switch current sink
-	digitalWrite(LCD_SWITCH_PWR_PIN, LOW);
-
 	pinMode(PIR_PIN, INPUT);			//pir pin
 	//turn off relays
 	for (int i = 0; i < 4; i++)
@@ -71,16 +68,8 @@ void setupPins() {
 	}
 
 	//current sensor right socket
-	pinMode(CURRENT_RIGHT_PWR_PIN, OUTPUT);	//vcc
-	digitalWrite(CURRENT_RIGHT_PWR_PIN, HIGH);
-	pinMode(CURRENT_RIGHT_GND_PIN, OUTPUT);	//gnd
-	digitalWrite(CURRENT_RIGHT_GND_PIN, LOW);
-
-	//current sensor left socket
-	pinMode(CURRENT_LEFT_PWR_PIN, OUTPUT);	//vcc
-	digitalWrite(CURRENT_LEFT_PWR_PIN, HIGH);
-	pinMode(CURRENT_LEFT_GND_PIN, OUTPUT);	//gnd
-	digitalWrite(CURRENT_LEFT_GND_PIN, LOW);
+	pinMode(CURRENT_LEFT_PIN, INPUT);
+	pinMode(CURRENT_RIGHT_PIN, INPUT);
 
 #if DEBUG
 	Serial.println(F("Pins initialized and set"));
@@ -107,7 +96,7 @@ void setupWire() {
 	//24=250
 	//32=200
 	//72=100 (default)
-	TWBR = 72;
+	TWBR = 2;
 
 #if DEBUG
 	long i2c_prescaler = pow(4, TWSR & 0x03);
@@ -220,7 +209,7 @@ void setupRadio() {
 		lcd.print(F("Radio failed to"));
 		lcd.setCursor(0, 1);
 		lcd.print(F("initialize!"));
-		ledLight(2, 'm');
+		ledLight(2, 'r');
 		Alarm.delay(2000);
 	}
 }
@@ -321,12 +310,12 @@ void setupAlarms() {
 	rainPerHourAlarm = Alarm.timerRepeat(60, getRainPerHour); //cumulative rainfall
 	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay); //cumulative rainfall
 	Alarm.timerRepeat(86400, syncRTCwithNTP); //sync RTC with NTP every 24h
-	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
+	//dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 	//these get enabled with first radio msg
 	Alarm.disable(rainPerHourAlarm);
 	Alarm.disable(rainPerDayAlarm);
 
-	if (!Settings.DHCP) Alarm.disable(dhcpAlarm);
+	//if (!Settings.DHCP) Alarm.disable(dhcpAlarm);
 	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
 
 #if PRINT_SUMMARY && DEBUG

@@ -10,6 +10,9 @@
 /// <returns>Unix time, that is, seconds from 1970 - 01 - 01T00:00.</returns>
 unsigned long ntpUnixTime(UDP &udp)
 {
+#if DEBUG
+		Serial.println(F("Syncing clock with NTP"));
+#endif
 	static int _nUDPInited = udp.begin(123); // open socket on arbitrary port
 
 	// Only the first four bytes of an outgoing NTP packet need to be set

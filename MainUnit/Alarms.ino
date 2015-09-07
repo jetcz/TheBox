@@ -6,7 +6,7 @@ void printDebug() {
 /// Helper method - service call which could be in main loop(), but executing every seconds is good enough
 /// </summary>
 void system() {
-	wdt_reset();	//reset watchdog
+	wdt_reset();
 	DateTime _dtNow = now();
 	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(_dtNow);
 	sNow = getDateTimeString(_dtNow);
@@ -272,6 +272,7 @@ void syncRTCwithNTP() {
 /// Maintain DHCP lease if used
 /// </summary>
 void dhcp() {
+	wdt_disable();
 	if (Ethernet.maintain() % 2 == 1) {  //renew dhcp lease
 		bLCDRefreshing = false;
 #if DEBUG
@@ -298,6 +299,7 @@ void dhcp() {
 #endif
 		ledLight(1, 'g');
 	}
+	wdt_enable(WDTO_8S);
 }
 
 

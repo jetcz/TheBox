@@ -25,6 +25,8 @@ public:
 	/// </summary>
 	DataSet() {
 		TimeStamp = 0;
+		Size = 8;
+		isValid = true;
 		ThingSpeakStr.reserve(70);
 	}
 
@@ -32,7 +34,7 @@ public:
 	float Data[8];
 	byte Size; //size is used to determine length to the array. It is changed manulay in the code. Refer to alarms.ino
 	bool isValid;
-	String* APIkey;
+	String APIkey;
 	DateTime TimeStamp;
 	String ThingSpeakStr;
 
@@ -41,9 +43,9 @@ public:
 	float *Humidity = &Data[1]; //not for system DS
 	float *Humidex = &Data[2]; //not for system DS
 
-							   /// <summary>
-							   /// Create ThingSpeak string
-							   /// </summary>
+	/// <summary>
+	/// Create ThingSpeak string
+	/// </summary>
 	void GetTSString() {
 		ThingSpeakStr = "";
 		for (int i = 0; i < this->Size; i++)

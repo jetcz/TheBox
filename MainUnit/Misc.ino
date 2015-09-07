@@ -30,7 +30,7 @@ void resetWifi() {
 /// </summary>
 void needRestart() {
 	// Check if Ethernet needs to be restarted
-	if ((nFailedCounter % Settings.RestartEthernetThreshold) == 0 && nFailedCounter != 0) {
+	if (nFailedCounter % Settings.RestartEthernetThreshold == 0 && nFailedCounter != 0) {
 		ledLight(1, 'r');
 		ledLight(3, 'r');
 #if DEBUG
@@ -95,20 +95,20 @@ void needRestart() {
 /// <returns></returns>
 bool isRemoteDataSetValid(DateTime t) {
 	bool _bValid;
-	TimeSpan _tsDiff = t - RemoteDS.TimeStamp;
-	if (_tsDiff.totalseconds() <= Settings.RadioMsgInterval)
+	unsigned long _lDiff = t.unixtime() - RemoteDS.TimeStamp.unixtime();
+	if (_lDiff <= Settings.RadioMsgInterval)
 	{
 		_bValid = true;
 		ledLight(2, 'g');
 	}
 
-	if (_tsDiff.totalseconds() > Settings.RadioMsgInterval && _tsDiff.totalseconds() <= Settings.RemoteDataSetTimeout)
+	if (_lDiff > Settings.RadioMsgInterval && _lDiff <= Settings.RemoteDataSetTimeout)
 	{
 		_bValid = true;
 		ledLight(2, 'y');
 	}
 
-	if (_tsDiff.totalseconds() > Settings.RemoteDataSetTimeout)
+	if (_lDiff > Settings.RemoteDataSetTimeout)
 	{
 		_bValid = false;
 		ledLight(2, 'r');

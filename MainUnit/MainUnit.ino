@@ -1,4 +1,4 @@
-#define PRINT_SUMMARY false
+#define PRINT_SUMMARY true
 #define DEBUG true
 
 #include <Wire.h>
@@ -33,32 +33,27 @@
 #include "RelayScheduler.h"
 #include "PrivateData.h" //this is not in source control - it contains my API keys
 
-
 //my arduino specific calibration constant for reading vcc
 const float lVccCalibration = 1100000;
 
 //setup pins
-const byte RESET_ETH_SHIELD_PIN = 14;
-const byte RESET_WIFI_PIN = 15;
+const byte RESET_ETH_SHIELD_PIN = 2;
+const byte RESET_WIFI_PIN = 42;
 const byte DHT22_PIN = 9;
 const byte PIR_PIN = 41;
 const byte ETH_SELECT_PIN = 10;
 const byte SD_SELECT_PIN = 4;
-const byte RELAY_PIN[4] = { 22, 24, 26, 28 };
+const byte RELAY_PIN[4] = { 25, 29, 27, 31 };
 const byte LED1[3] = { 44, 45, 46 };
 const byte LED2[3] = { 5, 6, 7 };
 const byte LED3[3] = { 11, 12, 13 };
-const byte LCD_SWITCH[3] = { 32, 34, 36 };
-const byte LCD_SWITCH_PWR_PIN = 30;
+const byte LCD_SWITCH[3] = { 33, 35, 37 };
 const byte RADIO_SELECT_PIN = 49;
 const byte RADIO_ENABLE_PIN = 47;
 const byte VOLTAGE_PIN = 54;
-const byte CURRENT_LEFT_PIN = 63;
-const byte CURRENT_LEFT_PWR_PIN = 64;
-const byte CURRENT_LEFT_GND_PIN = 62;
 const byte CURRENT_RIGHT_PIN = 58;
-const byte CURRENT_RIGHT_PWR_PIN = 59;
-const byte CURRENT_RIGHT_GND_PIN = 57;
+const byte CURRENT_LEFT_PIN = 59;
+
 
 //general buffers for various usages (datatypes conversion, reading ini settings etc)
 const byte nBuffLen1 = 30;
@@ -1099,7 +1094,6 @@ void setup()
 	wdt_disable(); //disable watchdog
 
 	setupSerial();
-	setupWire();
 	setupPins();
 	setupSD();
 	readSDSettings(Settings.RelaysPath);
@@ -1108,8 +1102,8 @@ void setup()
 	readSDSettings(Settings.SettingsPath);
 	readSDSettings(Settings.OffsetsPath);
 	if (!readSDSettings(Settings.EthernetPath)) Settings.DHCP = true; //reading ethernet settings must for some reason take place much earlier than ethernet.begin
-	setupLCD();
-	//setupWire();
+	setupWire();
+	setupLCD();	
 	setupBMP();
 	setupRadio();
 	setupEthernet();
@@ -1142,23 +1136,19 @@ void setup()
 	PrivateData pd;
 
 	//datasets setup
-	MainDS.APIkey = &pd.MainDSAPIKey;
-	MainDS.Size = 8;
-	MainDS.isValid = true;
-
-	RemoteDS.APIkey = &pd.RemoteUnitAPIKey;
-	RemoteDS.Size = 8;
+	//for some reason, we have to pass the whole string with API key, pointer doesn't work properly, arduino sometimes freezes
+	//this is not very memory friendly
+	MainDS.APIkey = pd.MainDSAPIKey;
+	RemoteDS.APIkey = pd.RemoteUnitAPIKey;
+	SystemDS.APIkey = pd.SystemAPIKey;
 	RemoteDS.isValid = false;
-
-	SystemDS.APIkey = &pd.SystemAPIKey;
-	SystemDS.Size = 8;
-	SystemDS.isValid = true;
+	
 
 	//Calibration process: attach a classic light bulb or heater and set the phase_shift constant so that the reported power factor is 1,
 	//then connect a multimeter and set the calibration constant so that the reported voltage is same as on the multimeter
-	emon.voltage(VOLTAGE_PIN, 939, -0.24);  // Voltage: input pin, calibration, phase_shift
+	emon.voltage(VOLTAGE_PIN, 938, -0.4);  // Voltage: input pin, calibration, phase_shift
 	//Calibration process: connect a known load and adjust the calibration constants so the reported wattage is the same as the load
-	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 18, 17.25); //Current: input pin, input pin, calibration, calibration
+	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 15.2, 14.44); //Current: input pin, input pin, calibration, calibration
 
 	wdt_enable(WDTO_8S); //enable watchdog
 
@@ -1172,5 +1162,5 @@ void loop()
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
 	receiveData();					//receive radio messages from remote unit if available
 	webserver.processConnection();	//process webserver request as soon as possible
-	emon.calcVI(100, fVcc);			//measure power consumption in outlets (non-blocking)
+	emon.calcVI(100, fVcc);			//measure power consumption in outlets (non-blocking)	
 }

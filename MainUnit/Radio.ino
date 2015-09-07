@@ -4,6 +4,10 @@
 void receiveData() {
 	static byte pipeNo;
 	while (radio.available(&pipeNo)) { //receiving data		
+#if DEBUG
+		Serial.println(F("Received radio msg"));
+#endif
+
 		ledLight(2, 'b');
 		Payload p; //my custom struct to hold radio data.
 		radio.read(&p, sizeof(p));
