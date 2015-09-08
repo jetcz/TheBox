@@ -2,10 +2,10 @@
 /// Receive data from radio module and fill our datasets and related variables
 /// </summary>
 void receiveData() {
-	static byte pipeNo;
-	while (radio.available(&pipeNo)) { //receiving data		
+	while (radio.available()) { //receiving data		
 #if DEBUG
-		Serial.println(F("Received radio msg"));
+		Serial.println();
+		Serial.println(F("Received radio message"));
 #endif
 
 		ledLight(2, 'b');
@@ -13,10 +13,10 @@ void receiveData() {
 		radio.read(&p, sizeof(p));
 
 		//apply offsets only for valid values (not -255)
-		RemoteDS.Data[0] = (p.AirTemp == Settings.InvalidValue * 10)
+		*RemoteDS.Temperature = (p.AirTemp == Settings.InvalidValue * 10)
 			? (p.AirTemp / 10.0) : (p.AirTemp / 10.0 + Settings.RemoteTempOffset);		//remoteTemperature
-		RemoteDS.Data[1] = p.AirHumidex / 10.0;											//remoteHumidity
-		RemoteDS.Data[2] = p.AirHumidex / 10.0;											//remoteHumidex
+		*RemoteDS.Humidity = p.AirHum / 10.0;											//remoteHumidity
+		*RemoteDS.Humidex = p.AirHumidex / 10.0;											//remoteHumidex
 		RemoteDS.Data[3] = (p.SoilTemp == Settings.InvalidValue * 10)
 			? (p.SoilTemp / 10.0) : (p.SoilTemp / 10.0 + Settings.SoilTempOffset);		//remoteSoilTemperature
 		RemoteDS.Data[4] = p.SoilHum / 10.0;											//remoteSoilHumidity
@@ -34,7 +34,6 @@ void receiveData() {
 		//this gets executed after first received radio msg
 		if (!Alarm.active(rainPerDayAlarm)) Alarm.enable(rainPerDayAlarm);
 		if (!Alarm.active(rainPerHourAlarm)) Alarm.enable(rainPerHourAlarm);
-
 	}
 }
 

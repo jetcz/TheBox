@@ -15,7 +15,7 @@ void system() {
 	{
 		if (Settings.RelayMode[relay] > 1) serviceSchedulers(_dtNow, relay);
 	}
-	printLcd();
+	printLcd(); //this takes about 64ms when lcd is lit up
 }
 /// <summary>
 /// Fill datasets and apply offsets
@@ -89,7 +89,7 @@ void printSensorDataSerial(){
 	if (MainDS.isValid)
 	{
 		Serial.println();
-		Serial.println(F("Main Unit"));
+		Serial.println(F("Main Unit (with offsets)"));
 		Serial.print(F("Temperature "));
 		Serial.print(*MainDS.Temperature, 1);
 		Serial.println(F("C"));
@@ -118,12 +118,12 @@ void printSensorDataSerial(){
 
 	if (RemoteDS.isValid)
 	{
-		Serial.println(F("Remote Unit"));
+		Serial.println(F("Remote Unit (with offsets)"));
 		Serial.print(F("Temperature "));
 		Serial.print(*RemoteDS.Temperature, 1);
 		Serial.println(F("C"));
 		Serial.print(F("Humidity "));
-		Serial.print(*RemoteDS.Humidity, 0);
+		Serial.print(*RemoteDS.Humidity, 1);
 		Serial.println(F("%RH"));
 		Serial.print(F("Humidex "));
 		Serial.print(*RemoteDS.Humidex, 1);
@@ -132,10 +132,10 @@ void printSensorDataSerial(){
 		Serial.print(RemoteDS.Data[3], 1);
 		Serial.println(F("C"));
 		Serial.print(F("SoilHumidity "));
-		Serial.print(RemoteDS.Data[4], 0);
+		Serial.print(RemoteDS.Data[4], 1);
 		Serial.println(F("%RH"));
 		Serial.print(F("Light "));
-		Serial.print(RemoteDS.Data[5], 0);
+		Serial.print(RemoteDS.Data[5], 1);
 		Serial.println(F("%"));
 		Serial.print(F("Rain "));
 		Serial.print(RemoteDS.Data[6], 1);
@@ -147,6 +147,9 @@ void printSensorDataSerial(){
 		Serial.println(getUptimeString(TimeSpan(SystemDS.Data[7])));
 		Serial.print(F("Free ram "));
 		Serial.println(intToString(nRemoteFreeRam) + "B (" + floatToString(float(nRemoteFreeRam) / 2048 * 100) + "%)");
+		Serial.print(F("Failed messages "));
+		Serial.print(nFailedCntRadioTotal);
+		Serial.println();
 	}
 	else Serial.println(F("Remote Unit DataSet invalid!"));
 }

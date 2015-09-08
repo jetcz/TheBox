@@ -3,7 +3,7 @@
 /// </summary>
 void setupSerial() {
 #if DEBUG
-	Serial.begin(9600);
+	Serial.begin(115200);
 	Serial.println(F("Serial initialized"));
 #endif
 }
@@ -179,39 +179,19 @@ void setupRTC() {
 /// Setup radio NRF24
 /// </summary>
 void setupRadio() {
-	ledLight(1, 'y');
-	bool _bSuccess = false;
-	_bSuccess = radio.begin();
-	radio.setAutoAck(1);                    // Ensure autoACK is enabled
+
+	radio.begin(); //for some reasong it returns false even tough radio initialized successfuly
+	radio.setAutoAck(1);  // Ensure autoACK is enabled
 	//radio.setChannel(24);
 	radio.setCRCLength(RF24_CRC_8);
-	_bSuccess = _bSuccess | radio.setDataRate(RF24_1MBPS);
+	radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.setRetries(1, 15);                 // Smallest time between retries, max no. of retries
+	radio.setRetries(1, 15);  // Smallest time between retries, max no. of retries
 	radio.setPayloadSize(sizeof(Payload));
 	radio.openWritingPipe(pipes[1]);
 	radio.openReadingPipe(1, pipes[0]);
 	radio.startListening();                 // Start listening	
-
-	if (_bSuccess)
-	{
-#if DEBUG
-		Serial.println(F("Radio initialized"));
-		ledLight(1, 'g');
-#endif
-	}
-	else {
-#if DEBUG
-		Serial.println(F("Radio failed to initialize or not present!"));
-#endif
-		lcd.clear();
-		lcd.setCursor(0, 0);
-		lcd.print(F("Radio failed to"));
-		lcd.setCursor(0, 1);
-		lcd.print(F("initialize!"));
-		ledLight(2, 'r');
-		Alarm.delay(2000);
-	}
+	
 }
 
 /// <summary>
@@ -299,7 +279,7 @@ void setupLCD() {
 /// </summary>
 void setupAlarms() {
 	Alarm.timerOnce(1, prepareDataSetArrays);
-	Alarm.timerOnce(60, syncRTCwithNTP);
+	Alarm.timerOnce(40, syncRTCwithNTP);
 	updateTSAlarm = Alarm.timerRepeat(Settings.UpdateThingSpeakInterval, thingSpeak);
 	Alarm.timerRepeat(Settings.RadioMsgInterval, getFailedRadioMessages); //count failed radio messages by default interval (gets reinitialized once we get first radio msg)
 	Alarm.timerRepeat(1, system);
@@ -309,12 +289,12 @@ void setupAlarms() {
 	rainPerHourAlarm = Alarm.timerRepeat(60, getRainPerHour); //cumulative rainfall
 	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay); //cumulative rainfall
 	Alarm.timerRepeat(3600, syncRTCwithNTP); //sync RTC with NTP every hour
-	//dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
+	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 	//these get enabled with first radio msg
 	Alarm.disable(rainPerHourAlarm);
 	Alarm.disable(rainPerDayAlarm);
 
-	//if (!Settings.DHCP) Alarm.disable(dhcpAlarm);
+	if (!Settings.DHCP) Alarm.disable(dhcpAlarm);
 	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
 
 #if PRINT_SUMMARY && DEBUG

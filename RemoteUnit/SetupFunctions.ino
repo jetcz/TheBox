@@ -33,31 +33,14 @@ void setupPins() {
 /// Setup radio NRF24
 /// </summary>
 void setupRadio(){
-	bool _bSuccess = false;
-	_bSuccess = radio.begin();
-	radio.setAutoAck(1);                    // Ensure autoACK is enabled
+	radio.begin(); //for some reasong it returns false even tough radio initialized successfuly
+	radio.setAutoAck(1); // Ensure autoACK is enabled
 	//radio.setChannel(24);
 	radio.setCRCLength(RF24_CRC_8);
-	_bSuccess = _bSuccess | radio.setDataRate(RF24_1MBPS);
+	radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.setRetries(1, byRadioAutoRetransmits);              // Smallest time between retries, max no. of retries
+	radio.setRetries(1, 15); // Smallest time between retries, max no. of retries
 	radio.setPayloadSize(sizeof(Payload));
-	radio.openWritingPipe(pipes[1]);
-	radio.openReadingPipe(1, pipes[0]);
-	radio.startListening();                 // Start listening	
-
-
-	if (_bSuccess)
-	{
-#if DEBUG
-		Serial.println(F("Radio initialized"));
-#endif
-	}
-	else {
-#if DEBUG
-		Serial.println(F("Radio failed to initialize or not present!"));
-#endif	
-		ledLight('r', false);
-		while(1);	
-	}
+	radio.openWritingPipe(pipes[0]);
+	radio.openReadingPipe(1, pipes[1]);
 }

@@ -2,7 +2,7 @@
 /// Exact measurement of reference voltage (5V)
 /// </summary>
 /// <returns></returns>
-long readVcc() {
+unsigned int readVcc() {
 	// Read 1.1V reference against AVcc
 	// set the reference to Vcc and the measurement to the internal 1.1V reference
 #if defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
@@ -22,17 +22,17 @@ long readVcc() {
 	long result = (high << 8) | low;
 	//result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
 	result = lVccCalibration / result;
-	return result; // Vcc in millivolts
+	return (unsigned int)result; // Vcc in millivolts
 }
 
 /// <summary>
 /// Amount of free RAM in Bytes
 /// </summary>
 /// <returns></returns>
-int getFreeRam() {
+unsigned int getFreeRam() {
 	extern int __heap_start, *__brkval;
 	int _nVal;
-	return (int)&_nVal - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
+	return (unsigned int)(int)&_nVal - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
 }
 
 /// <summary>
@@ -46,9 +46,9 @@ int getFreeRam() {
 ///  Rob Faludi http ://rob.faludi.com
 /// </summary>
 /// <returns></returns>
-int millisRollover() {
+unsigned int millisRollover() {
 
-	static int _nNumRollovers = 0; // variable that permanently holds the number of rollovers since startup
+	static unsigned int _nNumRollovers = 0; // variable that permanently holds the number of rollovers since startup
 	static bool _bReadyToRoll = false; // tracks whether we've made it halfway to rollover
 	unsigned long _lNow = millis(); // the time right now
 	unsigned long _lHalfwayMillis = 2147483647; // this is halfway to the max millis value (17179868 for earlier versions of Arduino)

@@ -10,7 +10,8 @@
 /// <returns>Unix time, that is, seconds from 1970 - 01 - 01T00:00.</returns>
 unsigned long ntpUnixTime(UDP &udp)
 {
-	if (nFailedCounter > 0) return 0; //if last thing speak upload failed, there is proably problem with connectivity, do not try to sync the clock since it wont probably freeze arduino and WD may reboot it.
+	if (Settings.NTPServer == "0") return 0;
+
 #if DEBUG
 		Serial.println(F("Syncing clock with NTP"));
 #endif
@@ -66,6 +67,7 @@ unsigned long ntpUnixTime(UDP &udp)
 
 	// Discard the rest of the packet
 	udp.flush();
+	udp.stop();
 
 	return _lTime - 2208988800ul;		// convert NTP time to Unix time
 }

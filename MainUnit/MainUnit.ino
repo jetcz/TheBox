@@ -37,6 +37,7 @@
 #include "RelayScheduler.h"
 #include "PrivateData.h" //this is not in source control - it contains my API keys
 
+
 //my arduino specific calibration constant for reading vcc
 const float lVccCalibration = 1100000;
 
@@ -52,8 +53,8 @@ const byte LED1[3] = { 44, 45, 46 };
 const byte LED2[3] = { 5, 6, 7 };
 const byte LED3[3] = { 11, 12, 13 };
 const byte LCD_SWITCH[3] = { 33, 35, 37 };
-const byte RADIO_SELECT_PIN = 49;
 const byte RADIO_ENABLE_PIN = 47;
+const byte RADIO_SELECT_PIN = 49;
 const byte VOLTAGE_PIN = 54;
 const byte CURRENT_RIGHT_PIN = 58;
 const byte CURRENT_LEFT_PIN = 59;
@@ -82,7 +83,7 @@ Timezone myTZ(CEST, CET);
 TimeChangeRule *tcr;
 EnergyMonitor emon;
 RF24 radio(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
-const uint64_t pipes[2] = { 0x24CDABCD71LL, 0x244d52687CLL }; //addresses of the NRF24L01 modules
+const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 float fVcc;
 
 //initialize custom structs
@@ -1163,10 +1164,12 @@ void setup()
 #endif
 }
 
-void loop()
+void loop() //one cycle takes about 1ms (900us - 1050us)
 {
 	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
 	receiveData();					//receive radio messages from remote unit if available
 	webserver.processConnection();	//process webserver request as soon as possible
 	emon.calcVI(100, fVcc);			//measure power consumption in outlets (non-blocking)	
 }
+
+

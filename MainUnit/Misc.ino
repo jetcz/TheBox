@@ -99,13 +99,13 @@ void needRestart() {
 bool isRemoteDataSetValid(DateTime t) {
 	bool _bValid;
 	unsigned long _lDiff = t.unixtime() - RemoteDS.TimeStamp.unixtime();
-	if (_lDiff <= Settings.RadioMsgInterval)
+	if (_lDiff <= Settings.RadioMsgInterval + 1)
 	{
 		_bValid = true;
 		ledLight(2, 'g');
 	}
 
-	if (_lDiff > Settings.RadioMsgInterval && _lDiff <= Settings.RemoteDataSetTimeout)
+	if (_lDiff > Settings.RadioMsgInterval + 1 && _lDiff <= Settings.RemoteDataSetTimeout)
 	{
 		_bValid = true;
 		ledLight(2, 'y');

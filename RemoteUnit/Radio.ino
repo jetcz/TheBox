@@ -5,7 +5,7 @@ void sendPayload() {
 	radio.powerUp();
 	radio.stopListening();
 
-	if (radio.write(&payload, sizeof(payload))) {
+	if (radio.write(&payload, sizeof(Payload))) {
 		ledLight('g', true);
 #if DEBUG
 		Serial.println(F("Radio message sent, ACK OK"));

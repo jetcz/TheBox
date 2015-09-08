@@ -34,7 +34,6 @@ const int RADIO_SELECT_PIN = 10;
 //some settings
 const int InvalidValue = -255;
 const int nMsgTimeout = 20000;		//timeout between messsages in ms 20000
-const byte byRadioAutoRetransmits = 15;
 const long lVccCalibration = 1093800;
 
 char buffer[24];
@@ -43,7 +42,7 @@ DallasTemperature ds(&oneWire);
 dht DHT;
 int nDHTStatus;
 RF24 radio(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
-const uint64_t pipes[2] = { 0x24CDABCD71LL, 0x244d52687CLL };
+const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 Payload payload;
 
 volatile unsigned int nRainTips;
@@ -56,7 +55,7 @@ void setup() {
 	
 	noInterrupts();
 #if DEBUG
-	Serial.begin(9600);
+	Serial.begin(115200);
 #endif
 	attachInterrupt(0, ISRTipCnt, FALLING);
 	setupPins();
@@ -65,7 +64,7 @@ void setup() {
 	ds.requestTemperatures();
 	nRainTips = 0;
 	interrupts();	
-	ledLight('w', 500);
+	ledLight('w', 200);
 }
 
 void loop() {
