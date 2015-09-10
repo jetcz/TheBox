@@ -18,12 +18,12 @@
 #include <LiquidCrystal_I2C.h>
 #include <IniFile.h>
 #include <QueueArray.h>
-#include <RunningAverage.h>
 #include "avr/pgmspace.h"
 #include "nRF24L01.h"
 #include "RF24.h"
 #include <avr/wdt.h>
 //slightly modified libs, can use default
+#include <RunningAverage.h>
 #include <dht.h>
 #include <Ethernet.h>
 #include <WebServer.h>
@@ -58,7 +58,6 @@ const byte RADIO_SELECT_PIN = 49;
 const byte VOLTAGE_PIN = 54;
 const byte CURRENT_RIGHT_PIN = 58;
 const byte CURRENT_LEFT_PIN = 59;
-
 
 //general buffers for various usages (datatypes conversion, reading ini settings etc)
 const byte nBuffLen1 = 30;
@@ -1119,25 +1118,25 @@ void setup()
 
 	//add webduino commands
 	webserver.setDefaultCommand(&homePageCmd);						//get page
-	webserver.addCommand("index.htm", homePageCmd);					//get page
-	webserver.addCommand("sensors.xml", sensorsXMLCmd);				//get xml
-	webserver.addCommand("relays.data", relayDataCmd);				//post data
-	webserver.addCommand("graphs1.htm", graphs1PageCmd);			//get page
-	webserver.addCommand("graphs2.htm", graphs2PageCmd);			//get page
-	webserver.addCommand("sched.htm", schedPageCmd);				//get page
-	webserver.addCommand("sched.xml", schedXMLCmd);					//get xml
-	webserver.addCommand("sched.data", schedDataCmd);				//post data
-	webserver.addCommand("sched.delete", schedDeleteCmd);			//delete sched data from sd
-	webserver.addCommand("system.htm", systemPageCmd);				//get page
-	webserver.addCommand("stats.xml", statsXMLCmd);					//get xml
-	webserver.addCommand("settings.xml", settingsXMLCmd);			//get xml
-	webserver.addCommand("settings.data", settingsDataCmd);			//post data
-	webserver.addCommand("settings.default", settingsDefaultCmd);	//delete settings data from sd
-	webserver.addCommand("offsets.data", offsetsDataCmd);			//post data
-	webserver.addCommand("offsets.default", offsetsDefaultCmd);		//delete settings data from sd
-	webserver.addCommand("network.data", networkDataCmd);			//post data
-	webserver.addCommand("reboot", rebootCmd);						//reboot arduino
-	webserver.addCommand("rebootwifi", rebootWifiCmd);				//reboot wifi
+	webserver.addCommand("index.htm", &homePageCmd);					//get page
+	webserver.addCommand("sensors.xml", &sensorsXMLCmd);				//get xml
+	webserver.addCommand("relays.data", &relayDataCmd);				//post data
+	webserver.addCommand("graphs1.htm", &graphs1PageCmd);			//get page
+	webserver.addCommand("graphs2.htm", &graphs2PageCmd);			//get page
+	webserver.addCommand("sched.htm", &schedPageCmd);				//get page
+	webserver.addCommand("sched.xml", &schedXMLCmd);					//get xml
+	webserver.addCommand("sched.data", &schedDataCmd);				//post data
+	webserver.addCommand("sched.delete", &schedDeleteCmd);			//delete sched data from sd
+	webserver.addCommand("system.htm", &systemPageCmd);				//get page
+	webserver.addCommand("stats.xml", &statsXMLCmd);					//get xml
+	webserver.addCommand("settings.xml", &settingsXMLCmd);			//get xml
+	webserver.addCommand("settings.data", &settingsDataCmd);			//post data
+	webserver.addCommand("settings.default", &settingsDefaultCmd);	//delete settings data from sd
+	webserver.addCommand("offsets.data", &offsetsDataCmd);			//post data
+	webserver.addCommand("offsets.default", &offsetsDefaultCmd);		//delete settings data from sd
+	webserver.addCommand("network.data", &networkDataCmd);			//post data
+	webserver.addCommand("reboot", &rebootCmd);						//reboot arduino
+	webserver.addCommand("rebootwifi", &rebootWifiCmd);				//reboot wifi
 	webserver.begin();
 
 	PrivateData pd;

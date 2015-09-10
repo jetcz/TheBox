@@ -17,3 +17,5 @@ Shorter DHCP lease request timeout, shorter connect() timout
 DHT library
 Use non-Adafruit library, add noInterrupt()
 
+RunningAverage
+Return 0 instead of NaN if the fifo is empty

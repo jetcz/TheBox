@@ -92,14 +92,9 @@ void weatherForecast() {
 		byForecast = 5; // Unknown
 }
 
-
-//************************************
-// Method:   	 getRainPerHour
-// Description:  Calculate running sum of rain fall from the last hour. This needs to be called every 60s.
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Calculate running sum of rain fall from the last hour. This needs to be called every 60s.
+/// </summary>
 void getRainPerHour() {
 	static QueueArray <byte> q;
 	static unsigned int _nLastTickCnt = nRainTicks;
@@ -115,13 +110,9 @@ void getRainPerHour() {
 };
 
 
-//************************************
-// Method:   	 getRainPerDay
-// Description:  Calculate running sum of rain fall from the las 24h. This is called by default every 10 minutes. The often it is call, the bigger FIFO it needs, so be careful not to waste all your RAM.
-// Access:   	 public 
-// Returns:  	 void
-// Qualifier:	
-//************************************
+/// <summary>
+/// Calculate running sum of rain fall from the las 24h. This is called by default every 10 minutes. The often it is call, the bigger FIFO it needs, so be careful not to waste all your RAM.
+/// </summary>
 void getRainPerDay() {
 	static QueueArray <byte> q;
 	static unsigned int _nLastTickCnt = nRainTicks;
