@@ -70,32 +70,35 @@ bool getMainPir() {
 /// </summary>
 /// <param name="relay">relay</param>
 /// <returns></returns>
-float getPower(int relay){
+float getPower(int relay) {
 	static RunningAverage _raCurr0(5);
 	static RunningAverage _raCurr3(5);
 
 	if (relay == 0)
 	{
-		if (!getRelayState(0)){
+		if (!getRelayState(0) ||
+			emon.realPower1 < 0 ||
+			emon.powerFactor1 < 0
+			)
+		{
 			_raCurr0.clear();
-			return 0;
 		}
-		else if (emon.realPower1 < 0 || emon.powerFactor1 < 0) {}
-		else
-			_raCurr0.addValue(emon.realPower1);
+		else _raCurr0.addValue(emon.realPower1);
+
 		return _raCurr0.getAverage();
 	}
 
 	if (relay == 3)
 	{
-		if (!getRelayState(3))
+		if (!getRelayState(3) ||
+			emon.realPower2 < 0 ||
+			emon.powerFactor2 < 0
+			)
 		{
 			_raCurr3.clear();
-			return 0;
 		}
-		else if (emon.realPower2 < 0 || emon.powerFactor2 < 0) {}
-		else
-			_raCurr3.addValue(emon.realPower2);
+		else _raCurr3.addValue(emon.realPower2);
+
 		return _raCurr3.getAverage();
 	}
 	return 0;
@@ -105,7 +108,7 @@ float getPower(int relay){
 /// Get running average of mains voltage
 /// </summary>
 /// <returns></returns>
-float getVoltage(){
+float getVoltage() {
 	static RunningAverage _raVoltage(10);
 	_raVoltage.addValue((emon.Vrms));
 	return _raVoltage.getAverage();

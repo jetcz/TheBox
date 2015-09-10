@@ -3,7 +3,7 @@
 /// </summary>
 void switchRelays() {
 #if DEBUG
-	Serial.print(F("Setting relays:"));
+	Serial.print(F("Setting relays: "));
 #endif
 	for (int i = 0; i < 4; i++)
 	{
@@ -12,24 +12,26 @@ void switchRelays() {
 		{
 		case 0:
 #if DEBUG
-			Serial.print(F(" OFF"));
+			Serial.print(F("OFF"));
 #endif
 			digitalWrite(RELAY_PIN[i], HIGH); //HIGH is inactive
+
 			break;
 		case 1:
 #if DEBUG
-			Serial.print(F(" ON"));
+			Serial.print(F(" N"));
 #endif
 			digitalWrite(RELAY_PIN[i], LOW); //LOW is active
 			break;
 		default:
 #if DEBUG
-			Serial.print(F(" AUTO"));
+			Serial.print(F("AUTO"));
 #endif
 			serviceSchedulers(now(), i);
 			break;
 		}
 	}
+	
 #if DEBUG
 	Serial.println();
 #endif
@@ -50,10 +52,10 @@ bool getRelayState(int relay){
 /// <param name="t">Current date time</param>
 /// <param name="relay">relay</param>
 void serviceSchedulers(DateTime t, int relay){
-
+	
 	if (Sched[relay].Variable != 0) //is not pir
-	{
-		//set current interval
+	{		
+		//set current interval where we are at this time of day
 		unsigned long _lCurrSec = long(t.hour()) * 60 * 60 + long(t.minute()) * 60 + long(t.second());
 		bool _bSet = false; //in case we use all 5 intervals we need to have this aux variable
 		for (int i = 0; i < 5; i++)

@@ -1,4 +1,4 @@
-#define PRINT_SUMMARY true	//print sensor summary every reading
+#define PRINT_SUMMARY false	//print sensor summary every reading
 #define DEBUG true			//other debug messages
 
 //this is where are stored aditional css and js files

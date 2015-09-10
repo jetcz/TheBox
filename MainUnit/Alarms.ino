@@ -72,7 +72,7 @@ void prepareDataSetArrays() {
 /// <summary>
 /// Get power data (mains voltage, power consumption of appliances connected to sockets)
 /// </summary>
-void getPWRData(){
+void getPWRData() {
 	float _fVal;
 	fVcc = readVcc();
 	_fVal = getPower(0);
@@ -85,7 +85,7 @@ void getPWRData(){
 /// <summary>
 /// Print some sensor data to serial port, disabled if DEBUG=false
 /// </summary>
-void printSensorDataSerial(){
+void printSensorDataSerial() {
 	if (MainDS.isValid)
 	{
 		Serial.println();
@@ -173,7 +173,7 @@ void printLcd() {
 		bLCDRefreshing = true;
 		lcd.clear();
 	}
-	
+
 	//refresh lcd only if PIR sees someone
 	if (getMainPir())
 	{
@@ -212,7 +212,7 @@ void printLcd() {
 /// <summary>
 /// Helper method to call Thingspeak upload, rotate datasets and restart arduino if there problems uploading
 /// </summary>
-void thingSpeak(){
+void thingSpeak() {
 	if (millis() < 41000) return;	//return if time is less than 0:40 (boot time of the wifi router)
 	static unsigned int _nCnt;
 	byte _byCurrentDS = _nCnt % 3;

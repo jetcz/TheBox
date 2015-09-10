@@ -116,6 +116,7 @@ bool isRemoteDataSetValid(DateTime t) {
 		_bValid = false;
 		ledLight(2, 'r');
 	}
+	
 	return _bValid;
 }
 
