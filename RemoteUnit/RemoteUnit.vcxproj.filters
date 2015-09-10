@@ -23,10 +23,10 @@
     <None Include="Radio.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Visual Micro\.RemoteUnit.vsarduino.h">
+    <ClInclude Include="Payload.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Payload.h">
+    <ClInclude Include="__vm\.RemoteUnit.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

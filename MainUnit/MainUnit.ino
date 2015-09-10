@@ -1,5 +1,5 @@
 #define PRINT_SUMMARY false	//print sensor summary every reading
-#define DEBUG true			//other debug messages
+#define DEBUG false			//other debug messages
 
 //this is where are stored aditional css and js files
 //if you change the host, dont forget to update also html files on SD card

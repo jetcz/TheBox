@@ -3,7 +3,7 @@
 /// </summary>
 void switchRelays() {
 #if DEBUG
-	Serial.print(F("Setting relays: "));
+	Serial.print(F("Setting relays:"));
 #endif
 	for (int i = 0; i < 4; i++)
 	{
@@ -12,20 +12,20 @@ void switchRelays() {
 		{
 		case 0:
 #if DEBUG
-			Serial.print(F("OFF"));
+			Serial.print(F(" OFF"));
 #endif
 			digitalWrite(RELAY_PIN[i], HIGH); //HIGH is inactive
 
 			break;
 		case 1:
 #if DEBUG
-			Serial.print(F(" N"));
+			Serial.print(F(" ON"));
 #endif
 			digitalWrite(RELAY_PIN[i], LOW); //LOW is active
 			break;
 		default:
 #if DEBUG
-			Serial.print(F("AUTO"));
+			Serial.print(F(" AUTO"));
 #endif
 			serviceSchedulers(now(), i);
 			break;
