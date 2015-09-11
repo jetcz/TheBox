@@ -135,7 +135,8 @@ float getSoilTemperature() {
 
 /// <summary>
 /// Get running average of remote soil humidity
-/// 0 = air, 100 = salt water
+/// perc: air = 0%, salt water = 100%
+/// tick cnt: air = 15, salt water = 746
 /// </summary>
 /// <returns></returns>
 float getSoilHumidity() {
@@ -145,8 +146,12 @@ float getSoilHumidity() {
 	{
 		AnalogReadings.addValue(analogRead(HUMIDITY_DATA_PIN));
 	}
-	float _fHum = (AnalogReadings.getAverage() + 0.5)*(*Vcc) / 1024.0;
-	_fHum = ((_fHum / *Vcc - 1)*-103);
+	float _fHum = (AnalogReadings.getAverage() + 0.5) / 1024.0;
+	_fHum = ((_fHum - 1)*-100);
+	_fHum -= 27.3;	//calibration
+	_fHum *= 1.405;	//calibration
+	_fHum = _fHum > 100 ? 100 : _fHum;
+	_fHum = _fHum < 0 ? 0 : _fHum;
 	SoilHum.addValue(_fHum);
 	return SoilHum.getAverage();
 }

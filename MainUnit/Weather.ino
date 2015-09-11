@@ -99,7 +99,7 @@ void getRainPerHour() {
 	static QueueArray <byte> q;
 	static unsigned int _nLastTickCnt = nRainTicks;
 	static unsigned int _nTicksPerLastHour = 0;
-	if (nRainTicks == 0) _nLastTickCnt = 0; //in case we restart the remote unit and main unit keeps runnig
+	if (nRainTicks < _nLastTickCnt) _nLastTickCnt = nRainTicks; //in case we restart the remote unit and main unit keeps runnig
 
 	unsigned int _nTicks = nRainTicks - _nLastTickCnt;
 	_nTicksPerLastHour += _nTicks;
@@ -111,13 +111,14 @@ void getRainPerHour() {
 
 
 /// <summary>
-/// Calculate running sum of rain fall from the las 24h. This is called by default every 10 minutes. The often it is call, the bigger FIFO it needs, so be careful not to waste all your RAM.
+/// Calculate running sum of rain fall from the las 24h. This is called by default every 10 minutes.
+/// The often it is call, the bigger FIFO it needs, so be careful not to waste all your RAM.
 /// </summary>
 void getRainPerDay() {
 	static QueueArray <byte> q;
 	static unsigned int _nLastTickCnt = nRainTicks;
 	static unsigned int _nTicksPerLastDay = 0;
-	if (nRainTicks == 0) _nLastTickCnt = 0;
+	if (nRainTicks < _nLastTickCnt) _nLastTickCnt = nRainTicks;
 
 	unsigned int _nTicks = nRainTicks - _nLastTickCnt;
 	_nTicksPerLastDay += _nTicks;
