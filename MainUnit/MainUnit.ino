@@ -1,5 +1,5 @@
 #define PRINT_SUMMARY false	//print sensor summary every reading
-#define DEBUG false			//other debug messages
+#define DEBUG true			//other debug messages
 
 //this is where are stored aditional css and js files
 //if you change the host, dont forget to update also html files on SD card
@@ -22,6 +22,7 @@
 #include "nRF24L01.h"
 #include "RF24.h"
 #include <avr/wdt.h>
+#include "Dns.h"
 //slightly modified libs, can use default
 #include <RunningAverage.h>
 #include <dht.h>

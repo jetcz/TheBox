@@ -12,8 +12,16 @@ unsigned long ntpUnixTime(UDP &udp)
 {
 	if (Settings.NTPServer == "0") return 0;
 
+	static IPAddress NTPIP;
+	if (NTPIP == INADDR_NONE)
+	{
+		if (!resolveHost(NTPIP, *Settings.NTPServer)) return 0;
+	}
+
+	ledLight(1, 'b');
+
 #if DEBUG
-		Serial.println(F("Syncing clock with NTP"));
+	Serial.println(F("Syncing clock with NTP"));
 #endif
 	static int _nUDPInited = udp.begin(123); // open socket on arbitrary port
 
@@ -22,14 +30,13 @@ unsigned long ntpUnixTime(UDP &udp)
 	const long _lNTPFirstFourBytes = 0xEC0600E3; // NTP request header
 
 	// Fail if WiFiUdp.begin() could not init a socket
-	if (!_nUDPInited)
-		return 0;
+	if (!_nUDPInited) return 0;
 
 	// Clear received data from possible stray received packets
 	udp.flush();
 
 	// Send an NTP request
-	if (!(udp.beginPacket(Settings.NTPServer, 123) // 123 is the NTP port
+	if (!(udp.beginPacket(NTPIP, 123) // 123 is the NTP port
 		&& udp.write((byte *)&_lNTPFirstFourBytes, 48) == 48
 		&& udp.endPacket()))
 		return 0;				// sending request failed
@@ -43,8 +50,7 @@ unsigned long ntpUnixTime(UDP &udp)
 			break;
 		Alarm.delay(_nPollIntv);
 	}
-	if (_nPktLen != 48)
-		return 0;				// no correct packet received
+	if (_nPktLen != 48)	return 0;	// no correct packet received
 
 	// Read and discard the first useless bytes
 	// Set useless to 32 for speed; set to 40 for accuracy.
@@ -67,7 +73,6 @@ unsigned long ntpUnixTime(UDP &udp)
 
 	// Discard the rest of the packet
 	udp.flush();
-	udp.stop();
 
 	return _lTime - 2208988800ul;		// convert NTP time to Unix time
 }

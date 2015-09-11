@@ -116,7 +116,7 @@ bool isRemoteDataSetValid(DateTime t) {
 		_bValid = false;
 		ledLight(2, 'r');
 	}
-	
+
 	return _bValid;
 }
 
@@ -196,4 +196,42 @@ String getUptimeString(TimeSpan ts) {
 time_t syncProvider()
 {
 	return myTZ.toLocal(rtc.now().unixtime(), &tcr);
+}
+
+/// <summary>
+/// Resolves hostname into IP address. The resolved address should be stored inside the caller function for future reuse.
+/// Also handles led, lcd and serial.
+/// </summary>
+/// <param name="addr">where tu put resolved address</param>
+/// <param name="host">host to resolve</param>
+/// <returns>true if resolved successfull</returns>
+bool resolveHost(IPAddress &addr, char &host)
+{
+	ledLight(3, 'c');
+	DNSClient dns;
+	dns.begin(Ethernet.dnsServerIP());
+	if (dns.getHostByName(&host, addr) == 1) {
+#if DEBUG
+		Serial.print(F("Resolved hostname: "));
+		Serial.print(&host);
+		Serial.print(F(" into IP: "));
+		Serial.println(addr);		
+#endif // DEBUG		
+		ledLight(3, 'g');
+		return true;
+	}
+	else {
+#if DEBUG
+		Serial.println(F("Failed to resolve hostname: "));
+		Serial.print(&host);
+#endif // DEBUG
+		ledLight(3, 'r');
+		bLCDRefreshing = false;
+		lcd.clear();
+		lcd.setCursor(0, 0);
+		lcd.print(F("Failed to resolve"));
+		lcd.setCursor(0, 1);
+		lcd.print(&host);
+		return false;
+	}
 }

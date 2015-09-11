@@ -18,9 +18,9 @@ struct SystemSettings
 		strncpy(ThingSpeakAddress, "api.thingspeak.com", 30);
 		UpdateThingSpeakInterval = 20;
 		RemoteDataSetTimeout = 180;
-		RestartEthernetThreshold = 3;
+		RestartEthernetThreshold = 5;
 		RestartWifiThreshold = 20;
-		RestartArduinoThreshold = 45;
+		RestartArduinoThreshold = 30;
 		strncpy(NTPServer, "tik.cesnet.cz", 30);
 		LcdMsgTimeout = 4;
 		LightIntensity[0] = 6; //R
