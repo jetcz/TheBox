@@ -124,6 +124,7 @@ function xmlParseSettings(xml) {
 
     $("#tsaddr").val($(xml).find("TSAddr").text().trim());
     $("#ntpaddr").val($(xml).find("NTPAddr").text().trim());
+    $("#nrfch").val($(xml).find("NRFCh").text().trim());
 
     //offsets
     $("#SysTempOffset").val(parseFloat($(xml).find("SysTempOffset").text().trim()));

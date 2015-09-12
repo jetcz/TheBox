@@ -247,6 +247,16 @@ bool readSDSettings(char *path) {
 #endif
 				return false;
 			}
+			if (ini.getValue(NULL, "NRFChannel", cBuff1, nBuffLen1)) {
+				Settings.NRFChannel = atoi(cBuff1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'NRFChannel', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
 		}
 #pragma endregion general
 
@@ -361,6 +371,8 @@ bool writeSDSettings() {
 		file.println(Settings.ThingSpeakAddress);
 		file.print(F("ntp="));
 		file.println(Settings.NTPServer);
+		file.print(F("NRFChannel="));
+		file.println(Settings.NRFChannel);
 		file.close();
 		return true;
 	}

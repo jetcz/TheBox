@@ -33,6 +33,7 @@ struct SystemSettings
 		UpdateRainPerDayInterval = 600; //10 min interval
 		RadioMsgInterval = 20;
 		InvalidValue = -255;
+		NRFChannel = 0;
 	}
 
 	/// <summary>
@@ -70,6 +71,7 @@ struct SystemSettings
 	int UpdateRainPerDayInterval;
 	byte RadioMsgInterval;
 	int InvalidValue;
+	byte NRFChannel;
 
 	/* sensor offsets */
 	float SysTempOffset;

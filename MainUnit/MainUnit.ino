@@ -688,6 +688,9 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.print(F("<NTPAddr>"));
 		server.print(Settings.NTPServer);
 		server.print(F("</NTPAddr>"));
+		server.print(F("<NRFCh>"));
+		server.print(Settings.NRFChannel);
+		server.print(F("</NRFCh>"));
 		server.print(F("</General>"));
 
 		server.print(F("<Offsets>"));
@@ -748,6 +751,7 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 	const static char thingspeak[] PROGMEM = "thingspeak";
 	const static char tsaddr[] PROGMEM = "tsaddr";
 	const static char ntpaddr[] PROGMEM = "ntpaddr";
+	const static char nrfch[] PROGMEM = "nrfch";
 
 	ledLight(1, 'y');
 	server.httpSuccess();
@@ -774,6 +778,10 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 			if (strcmp_P(cBuff1, ntpaddr) == 0)
 			{
 				memcpy(&Settings.NTPServer, cBuff2, nBuffLen2);
+			}
+			if (strcmp_P(cBuff1, nrfch) == 0)
+			{
+				Settings.NRFChannel = atoi(cBuff2);
 			}
 		}
 
@@ -820,6 +828,8 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 		{
 			Alarm.disable(updateTSAlarm);
 		}
+
+		radio.setChannel(Settings.NRFChannel);
 
 		ledLight(1, 'g');
 	}

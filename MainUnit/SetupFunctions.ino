@@ -182,7 +182,7 @@ void setupRadio() {
 
 	radio.begin(); //for some reasong it returns false even tough radio initialized successfuly
 	radio.setAutoAck(1);  // Ensure autoACK is enabled
-	//radio.setChannel(24);
+	radio.setChannel(Settings.NRFChannel);
 	radio.setCRCLength(RF24_CRC_8);
 	radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);

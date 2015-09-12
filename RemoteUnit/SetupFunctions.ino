@@ -32,15 +32,43 @@ void setupPins() {
 /// <summary>
 /// Setup radio NRF24
 /// </summary>
-void setupRadio(){
+void setupRadio() {
 	radio.begin(); //for some reasong it returns false even tough radio initialized successfuly
 	radio.setAutoAck(1); // Ensure autoACK is enabled
 	//radio.setChannel(24);
 	radio.setCRCLength(RF24_CRC_8);
 	radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.setRetries(1, 15); // Smallest time between retries, max no. of retries
+	radio.setRetries(4, 15); // Smallest time between retries, max no. of retries
 	radio.setPayloadSize(sizeof(Payload));
 	radio.openWritingPipe(pipes[0]);
 	radio.openReadingPipe(1, pipes[1]);
+}
+
+/// <summary>
+/// This sends payload on available channels until ACK is received on one of them. Do not use channels 126 and 127, for some reason they don't work correctly on my units.
+/// </summary>
+/// <returns>Success</returns>
+bool selectChannel()
+{
+	ledLight('m', false);
+	unsigned long _lStartTime = millis();
+	byte _byChannel = 0;
+	radio.setRetries(10, 2);
+	radio.powerUp();
+	while (!radio.write(&payload, sizeof(Payload)))
+	{
+		_byChannel++;
+		if (_byChannel > 125) _byChannel = 0;
+		radio.setChannel(_byChannel);
+		if (millis() - _lStartTime > 10000)
+		{
+			ledLight('k', false);
+			return false;
+		}
+	}
+	radio.powerDown();
+	radio.setRetries(4, 15);
+	ledLight('k', false);
+	return true;
 }
