@@ -187,6 +187,9 @@ void printLcdScreen2() {
 /// Prints system values to lcd
 /// </summary>
 void printLcdScreen3() {
+	static byte _byLastFailedCntRadioTotal;
+	byte _byCurrFailedCntRadioTotal = intToString(nFailedCntRadioTotal).length();
+
 	//line 1
 	lcd.setCursor(0, 0);
 	lcd.print(*SystemDS.Temperature, 1);
@@ -206,9 +209,14 @@ void printLcdScreen3() {
 	if (bReceivedRadioMsg) s = intToString(now() - RemoteDS.TimeStamp.unixtime());
 	else s = "NaN";
 	lcd.setCursor(0, 2);
-	lcd.print(F("RDS age    "));
+	lcd.print(F("RDS age     "));
 	lcd.setCursor(8, 2);
 	lcd.print(s);
+	if (_byLastFailedCntRadioTotal != _byCurrFailedCntRadioTotal)
+	{
+		lcd.setCursor(12, 2);
+		lcd.print(F("        "));
+	}
 	lcd.setCursor(17 - intToString(nFailedCntRadioTotal).length(), 2);
 	lcd.print(F("fR "));
 	lcd.print(nFailedCntRadioTotal);
@@ -221,4 +229,6 @@ void printLcdScreen3() {
 	lcd.setCursor(17 - intToString(nFailedCntTSTotal).length(), 3);
 	lcd.print(F("fT "));
 	lcd.print(nFailedCntTSTotal);
+
+	_byLastFailedCntRadioTotal = _byCurrFailedCntRadioTotal;
 }

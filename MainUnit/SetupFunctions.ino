@@ -288,7 +288,7 @@ void setupAlarms() {
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	rainPerHourAlarm = Alarm.timerRepeat(60, getRainPerHour); //cumulative rainfall
 	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay); //cumulative rainfall
-	Alarm.timerRepeat(3600, syncRTCwithNTP); //sync RTC with NTP every hour
+	Alarm.timerRepeat(10800, syncRTCwithNTP); //sync RTC with NTP
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 	//these get enabled with first radio msg
 	Alarm.disable(rainPerHourAlarm);
