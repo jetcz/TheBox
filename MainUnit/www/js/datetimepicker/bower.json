@@ -1,0 +1,41 @@
+{
+  "name": "datetimepicker",
+  
+  "description": "Responsive flat design jQuery DateTime Picker plugin for Web & Mobile",
+  
+  "keywords": [
+    "date",
+    "time",
+    "picker",
+    "flat",
+    "jquery"
+  ],
+  
+  "version": "0.1.7",
+  
+  "homepage": "http://curioussolutions.github.io/DateTimePicker/",
+  
+  "main": ["dist/datetimepicker.js", "dist/datetimepicker.css"],
+  
+  "authors": [
+    {"name": "nehakadam"}
+  ],
+  
+  "main": "dist/datetimepicker.js",
+  
+  "repository": {
+    "type": "git",
+    "url": "git://github.com:CuriousSolutions/DateTimePicker.git"
+  },
+  
+  "devDependencies": {
+    "jquery": ">=1.0.0"
+  },
+  
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "package.json"
+  ]
+  
+}
