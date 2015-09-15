@@ -77,6 +77,12 @@ void ledLight(char color, bool flash) {
 /// <param name="time"></param>
 void ledLight(char color, int time) {
 	ledLight(color, false);
+#if DEBUG
 	delay(time);
+#endif
+
+#if !DEBUG
+	Sleepy::loseSomeTime(time);
+#endif // !DEBUG
 	ledLight('k', false);
 }

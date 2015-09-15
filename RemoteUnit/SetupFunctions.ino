@@ -39,7 +39,7 @@ void setupRadio() {
 	radio.setCRCLength(RF24_CRC_8);
 	radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.setRetries(4, 15); // Smallest time between retries, max no. of retries
+	radio.setRetries(3, 3); // Smallest time between retries, max no. of retries
 	radio.setPayloadSize(sizeof(Payload));
 	radio.openWritingPipe(pipes[0]);
 	radio.openReadingPipe(1, pipes[1]);
@@ -48,27 +48,23 @@ void setupRadio() {
 /// <summary>
 /// This sends payload on available channels until ACK is received on one of them. Do not use channels 126 and 127, for some reason they don't work correctly on my units.
 /// </summary>
-/// <returns>Success</returns>
-bool selectChannel()
+/// <returns>channel</returns>
+int selectChannel()
 {
-	ledLight('m', false);
 	unsigned long _lStartTime = millis();
 	byte _byChannel = 0;
-	radio.setRetries(10, 2);
+	radio.setRetries(5, 2);
 	radio.powerUp();
 	while (!radio.write(&payload, sizeof(Payload)))
 	{
+		ledLight('m', true);
 		_byChannel++;
 		if (_byChannel > 125) _byChannel = 0;
 		radio.setChannel(_byChannel);
-		if (millis() - _lStartTime > 10000)
-		{
-			ledLight('k', false);
-			return false;
-		}
+		if (millis() - _lStartTime > 5000) return InvalidValue;
 	}
 	radio.powerDown();
-	radio.setRetries(4, 15);
-	ledLight('k', false);
-	return true;
+	radio.setRetries(3, 3);
+	byFailedConsMsgs = 0;
+	return _byChannel;
 }

@@ -36,8 +36,7 @@ void getPayload() {
 
 #if DEBUG
 	payload.print();
-#endif
-
+#endif	
 }
 
 /// <summary>

@@ -44,6 +44,7 @@ int nDHTStatus;
 RF24 radio(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
 const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 Payload payload;
+int nChannel = InvalidValue;
 byte byFailedConsMsgs = 0;
 
 volatile unsigned int nRainTips;
@@ -66,13 +67,22 @@ void setup() {
 	interrupts();
 
 	getPayload();
-	while (!selectChannel())
+
+	do
 	{
-		ledLight('r', false);
-		Sleepy::loseSomeTime(1000);
-	}
-	selectChannel();
-	ledLight('w', 200);
+		nChannel = selectChannel();
+
+		if (nChannel == InvalidValue)
+		{
+			ledLight('r', 100);
+			Sleepy::loseSomeTime(2000);
+		}
+	} while (nChannel == InvalidValue);
+#if DEBUG
+	Serial.print(F("NRF24 Channel: "));
+	Serial.println(nChannel);
+#endif // DEBUG
+	ledLight('w', 200);	
 }
 
 void loop() {
@@ -80,11 +90,11 @@ void loop() {
 
 	getPayload();	//read sensor data
 	if (!sendPayload()) byFailedConsMsgs++;	else byFailedConsMsgs = 0;	//try to send data over the air; we use hardware auto ACK and retransmit
-	if (byFailedConsMsgs >= 9) selectChannel(); //if there is x consecutive failures, we can presume that channel was changed on the main unit, try to find it then
+	adjustRadio();
 	//go to sleep again for 20 seconds minus the time it took to read and send data
 	lDelay = millis() - lDelay;
 #if !DEBUG
-	Sleepy::loseSomeTime(lDelay < nMsgTimeout ?  nMsgTimeout - lDelay : nMsgTimeout);
+	Sleepy::loseSomeTime(lDelay < nMsgTimeout ? nMsgTimeout - lDelay : nMsgTimeout);
 #endif // !DEBUG
 #if DEBUG
 	delay(nMsgTimeout - lDelay);
