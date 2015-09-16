@@ -33,7 +33,7 @@ void resetWifi() {
 /// </summary>
 void needRestart() {
 	// Check if Ethernet needs to be restarted
-	if (nFailedCounter % Settings.RestartEthernetThreshold == 0 && nFailedCounter != 0) {
+	if (nFailedNetworkOps % Settings.RestartEthernetThreshold == 0 && nFailedNetworkOps != 0) {
 		ledLight(1, 'r');
 		ledLight(3, 'r');
 #if DEBUG
@@ -53,7 +53,7 @@ void needRestart() {
 	}
 
 	// Check if Wifi needs to be restarted
-	if ((nFailedCounter % Settings.RestartWifiThreshold) == 0 && nFailedCounter != 0) {
+	if ((nFailedNetworkOps % Settings.RestartWifiThreshold) == 0 && nFailedNetworkOps != 0) {
 		ledLight(1, 'r');
 		ledLight(3, 'r');
 #if DEBUG
@@ -71,7 +71,7 @@ void needRestart() {
 	}
 
 	// Check if Arduino needs to be restarted
-	if ((nFailedCounter % Settings.RestartArduinoThreshold) == 0 && nFailedCounter != 0) {
+	if ((nFailedNetworkOps % Settings.RestartArduinoThreshold) == 0 && nFailedNetworkOps != 0) {
 		ledLight(1, 'r');
 		ledLight(2, 'r');
 		ledLight(3, 'r');
@@ -218,6 +218,7 @@ bool resolveHost(IPAddress &addr, char &host)
 		Serial.println(addr);		
 #endif // DEBUG		
 		ledLight(3, 'g');
+		nFailedNetworkOps = 0;
 		return true;
 	}
 	else {
@@ -232,6 +233,9 @@ bool resolveHost(IPAddress &addr, char &host)
 		lcd.print(F("Failed to resolve"));
 		lcd.setCursor(0, 1);
 		lcd.print(&host);
+
+		nFailedNetworkOps++;
+		nFailedNetowkOpsTotal++;
 		return false;
 	}
 }

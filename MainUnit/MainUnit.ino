@@ -94,8 +94,8 @@ DataSet SystemDS;					//system dataset (warning, system dataset contains values 
 RelayScheduler Sched[4];			//scheduler settings
 
 //global variables
-unsigned int nFailedCounter;			//failed thingspeak uploads
-unsigned int nFailedCntTSTotal;			//total failed thing speak messages
+unsigned int nFailedNetworkOps;			//failed thingspeak uploads
+unsigned int nFailedNetowkOpsTotal;			//total failed thing speak messages
 unsigned int nFailedCntRadioTotal;		//total failed radio messages
 DateTime dtSysStart;					//time of system start for uptime
 DateTime dtLastNTPsync;					//time of last ntp sync
@@ -640,7 +640,7 @@ void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
-		server.print(nFailedCntTSTotal);
+		server.print(nFailedNetowkOpsTotal);
 		server.printP(tag_end_sensor);
 
 		server.printP(tag_start_sensor);
@@ -973,6 +973,8 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 	server.printP(message);
 	server.flushBuf();
 	Alarm.delay(100);
+	ledLight(2, 'k');
+	ledLight(3, 'k');
 	resetFunc();
 }
 
@@ -997,6 +999,7 @@ void rebootWifiCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 	server.printP(message);
 	server.flushBuf();
 	Alarm.delay(100);
+	ledLight(3, 'k');
 	resetWifi();
 }
 void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)

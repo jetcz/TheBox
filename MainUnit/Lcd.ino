@@ -226,9 +226,9 @@ void printLcdScreen3() {
 	lcd.print(F("FreeRAM "));
 	lcd.print(floatToString(float(nMainFreeRam) / 8192 * 100));
 	lcd.print(F("% "));
-	lcd.setCursor(17 - intToString(nFailedCntTSTotal).length(), 3);
+	lcd.setCursor(17 - intToString(nFailedNetowkOpsTotal).length(), 3);
 	lcd.print(F("fT "));
-	lcd.print(nFailedCntTSTotal);
+	lcd.print(nFailedNetowkOpsTotal);
 
 	_byLastFailedCntRadioTotal = _byCurrFailedCntRadioTotal;
 }

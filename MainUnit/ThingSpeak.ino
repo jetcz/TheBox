@@ -26,7 +26,7 @@ void updateThingSpeak(DataSet ds) {
 	}
 	//update thingspeak
 	if (client.connected()) {
-		nFailedCounter = 0;
+		nFailedNetworkOps = 0;
 #if DEBUG
 		Serial.println(F("Connected to ThingSpeak, sending data..."));
 		Serial.println(ds.ThingSpeakStr);
@@ -46,10 +46,10 @@ void updateThingSpeak(DataSet ds) {
 	else
 	{
 		client.stop();
-		if (nFailedCounter > Settings.RestartEthernetThreshold)	ledLight(3, 'r');
+		if (nFailedNetworkOps > Settings.RestartEthernetThreshold)	ledLight(3, 'r');
 		else ledLight(3, 'y');
-		nFailedCounter++;
-		nFailedCntTSTotal++;
+		nFailedNetworkOps++;
+		nFailedNetowkOpsTotal++;
 		bLCDRefreshing = false;
 		lcd.clear();
 		lcd.setCursor(0, 0);
@@ -57,7 +57,7 @@ void updateThingSpeak(DataSet ds) {
 		lcd.setCursor(0, 1);
 		lcd.print(F("ThingSpeak failed"));
 		lcd.setCursor(0, 2);
-		lcd.print(intToString(nFailedCounter));
+		lcd.print(intToString(nFailedNetworkOps));
 		lcd.print(F(" times!"));
 #if DEBUG
 		Serial.print(F("Connecting to ThingSpeak failed "));
