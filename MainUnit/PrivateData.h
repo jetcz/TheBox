@@ -1,9 +1,9 @@
 /// <summary>
-/// Structure for keeping private data
+/// Structure for keeping private data (API keys)
 /// </summary>
 struct PrivateData
 {
-	String MainDSAPIKey = "xxx";
-	String RemoteUnitAPIKey = "xxx";
+	String MainAPIKey = "xxx";
+	String RemoteAPIKey = "xxx";
 	String SystemAPIKey = "xxx";
 }; typedef struct PrivateData PrivateData;

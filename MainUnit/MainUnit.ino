@@ -85,6 +85,7 @@ EnergyMonitor emon;
 RF24 radio(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
 const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 float fVcc;
+bool bRTCInitSuccess;
 
 //initialize custom structs
 SystemSettings Settings;			//here are all user configurables
@@ -671,7 +672,7 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.print(F("<Settings>"));
 		server.print(F("<General>"));
 		server.print(F("<RadioMsgInterval>"));
-		server.print(Settings.RadioMsgInterval);
+		server.print(Settings.RadioMsgInterval + 1);
 		server.print(F("</RadioMsgInterval>"));
 		server.print(F("<RemoteDSTimeout>"));
 		server.print(Settings.RemoteDataSetTimeout);
@@ -1123,7 +1124,7 @@ void setup()
 	readSDSettings(Settings.OffsetsPath);
 	if (!readSDSettings(Settings.EthernetPath)) Settings.DHCP = true; //reading ethernet settings must for some reason take place much earlier than ethernet.begin
 	setupWire();
-	setupLCD();	
+	setupLCD();
 	setupBMP();
 	setupRadio();
 	setupEthernet();
@@ -1158,11 +1159,11 @@ void setup()
 	//datasets setup
 	//for some reason, we have to pass the whole string with API key, pointer doesn't work properly, arduino sometimes freezes
 	//this is not very memory friendly
-	MainDS.APIkey = pd.MainDSAPIKey;
-	RemoteDS.APIkey = pd.RemoteUnitAPIKey;
+	MainDS.APIkey = pd.MainAPIKey;
+	RemoteDS.APIkey = pd.RemoteAPIKey;
 	SystemDS.APIkey = pd.SystemAPIKey;
 	RemoteDS.isValid = false;
-	
+
 
 	//Calibration process: attach a classic light bulb or heater and set the phase_shift constant so that the reported power factor is 1,
 	//then connect a multimeter and set the calibration constant so that the reported voltage is same as on the multimeter

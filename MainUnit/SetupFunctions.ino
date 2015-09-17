@@ -150,8 +150,8 @@ void setupRTC() {
 		lcd.setCursor(0, 1);
 		lcd.print(F("or not present!"));
 		ledLight(1, 'r');
-		rtc.adjust(DateTime(1970, 1, 1));
 		Alarm.delay(3000);
+		bRTCInitSuccess = false;
 	}
 	if (!rtc.isrunning()) {
 #if DEBUG
@@ -160,19 +160,21 @@ void setupRTC() {
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("RTC is not running!"));
-		rtc.adjust(DateTime(1970, 1, 1));
-		Alarm.delay(2000);
+		ledLight(1, 'r');
+		Alarm.delay(3000);
+		bRTCInitSuccess = false;
 	}
 	else {
 		//rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //set RTC clock to compile date MUST COMMENT OUT
 #if DEBUG
 		Serial.println(F("RTC initialized and clock adjusted"));
 #endif
+		bRTCInitSuccess = true;
+		setSyncProvider(syncProvider); //sync system clock from RTC module
+		setSyncInterval(60); //sync interval for system clock from RTC module
+		dtSysStart = now();
 		ledLight(1, 'g');
-	} //sync interval for system clock from RTC module
-	setSyncProvider(syncProvider); //sync system clock from RTC module
-	setSyncInterval(60);
-	dtSysStart = now();
+	} 
 }
 
 /// <summary>
@@ -186,12 +188,11 @@ void setupRadio() {
 	radio.setCRCLength(RF24_CRC_8);
 	radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.setRetries(5, 15);  // Smallest time between retries, max no. of retries
+	radio.setRetries(15, 15);  // Smallest time between retries, max no. of retries
 	radio.setPayloadSize(sizeof(Payload));
 	radio.openWritingPipe(pipes[1]);
 	radio.openReadingPipe(1, pipes[0]);
-	radio.startListening();                 // Start listening	
-	
+	radio.startListening();  // Start listening		
 }
 
 /// <summary>
@@ -288,14 +289,15 @@ void setupAlarms() {
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
 	rainPerHourAlarm = Alarm.timerRepeat(60, getRainPerHour); //cumulative rainfall
 	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay); //cumulative rainfall
-	Alarm.timerRepeat(10800, syncRTCwithNTP); //sync RTC with NTP
+	Alarm.timerRepeat(21600, syncRTCwithNTP); //sync RTC with NTP
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 	//these get enabled with first radio msg
 	Alarm.disable(rainPerHourAlarm);
 	Alarm.disable(rainPerDayAlarm);
-
 	if (!Settings.DHCP) Alarm.disable(dhcpAlarm);
 	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
+	if (!bRTCInitSuccess) Alarm.timerOnce(300, setupRTC); //if first initialization of RTC module failed, try to do it one more time later (in case the battery is dead and needs to be charged first)
+
 
 #if PRINT_SUMMARY && DEBUG
 	printSummaryAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms

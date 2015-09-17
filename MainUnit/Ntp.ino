@@ -10,8 +10,6 @@
 /// <returns>Unix time, that is, seconds from 1970 - 01 - 01T00:00.</returns>
 unsigned long ntpUnixTime(UDP &udp)
 {
-	if (Settings.NTPServer == "0") return 0;
-
 	static IPAddress NTPIP;
 	if (NTPIP == INADDR_NONE)
 	{

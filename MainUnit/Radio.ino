@@ -13,12 +13,18 @@ void receiveData() {
 		Payload p; //my custom struct to hold radio data.
 		radio.read(&p, sizeof(p));
 		//apply offsets only for valid values (not -255)
-		*RemoteDS.Temperature = (p.AirTemp == Settings.InvalidValue * 10)
-			? (p.AirTemp / 10.0) : (p.AirTemp / 10.0 + Settings.RemoteTempOffset);		//remoteTemperature
-		*RemoteDS.Humidity = p.AirHum / 10.0;											//remoteHumidity
-		*RemoteDS.Humidex = p.AirHumidex / 10.0;											//remoteHumidex
-		RemoteDS.Data[3] = (p.SoilTemp == Settings.InvalidValue * 10)
-			? (p.SoilTemp / 10.0) : (p.SoilTemp / 10.0 + Settings.SoilTempOffset);		//remoteSoilTemperature
+		*RemoteDS.Temperature = (p.AirTemp == Settings.InvalidValue)
+			? *RemoteDS.Temperature : (p.AirTemp / 10.0 + Settings.RemoteTempOffset);	//remoteTemperature
+
+		*RemoteDS.Humidity = (p.AirHum == Settings.InvalidValue)
+			? *RemoteDS.Humidity : (p.AirHum / 10.0);									//remoteHumidity
+
+		*RemoteDS.Humidex = (p.AirHumidex == Settings.InvalidValue)
+			? *RemoteDS.Humidex: (p.AirHumidex / 10.0);									//remoteHumidex
+
+		RemoteDS.Data[3] = (p.SoilTemp == Settings.InvalidValue)
+			? RemoteDS.Data[3] : (p.SoilTemp / 10.0 + Settings.SoilTempOffset);			//remoteSoilTemperature
+
 		RemoteDS.Data[4] = p.SoilHum / 10.0;											//remoteSoilHumidity
 		RemoteDS.Data[5] = p.Light / 10.0;												//remoteLight
 		SystemDS.Data[6] = p.Vcc;														//vcc

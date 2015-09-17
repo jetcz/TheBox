@@ -213,7 +213,9 @@ void printLcd() {
 /// Helper method to call Thingspeak upload, rotate datasets and restart arduino if there problems uploading
 /// </summary>
 void thingSpeak() {
-	if (millis() < 41000) return;	//return if time is less than 0:40 (boot time of the wifi router)
+	if (millis() < 40000 ||
+		Settings.ThingSpeakAddress == "0" ||
+		Settings.ThingSpeakAddress == "") return;	//return if time is less than 0:40 (boot time of the wifi router), or the ts address is 0 or empty
 	static unsigned int _nCnt;
 	byte _byCurrentDS = _nCnt % 3;
 
@@ -228,7 +230,7 @@ void thingSpeak() {
 #endif
 		_nCnt++;
 		return; //cancel thingspeak update
-	}
+}
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
 	SystemDS.Size = (RemoteDS.isValid) ? 8 : 6;
 	DataSetPtr[_byCurrentDS]->GetTSString();
@@ -247,6 +249,7 @@ void thingSpeak() {
 /// Helper method to call NTP sync
 /// </summary>
 void syncRTCwithNTP() {
+	if (Settings.NTPServer == "0" || "") return;
 	bLCDRefreshing = false;
 	lcd.clear();
 	lcd.setCursor(0, 0);
@@ -267,7 +270,7 @@ void syncRTCwithNTP() {
 #if DEBUG
 		Serial.println(F("NTP time sync failed!"));
 #endif
-	}
+}
 }
 
 
@@ -301,7 +304,7 @@ void dhcp() {
 		Serial.println(Ethernet.dnsServerIP());
 #endif
 		ledLight(1, 'g');
-	}
+}
 	wdt_enable(WDTO_8S);
 }
 
@@ -323,7 +326,7 @@ void writeSD() {
 		lcd.print(F("settings to SD card"));
 		lcd.setCursor(0, 2);
 		lcd.print(F("failed!"));
-	}
+}
 	else
 	{
 #if DEBUG

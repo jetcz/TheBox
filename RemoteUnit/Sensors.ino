@@ -12,11 +12,11 @@ void getPayload() {
 		payload.AirHum = getAirHumidity() * 10;					//remoteHumidity
 		payload.AirHumidex = getAirHumidex() * 10;				//remoteHumidex
 	}
-	else payload.AirTemp = payload.AirHum = payload.AirHumidex = InvalidValue * 10;	//remoteTemperature
+	else payload.AirTemp = payload.AirHum = payload.AirHumidex = InvalidValue;	//remoteTemperature
 
 	//get DS data
 	float _fVal = getSoilTemperature();
-	payload.SoilTemp = (_fVal == (85 || -127)) ? InvalidValue * 10 : _fVal * 10;	//remoteSoilTemperature
+	payload.SoilTemp = (_fVal == (85 || -127)) ? InvalidValue : _fVal * 10;	//remoteSoilTemperature
 
 	//get simple analog sensors data
 	powerSensors(true, false);

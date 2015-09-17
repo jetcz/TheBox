@@ -34,7 +34,7 @@ void resetWifi() {
 void needRestart() {
 	// Check if Ethernet needs to be restarted
 	if (nFailedNetworkOps % Settings.RestartEthernetThreshold == 0 && nFailedNetworkOps != 0) {
-		ledLight(1, 'r');
+		ledLight(1, 'k');
 		ledLight(3, 'r');
 #if DEBUG
 		Serial.println(F("Ethernet Shield needs to be restarted!"));
@@ -54,7 +54,7 @@ void needRestart() {
 
 	// Check if Wifi needs to be restarted
 	if ((nFailedNetworkOps % Settings.RestartWifiThreshold) == 0 && nFailedNetworkOps != 0) {
-		ledLight(1, 'r');
+		ledLight(1, 'k');
 		ledLight(3, 'r');
 #if DEBUG
 		Serial.println(F("Wifi needs to be restarted!"));
@@ -87,8 +87,12 @@ void needRestart() {
 		lcd.setCursor(0, 1);
 		lcd.print(F("to be restarted!"));
 		Alarm.delay(3000);
+		ledLight(1, 'k');
+		ledLight(2, 'k');
+		ledLight(3, 'k');
 		resetFunc(); //reboot arduino
 	}
+
 }
 
 /// <summary>
@@ -99,13 +103,13 @@ void needRestart() {
 bool isRemoteDataSetValid(DateTime t) {
 	bool _bValid;
 	unsigned long _lDiff = t.unixtime() - RemoteDS.TimeStamp.unixtime();
-	if (_lDiff <= Settings.RadioMsgInterval + 1)
+	if (_lDiff <= Settings.RadioMsgInterval + 2)
 	{
 		_bValid = true;
 		ledLight(2, 'g');
 	}
 
-	if (_lDiff > Settings.RadioMsgInterval + 1 && _lDiff <= Settings.RemoteDataSetTimeout)
+	if (_lDiff > Settings.RadioMsgInterval + 2 && _lDiff <= Settings.RemoteDataSetTimeout)
 	{
 		_bValid = true;
 		ledLight(2, 'y');
@@ -234,8 +238,5 @@ bool resolveHost(IPAddress &addr, char &host)
 		lcd.setCursor(0, 1);
 		lcd.print(&host);
 
-		nFailedNetworkOps++;
-		nFailedNetowkOpsTotal++;
-		return false;
 	}
 }

@@ -35,21 +35,17 @@ void adjustRadio() {
 
 	if (byFailedConsMsgs == 0)
 	{
-		radio.setRetries(3, 3);
+		radio.setRetries(3, 10);
 	}
 	if (byFailedConsMsgs == 2)
 	{
-		radio.setRetries(5, 5);
+		radio.setRetries(7, 15);
 	}
 	if (byFailedConsMsgs == 4)
 	{
-		radio.setRetries(10, 10);
-	}
-	if (byFailedConsMsgs == 6)
-	{
 		radio.setRetries(15, 15);
 	}
-	if (byFailedConsMsgs > 8)
+	if (byFailedConsMsgs == 8)
 	{
 		if (selectChannel() == InvalidValue) radio.setChannel(nChannel);
 	}

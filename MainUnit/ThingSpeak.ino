@@ -6,7 +6,11 @@ void updateThingSpeak(DataSet ds) {
 	static IPAddress TSIP;
 	if (TSIP == INADDR_NONE)
 	{
-		if (!resolveHost(TSIP, *Settings.ThingSpeakAddress)) return;
+		if (!resolveHost(TSIP, *Settings.ThingSpeakAddress)) {
+			nFailedNetworkOps++;
+			nFailedNetowkOpsTotal++;
+			return;
+		};
 	}
 
 	ledLight(3, 'b');
@@ -46,8 +50,7 @@ void updateThingSpeak(DataSet ds) {
 	else
 	{
 		client.stop();
-		if (nFailedNetworkOps > Settings.RestartEthernetThreshold)	ledLight(3, 'r');
-		else ledLight(3, 'y');
+		ledLight(3, 'y');
 		nFailedNetworkOps++;
 		nFailedNetowkOpsTotal++;
 		bLCDRefreshing = false;

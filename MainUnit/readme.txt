@@ -12,7 +12,7 @@ EmonLib library
 Completely custom implementation (non-blocking behaviour, calculate two outlets at once)
 
 Ethernet library
-Shorter DHCP lease request timeout, shorter connect() timout
+Shorter DHCP lease request timeout, shorter connect() timout, implemetn udp.flush() timeout
 
 DHT library
 Use non-Adafruit library, add noInterrupt()
