@@ -230,7 +230,7 @@ void thingSpeak() {
 #endif
 		_nCnt++;
 		return; //cancel thingspeak update
-}
+	}
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
 	SystemDS.Size = (RemoteDS.isValid) ? 8 : 6;
 	DataSetPtr[_byCurrentDS]->GetTSString();
@@ -249,28 +249,29 @@ void thingSpeak() {
 /// Helper method to call NTP sync
 /// </summary>
 void syncRTCwithNTP() {
-	if (Settings.NTPServer == "0" || "") return;
-	bLCDRefreshing = false;
-	lcd.clear();
-	lcd.setCursor(0, 0);
+	if (Settings.NTPServer == "0" ||
+		Settings.NTPServer == "") return;
+		bLCDRefreshing = false;
+		lcd.clear();
+		lcd.setCursor(0, 0);
 
-	unsigned long ntp = ntpUnixTime(udp);
-	if (ntp != 0)
-	{
-		dtLastNTPsync = DateTime(now());
-		rtc.adjust(DateTime(ntp));
-		lcd.print(F("NTP timesync success"));
+		unsigned long ntp = ntpUnixTime(udp);
+		if (ntp != 0)
+		{
+			dtLastNTPsync = DateTime(now());
+			rtc.adjust(DateTime(ntp));
+			lcd.print(F("NTP timesync success"));
 #if DEBUG
-		Serial.println(F("NTP time sync success"));
+			Serial.println(F("NTP time sync success"));
 #endif
-	}
-	else
-	{
-		lcd.print(F("NTP timesync failed!"));
+		}
+		else
+		{
+			lcd.print(F("NTP timesync failed!"));
 #if DEBUG
-		Serial.println(F("NTP time sync failed!"));
+			Serial.println(F("NTP time sync failed!"));
 #endif
-}
+		}
 }
 
 

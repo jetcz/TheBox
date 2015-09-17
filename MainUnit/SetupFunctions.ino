@@ -188,7 +188,7 @@ void setupRadio() {
 	radio.setCRCLength(RF24_CRC_8);
 	radio.setDataRate(RF24_1MBPS);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.setRetries(15, 15);  // Smallest time between retries, max no. of retries
+	radio.setRetries(3, 15);  // Smallest time between retries, max no. of retries
 	radio.setPayloadSize(sizeof(Payload));
 	radio.openWritingPipe(pipes[1]);
 	radio.openReadingPipe(1, pipes[0]);
