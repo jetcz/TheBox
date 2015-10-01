@@ -1,7 +1,7 @@
 /// <summary>
 /// Receive data from radio module and fill our datasets and related variables
 /// </summary>
-void receiveData() {
+inline void receiveData() {
 	static unsigned int _nInitialFailedMsgCnt = 0;
 	while (radio.available()) { //receiving data		
 #if DEBUG

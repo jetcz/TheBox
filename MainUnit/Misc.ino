@@ -138,7 +138,7 @@ int freeRam() {
 /// Exact measurement of reference voltage (5V)
 /// </summary>
 /// <returns></returns>
-float readVcc() {
+inline float readVcc() {
 	static RunningAverage _raVcc(6);
 	// Read 1.1V reference against AVcc
 	// set the reference to Vcc and the measurement to the internal 1.1V reference

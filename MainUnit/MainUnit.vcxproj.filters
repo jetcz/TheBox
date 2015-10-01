@@ -94,6 +94,20 @@
     <None Include="sample\ini\ETHERNET.INI">
       <Filter>sample\ini</Filter>
     </None>
+    <None Include="www\js\collapsiblepanel\index.htm" />
+    <None Include="www\js\collapsiblepanel\jquery.collapsiblepanel.js" />
+    <None Include="www\js\jstepper\jquery.jstepper.js" />
+    <None Include="www\js\jstepper\jquery.jstepper.min.js" />
+    <None Include="www\js\mousewheel\.gitignore" />
+    <None Include="www\js\mousewheel\.jshintrc" />
+    <None Include="www\js\mousewheel\bower.json" />
+    <None Include="www\js\mousewheel\Gruntfile.js" />
+    <None Include="www\js\mousewheel\ChangeLog.md" />
+    <None Include="www\js\mousewheel\jquery.mousewheel.js" />
+    <None Include="www\js\mousewheel\jquery.mousewheel.min.js" />
+    <None Include="www\js\mousewheel\mousewheel.jquery.json" />
+    <None Include="www\js\mousewheel\package.json" />
+    <None Include="www\js\mousewheel\README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SystemSettings.h">
@@ -117,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
+    <Text Include="www\js\mousewheel\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="sample\xml\sensors.xml">

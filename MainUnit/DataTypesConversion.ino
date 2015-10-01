@@ -3,7 +3,7 @@
 /// </summary>
 /// <param name="val">float value to convert</param>
 /// <returns>number with 1 decimals in string format</returns>
-String floatToString(float val) {
+inline String floatToString(float val) {
 	dtostrf(val, 1, 1, cBuff1);  //1 is mininum width, 1 is precision; float value is copied onto buff
 	return cBuff1;
 }
@@ -13,7 +13,7 @@ String floatToString(float val) {
 /// </summary>
 /// <param name="i">int value to convert</param>
 /// <returns>number in string format</returns>
-String intToString(register int i) {
+inline String intToString(register int i) {
 	register unsigned char L = 1;
 	register char c;
 	register bool m = false;
@@ -100,7 +100,7 @@ String intToString(register int i) {
 /// </summary>
 /// <param name="c">input char array</param>
 /// <param name="b">output byte array</param>
-void chArrToByteArr(char* c, byte* b) {
+inline void chArrToByteArr(char* c, byte* b) {
 
 	//replace all , . : with white character space for strtol function
 	for (int i = 0; i < nBuffLen1; i++)

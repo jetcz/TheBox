@@ -27,7 +27,7 @@ public:
 		TimeStamp = 0;
 		Size = 8;
 		isValid = true;
-		ThingSpeakStr.reserve(70);
+		ThingSpeakStr.reserve(100);
 	}
 
 	//properties
@@ -52,7 +52,7 @@ public:
 		{
 			if (this->Data[i] > -100) //in case we get some broken values which are -255
 			{
-				ThingSpeakStr += String(i + 1) + "=" + String(this->Data[i], 1);
+				ThingSpeakStr += String(i + 1) + "=" + String(this->Data[i], 2);
 				if (i < this->Size - 1) ThingSpeakStr += "&";
 			}
 		}

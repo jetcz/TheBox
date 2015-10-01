@@ -1,16 +1,17 @@
 <?xml version = "1.0" ?>
 <Settings>
   <General>
-    <RadioMsgInterval>20</RadioMsgInterval>
+    <RadioMsgInterval>21</RadioMsgInterval>
     <RemoteDSTimeout>180</RemoteDSTimeout>
     <InvalidDSAction>0</InvalidDSAction>
     <TSEnabled>1</TSEnabled>
     <TSAddr>api.thingspeak.com</TSAddr>
     <NTPAddr>tik.cesnet.cz</NTPAddr>
+    <NRFCh>105</NRFCh>
   </General>
   <Offsets>
     <SysTempOffset>-0.20</SysTempOffset>
-    <PressureOffset>24.00</PressureOffset>
+    <PressureOffset>29.00</PressureOffset>
     <MainTempOffset>-1.20</MainTempOffset>
     <RemoteTempOffset>-0.50</RemoteTempOffset>
     <SoilTempOffset>-0.20</SoilTempOffset>
