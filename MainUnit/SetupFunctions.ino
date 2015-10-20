@@ -13,6 +13,7 @@ void setupSerial() {
 /// </summary>
 void setupSD() {
 	ledLight(1, 'y');
+	file.setTimeout(0);
 	if (!SD.begin(SD_SELECT_PIN)) {
 #if DEBUG
 		Serial.println(F("SD failed, or not present!"));
@@ -287,8 +288,8 @@ void setupAlarms() {
 	Alarm.timerRepeat(Settings.UpdateSensorsInterval, prepareDataSetArrays); //get sensor data every x ms
 	Alarm.timerRepeat(Settings.UpdatePWRSensorsInterval, getPWRData); //get sensor data every x ms	
 	Alarm.timerRepeat(60, weatherForecast); //update weather forecast every minute - this MUST be interval 60s
-	rainPerHourAlarm = Alarm.timerRepeat(60, getRainPerHour); //cumulative rainfall
-	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainPerDayInterval, getRainPerDay); //cumulative rainfall
+	rainPerHourAlarm = Alarm.timerRepeat(Settings.UpdateRainInterval[0], getRainPerHour); //cumulative rainfall
+	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainInterval[1], getRainPerDay); //cumulative rainfall
 	Alarm.timerRepeat(21600, syncRTCwithNTP); //sync RTC with NTP
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
 	//these get enabled with first radio msg
@@ -298,14 +299,13 @@ void setupAlarms() {
 	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
 	if (!bRTCInitSuccess) Alarm.timerOnce(300, setupRTC); //if first initialization of RTC module failed, try to do it one more time later (in case the battery is dead and needs to be charged first)
 
-
 #if PRINT_SUMMARY && DEBUG
 	printSummaryAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 #endif
 #if DEBUG
 	Serial.println(F("Alarms initialized"));
-	Alarm.timerRepeat(3, printDebug);
-#endif
+	Alarm.timerRepeat(2, printDebug);
+#endif	
 
 }
 

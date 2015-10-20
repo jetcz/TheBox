@@ -19,8 +19,8 @@ struct SystemSettings
 		UpdateThingSpeakInterval = 20;
 		RemoteDataSetTimeout = 180;
 		RestartEthernetThreshold = 3;
-		RestartWifiThreshold = 11;
-		RestartArduinoThreshold = 37;
+		RestartWifiThreshold = 34;
+		RestartArduinoThreshold = 71;
 		strncpy(NTPServer, "tik.cesnet.cz", 30);
 		LcdMsgTimeout = 4;
 		LightIntensity[0] = 6; //R
@@ -30,7 +30,8 @@ struct SystemSettings
 		UpdatePWRSensorsInterval = 1;
 		TSenabled = true;
 		InvalidDSAction = false;
-		UpdateRainPerDayInterval = 600; //10 min interval
+		UpdateRainInterval[0] = 60; //1 min interval - for hour cumulative rainfall
+		UpdateRainInterval[1] = 600; //10 min interval - for day cumulative rainfall
 		RadioMsgInterval = 20;
 		InvalidValue = -255;
 		NRFChannel = 0;
@@ -51,9 +52,9 @@ struct SystemSettings
 	//const char cThingSpeakAddress[] = "184.106.153.149";
 	byte UpdateThingSpeakInterval;
 	unsigned int RemoteDataSetTimeout;		//for how long is dataset valid and send to thingspeak (sec)
-	byte RestartEthernetThreshold;	//if thingspeak update fails x times -> ethernet shield reset
-	byte RestartWifiThreshold;		//if thingspeak update fails x times -> wifi reset
-	byte RestartArduinoThreshold;	//if thingspeak update fails x times -> arduino reset
+	byte RestartEthernetThreshold;			//if thingspeak update fails x times -> ethernet shield reset
+	byte RestartWifiThreshold;				//if thingspeak update fails x times -> wifi reset
+	byte RestartArduinoThreshold;			//if thingspeak update fails x times -> arduino reset
 
 	/* ntp server */
 	char NTPServer[30];
@@ -68,7 +69,7 @@ struct SystemSettings
 	byte UpdatePWRSensorsInterval;
 
 	/* Other settings*/
-	int UpdateRainPerDayInterval;
+	int UpdateRainInterval[2];
 	byte RadioMsgInterval;
 	int InvalidValue;
 	byte NRFChannel;
@@ -101,4 +102,5 @@ struct SystemSettings
 	char* RelaysPath = "/settings/relays.ini";
 	char* SettingsPath = "/settings/settings.ini";
 	char* OffsetsPath = "/settings/offsets.ini";
+	char* Rain[2] = { "/rph.dat","/rpd.dat" };
 }; typedef struct SystemSettings SystemSettings;

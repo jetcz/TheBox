@@ -4,14 +4,16 @@
 inline void receiveData() {
 	static unsigned int _nInitialFailedMsgCnt = 0;
 	while (radio.available()) { //receiving data		
+
+		Payload p; //my custom struct to hold radio data.
+		radio.read(&p, sizeof(p));
+		if (p.Uptime == 0 && p.Vcc == 0 && p.FreeRam == 0) return; //in case all is zero, we got some bogus data from interference
+
+		ledLight(2, 'b');
 #if DEBUG
 		Serial.println();
 		Serial.println(F("Received radio message"));
 #endif
-
-		ledLight(2, 'b');
-		Payload p; //my custom struct to hold radio data.
-		radio.read(&p, sizeof(p));
 		//apply offsets only for valid values (not -255)
 		*RemoteDS.Temperature = (p.AirTemp == Settings.InvalidValue)
 			? *RemoteDS.Temperature : (p.AirTemp / 10.0 + Settings.RemoteTempOffset);	//remoteTemperature
@@ -20,7 +22,7 @@ inline void receiveData() {
 			? *RemoteDS.Humidity : (p.AirHum / 10.0);									//remoteHumidity
 
 		*RemoteDS.Humidex = (p.AirHumidex == Settings.InvalidValue)
-			? *RemoteDS.Humidex: (p.AirHumidex / 10.0);									//remoteHumidex
+			? *RemoteDS.Humidex : (p.AirHumidex / 10.0);									//remoteHumidex
 
 		RemoteDS.Data[3] = (p.SoilTemp == Settings.InvalidValue)
 			? RemoteDS.Data[3] : (p.SoilTemp / 10.0 + Settings.SoilTempOffset);			//remoteSoilTemperature

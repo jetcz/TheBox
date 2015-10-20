@@ -64,7 +64,7 @@ void updateThingSpeak(DataSet ds) {
 		lcd.print(F(" times!"));
 #if DEBUG
 		Serial.print(F("Connecting to ThingSpeak failed "));
-		Serial.print(intToString(nFailedCounter));
+		Serial.print(intToString(nFailedNetworkOps));
 		Serial.println(F(" times!"));
 		Serial.println();
 #endif

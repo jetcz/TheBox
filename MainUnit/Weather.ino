@@ -96,17 +96,17 @@ void weatherForecast() {
 /// Calculate running sum of rain fall from the last hour. This needs to be called every 60s.
 /// </summary>
 void getRainPerHour() {
-	static QueueArray <byte> q;
 	static unsigned int _nLastTickCnt = nRainTicks;
-	static unsigned int _nTicksPerLastHour = 0;
+
 	if (nRainTicks < _nLastTickCnt) _nLastTickCnt = nRainTicks; //in case we restart the remote unit and main unit keeps runnig
 
 	unsigned int _nTicks = nRainTicks - _nLastTickCnt;
-	_nTicksPerLastHour += _nTicks;
-	q.push(byte(_nTicks));
-	if (q.count() > 60) _nTicksPerLastHour -= q.pop();
+	nRainTicksSum[0] += _nTicks;
+	Rain[0].push(byte(_nTicks));
+	if (Rain[0].count() > Settings.UpdateRainInterval[0]) nRainTicksSum[0] -= Rain[0].pop();
 	_nLastTickCnt = nRainTicks;
-	RemoteDS.Data[6] = float(_nTicksPerLastHour) * 0.3;
+	RemoteDS.Data[6] = float(nRainTicksSum[0]) * 0.3;
+	writeSDRain(0);
 };
 
 
@@ -115,17 +115,81 @@ void getRainPerHour() {
 /// The often it is call, the bigger FIFO it needs, so be careful not to waste all your RAM.
 /// </summary>
 void getRainPerDay() {
-	static QueueArray <byte> q;
 	static unsigned int _nLastTickCnt = nRainTicks;
-	static unsigned int _nTicksPerLastDay = 0;
+
 	if (nRainTicks < _nLastTickCnt) _nLastTickCnt = nRainTicks;
 
 	unsigned int _nTicks = nRainTicks - _nLastTickCnt;
-	_nTicksPerLastDay += _nTicks;
-	q.push(byte(_nTicks));
-	if (q.count() > 86400 / Settings.UpdateRainPerDayInterval) _nTicksPerLastDay -= q.pop(); //if the interval is set to 10 min, fifo is 144 bytes long
+	nRainTicksSum[1] += _nTicks;
+	Rain[1].push(byte(_nTicks));
+	if (Rain[1].count() > 86400 / Settings.UpdateRainInterval[1]) nRainTicksSum[1] -= Rain[1].pop(); //if the interval is set to 10 min, fifo is 144 bytes long
 	_nLastTickCnt = nRainTicks;
-	RemoteDS.Data[7] = float(_nTicksPerLastDay) * 0.3;
+	RemoteDS.Data[7] = float(nRainTicksSum[1]) * 0.3;
+	writeSDRain(1);
 };
+
+/// <summary>
+/// Writes rainfall data fifo to sdcard so it can be restored after reboot
+/// </summary>
+/// <param name="nArrPtr">hourly=0/daily=1</param>
+/// <returns>sd card writing success</returns>
+bool writeSDRain(int nArrPtr) {
+
+	SD.remove(Settings.Rain[nArrPtr]);
+	file = SD.open(Settings.Rain[nArrPtr], FILE_WRITE);
+
+	if (!file)
+	{
+		return false;
+	}
+	else {
+		file.println(now());
+		int j = Rain[nArrPtr].count();
+		for (int i = 0; i < j; i++)
+		{
+			file.print(Rain[nArrPtr].contents[i]);
+			if (i < j - 1)
+			{
+				file.println();
+			}
+		}
+		file.close();
+		return true;
+	}
+}
+/// <summary>
+/// Reads rainfall data from sdcard and restores sum of rain tips and fifo holding the data
+/// </summary>
+/// <param name="nArrPtr">hourly=0/daily=1</param>
+/// <returns>sd card writing success</returns>
+bool readSDRain(int nArrPtr) {
+	file = SD.open(Settings.Rain[nArrPtr]);
+	if (!file) return false;
+	else {
+		int _nCnt = 0;
+		int _nToBeSkipped = 0;
+
+		while (file.available()) {
+
+			if (_nCnt == 0)
+			{
+				time_t _lFileAge = now() - (time_t)file.parseInt();
+				_nToBeSkipped = _lFileAge / Settings.UpdateRainInterval[nArrPtr];
+			}
+
+			if (_nCnt > _nToBeSkipped + 1) //first line cotains just timestamp
+			{
+				byte _byVal = file.parseInt();
+				Rain[nArrPtr].push(_byVal);
+				nRainTicksSum[nArrPtr] += _byVal;
+			}
+			else file.read();
+			_nCnt++;
+		}
+		// close the file:
+		file.close();
+		return true;
+	}
+}
 
 

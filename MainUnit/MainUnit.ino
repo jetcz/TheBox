@@ -1,5 +1,5 @@
-#define PRINT_SUMMARY false	//print sensor summary every reading
-#define DEBUG false			//other debug messages
+#define PRINT_SUMMARY true	//print sensor summary every reading
+#define DEBUG true			//other debug messages
 
 //this is where are stored aditional css and js files
 //if you change the host, dont forget to update also html files on SD card
@@ -96,7 +96,7 @@ RelayScheduler Sched[4];			//scheduler settings
 
 //global variables
 unsigned int nFailedNetworkOps;			//failed thingspeak uploads
-unsigned int nFailedNetowkOpsTotal;			//total failed thing speak messages
+unsigned int nFailedNetowkOpsTotal;		//total failed thing speak messages
 unsigned int nFailedCntRadioTotal;		//total failed radio messages
 DateTime dtSysStart;					//time of system start for uptime
 DateTime dtLastNTPsync;					//time of last ntp sync
@@ -105,9 +105,12 @@ String sMainUptime;						//uptime string
 String sRemoteUptime;					//uptime string
 bool bReceivedRadioMsg = false;			//received at least one remote ds
 bool bLCDRefreshing = true;
-unsigned int nRainTicks;
 unsigned int nRemoteFreeRam;
 unsigned int nMainFreeRam;
+unsigned int nRainTicks;				//last raint tip count
+unsigned int nRainTicksSum[2] = { 0 };	//this holds sum of rain tips for hour and day
+QueueArray <byte> Rain[2];
+
 
 //weather variables
 const char* cWeather[] = { "  stable", "   sunny", "  cloudy", "    unstable", "   storm", " unknown" };
@@ -149,7 +152,6 @@ int dhcpAlarm;
 int writeSDAlarm;
 int rainPerHourAlarm;
 int rainPerDayAlarm;
-
 //reboot arduino
 void(*resetFunc) (void) = 0;
 
@@ -1113,7 +1115,6 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 void setup()
 {
 	wdt_disable(); //disable watchdog
-
 	setupSerial();
 	setupPins();
 	setupSD();
@@ -1130,25 +1131,31 @@ void setup()
 	setupEthernet();
 	setupRTC();
 	setupAlarms();
+	if (bRTCInitSuccess)
+	{
+		//read cumulative rain data from sd card - this solves forgetting rain ater reboot
+		readSDRain(0);
+		readSDRain(1);
+	}
 
 	//add webduino commands
 	webserver.setDefaultCommand(&homePageCmd);						//get page
-	webserver.addCommand("index.htm", &homePageCmd);					//get page
-	webserver.addCommand("sensors.xml", &sensorsXMLCmd);				//get xml
+	webserver.addCommand("index.htm", &homePageCmd);				//get page
+	webserver.addCommand("sensors.xml", &sensorsXMLCmd);			//get xml
 	webserver.addCommand("relays.data", &relayDataCmd);				//post data
 	webserver.addCommand("graphs1.htm", &graphs1PageCmd);			//get page
 	webserver.addCommand("graphs2.htm", &graphs2PageCmd);			//get page
 	webserver.addCommand("sched.htm", &schedPageCmd);				//get page
-	webserver.addCommand("sched.xml", &schedXMLCmd);					//get xml
+	webserver.addCommand("sched.xml", &schedXMLCmd);				//get xml
 	webserver.addCommand("sched.data", &schedDataCmd);				//post data
 	webserver.addCommand("sched.delete", &schedDeleteCmd);			//delete sched data from sd
 	webserver.addCommand("system.htm", &systemPageCmd);				//get page
-	webserver.addCommand("stats.xml", &statsXMLCmd);					//get xml
+	webserver.addCommand("stats.xml", &statsXMLCmd);				//get xml
 	webserver.addCommand("settings.xml", &settingsXMLCmd);			//get xml
-	webserver.addCommand("settings.data", &settingsDataCmd);			//post data
+	webserver.addCommand("settings.data", &settingsDataCmd);		//post data
 	webserver.addCommand("settings.default", &settingsDefaultCmd);	//delete settings data from sd
 	webserver.addCommand("offsets.data", &offsetsDataCmd);			//post data
-	webserver.addCommand("offsets.default", &offsetsDefaultCmd);		//delete settings data from sd
+	webserver.addCommand("offsets.default", &offsetsDefaultCmd);	//delete settings data from sd
 	webserver.addCommand("network.data", &networkDataCmd);			//post data
 	webserver.addCommand("reboot", &rebootCmd);						//reboot arduino
 	webserver.addCommand("rebootwifi", &rebootWifiCmd);				//reboot wifi

@@ -2,11 +2,13 @@ void printDebug() {
 
 }
 
+
 /// <summary>
 /// Helper method - service call which could be in main loop(), but executing every seconds is good enough
 /// </summary>
 void system() {
 	wdt_reset();
+	ethShieldFreezeDetect();
 	DateTime _dtNow = now();
 	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(_dtNow);
 	sNow = getDateTimeString(_dtNow);
@@ -251,27 +253,27 @@ void thingSpeak() {
 void syncRTCwithNTP() {
 	if (Settings.NTPServer == "0" ||
 		Settings.NTPServer == "") return;
-		bLCDRefreshing = false;
-		lcd.clear();
-		lcd.setCursor(0, 0);
+	bLCDRefreshing = false;
+	lcd.clear();
+	lcd.setCursor(0, 0);
 
-		unsigned long ntp = ntpUnixTime(udp);
-		if (ntp != 0)
-		{
-			dtLastNTPsync = DateTime(now());
-			rtc.adjust(DateTime(ntp));
-			lcd.print(F("NTP timesync success"));
+	unsigned long ntp = ntpUnixTime(udp);
+	if (ntp != 0)
+	{
+		dtLastNTPsync = DateTime(now());
+		rtc.adjust(DateTime(ntp));
+		lcd.print(F("NTP timesync success"));
 #if DEBUG
-			Serial.println(F("NTP time sync success"));
+		Serial.println(F("NTP time sync success"));
 #endif
-		}
-		else
-		{
-			lcd.print(F("NTP timesync failed!"));
+	}
+	else
+	{
+		lcd.print(F("NTP timesync failed!"));
 #if DEBUG
-			Serial.println(F("NTP time sync failed!"));
+		Serial.println(F("NTP time sync failed!"));
 #endif
-		}
+	}
 }
 
 
@@ -305,7 +307,7 @@ void dhcp() {
 		Serial.println(Ethernet.dnsServerIP());
 #endif
 		ledLight(1, 'g');
-}
+	}
 	wdt_enable(WDTO_8S);
 }
 
@@ -327,7 +329,7 @@ void writeSD() {
 		lcd.print(F("settings to SD card"));
 		lcd.setCursor(0, 2);
 		lcd.print(F("failed!"));
-}
+	}
 	else
 	{
 #if DEBUG

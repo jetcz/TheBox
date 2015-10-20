@@ -28,6 +28,21 @@ void resetWifi() {
 	if (Settings.TSenabled) Alarm.enable(updateTSAlarm);
 }
 
+
+/// <summary>
+/// if we lost IP address, ethernet shiled most likely died and needs to be reinitialized
+/// </summary>
+void ethShieldFreezeDetect() {
+
+	if (Ethernet.localIP() == INADDR_NONE) //ethernet shield froze
+	{
+#if DEBUG
+		Serial.println(F("Ethernet shield freeze detected!"));
+#endif
+		setupEthernet();
+	}
+}
+
 /// <summary>
 /// Check whether ethernet shield and arduino needs to be restared
 /// </summary>
@@ -219,7 +234,7 @@ bool resolveHost(IPAddress &addr, char &host)
 		Serial.print(F("Resolved hostname: "));
 		Serial.print(&host);
 		Serial.print(F(" into IP: "));
-		Serial.println(addr);		
+		Serial.println(addr);
 #endif // DEBUG		
 		ledLight(3, 'g');
 		nFailedNetworkOps = 0;
