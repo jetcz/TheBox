@@ -1,4 +1,4 @@
-#define PRINT_SUMMARY true	//print sensor summary every reading
+#define PRINT_SUMMARY false	//print sensor summary every reading
 #define DEBUG true			//other debug messages
 
 //this is where are stored aditional css and js files
@@ -85,7 +85,7 @@ EnergyMonitor emon;
 RF24 radio(RADIO_ENABLE_PIN, RADIO_SELECT_PIN);
 const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 float fVcc;
-bool bRTCInitSuccess;
+bool bRTCInitSuccess, bSetupDone;
 
 //initialize custom structs
 SystemSettings Settings;			//here are all user configurables
@@ -152,6 +152,7 @@ int dhcpAlarm;
 int writeSDAlarm;
 int rainPerHourAlarm;
 int rainPerDayAlarm;
+int ethShieldFreezeDetectAlarm;
 //reboot arduino
 void(*resetFunc) (void) = 0;
 
@@ -1179,10 +1180,11 @@ void setup()
 	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 15.2, 14.44); //Current: input pin, input pin, calibration, calibration
 
 	wdt_enable(WDTO_8S); //enable watchdog
-
+	bSetupDone = true;
 #if DEBUG
 	Serial.println(F("Setup Done"));
 #endif
+
 }
 
 void loop() //one cycle takes about 1ms (900us - 1050us)

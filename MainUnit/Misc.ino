@@ -30,16 +30,24 @@ void resetWifi() {
 
 
 /// <summary>
-/// if we lost IP address, ethernet shiled most likely died and needs to be reinitialized
+/// if we lost IP address, ethernet shield most likely died and needs to be reinitialized
 /// </summary>
 void ethShieldFreezeDetect() {
-
+	Alarm.disable(ethShieldFreezeDetectAlarm);
+#if DEBUG
+	Serial.print(F("Checking Ethernet Shield..."));
+#endif // DEBUG
 	if (Ethernet.localIP() == INADDR_NONE) //ethernet shield froze
 	{
 #if DEBUG
-		Serial.println(F("Ethernet shield freeze detected!"));
+		Serial.println(F("Freeze!"));
 #endif
 		setupEthernet();
+	}
+	else {
+#if DEBUG
+		Serial.println(F("OK"));
+#endif // DEBUG
 	}
 }
 

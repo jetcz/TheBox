@@ -171,21 +171,30 @@ bool readSDRain(int nArrPtr) {
 
 		while (file.available()) {
 
-			if (_nCnt == 0)
+			if (_nCnt == 0) //first line cotains timestamp
 			{
 				time_t _lFileAge = now() - (time_t)file.parseInt();
 				_nToBeSkipped = _lFileAge / Settings.UpdateRainInterval[nArrPtr];
 			}
 
-			if (_nCnt > _nToBeSkipped + 1) //first line cotains just timestamp
+			if (_nCnt > _nToBeSkipped) //rain data following
 			{
 				byte _byVal = file.parseInt();
 				Rain[nArrPtr].push(_byVal);
 				nRainTicksSum[nArrPtr] += _byVal;
 			}
-			else file.read();
+			else file.parseInt();
 			_nCnt++;
 		}
+
+		//fill the rest of the fifo with zeroes (presuming that there was no rain during the time we were turned off, this is very naive but hey...)
+		//main purpose of this feature is to keep data over reboot, not over longer period of inactivity - we cant possibly know how much rain has fallen over the period of inactivity
+		int _nFifoLen = (nArrPtr == 0) ? 60 : 86400 / Settings.UpdateRainInterval[1];
+		while (Rain[nArrPtr].count() < _nFifoLen)
+		{			
+			Rain[nArrPtr].push((byte)0);
+		}
+
 		// close the file:
 		file.close();
 		return true;

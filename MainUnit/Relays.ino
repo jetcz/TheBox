@@ -31,10 +31,13 @@ void switchRelays() {
 			break;
 		}
 	}
-	
+
 #if DEBUG
 	Serial.println();
 #endif
+
+	if (bSetupDone) Alarm.enable(ethShieldFreezeDetectAlarm);
+
 }
 
 /// <summary>
@@ -42,7 +45,7 @@ void switchRelays() {
 /// </summary>
 /// <param name="relay">relay</param>
 /// <returns>on/off</returns>
-bool getRelayState(int relay){
+bool getRelayState(int relay) {
 	return !digitalRead(RELAY_PIN[relay]);
 }
 
@@ -51,10 +54,13 @@ bool getRelayState(int relay){
 /// </summary>
 /// <param name="t">Current date time</param>
 /// <param name="relay">relay</param>
-void serviceSchedulers(DateTime t, int relay){
-	
+/// <returns>if any relay switch happened</returns>
+bool serviceSchedulers(DateTime t, int relay) {
+	static bool _bLastState[4] = { 0 };
+	bool _bSwitched = false;
+
 	if (Sched[relay].Variable != 0) //is not pir
-	{		
+	{
 		//set current interval where we are at this time of day
 		unsigned long _lCurrSec = long(t.hour()) * 60 * 60 + long(t.minute()) * 60 + long(t.second());
 		bool _bSet = false; //in case we use all 5 intervals we need to have this aux variable
@@ -81,11 +87,15 @@ void serviceSchedulers(DateTime t, int relay){
 				{
 					//switch relays according to target var
 					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {
+						_bSwitched = _bLastState[relay] != true;
 						digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
+						_bLastState[relay] = true;
 					}
 
 					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][1]) {
+						_bSwitched = _bLastState[relay] != false;
 						digitalWrite(RELAY_PIN[relay], HIGH);
+						_bLastState[relay] = false;
 					}
 				}
 			}
@@ -94,26 +104,43 @@ void serviceSchedulers(DateTime t, int relay){
 				{
 					//switch relays according to target var
 					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {
+						_bSwitched = _bLastState[relay] != true;
 						digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
+						_bLastState[relay] = true;
 					}
 
 					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][1]) {
+						_bSwitched = _bLastState[relay] != false;
 						digitalWrite(RELAY_PIN[relay], HIGH);
+						_bLastState[relay] = false;
 					}
 				}
 			}
 		}
 		else if (Settings.InvalidDSAction)//remote ds is not valid and we have in settings that we need to turn opff relay when ds invalid
 		{
+			_bSwitched = _bLastState[relay] != false;
 			digitalWrite(RELAY_PIN[relay], HIGH); //turn off relay
-		} 
+			_bLastState[relay] = false;
+		}
 		else //when we do nothing when ds invalid
 		{
 			// do nothing
 		}
 	}
-	else  { //target variable is pir
-		if (getMainPir()) digitalWrite(RELAY_PIN[relay], LOW);
-		else digitalWrite(RELAY_PIN[relay], HIGH);
+	else { //target variable is pir
+		if (getMainPir())
+		{
+			_bSwitched = _bLastState[relay] != true;
+			digitalWrite(RELAY_PIN[relay], LOW);
+			_bLastState[relay] = true;
+		}
+		else
+		{
+			_bSwitched = _bLastState[relay] != false;
+			digitalWrite(RELAY_PIN[relay], HIGH);
+			_bLastState[relay] = false;
+		}
 	}
+	return _bSwitched;
 }

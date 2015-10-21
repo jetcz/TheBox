@@ -8,14 +8,18 @@ void printDebug() {
 /// </summary>
 void system() {
 	wdt_reset();
-	ethShieldFreezeDetect();
 	DateTime _dtNow = now();
 	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(_dtNow);
 	sNow = getDateTimeString(_dtNow);
 	sMainUptime = getUptimeString(getUptime(_dtNow));
+	bool _bSwitched = false;
 	for (int relay = 0; relay < 4; relay++)
 	{
-		if (Settings.RelayMode[relay] > 1) serviceSchedulers(_dtNow, relay);
+		if (Settings.RelayMode[relay] > 1) _bSwitched |= serviceSchedulers(_dtNow, relay);
+	}
+	if (_bSwitched)
+	{
+		Alarm.enable(ethShieldFreezeDetectAlarm); //if relay switch happened, check if the eth shield is not frozen
 	}
 	printLcd(); //this takes about 64ms when lcd is lit up
 }

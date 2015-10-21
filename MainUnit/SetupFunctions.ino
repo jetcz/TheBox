@@ -292,6 +292,8 @@ void setupAlarms() {
 	rainPerDayAlarm = Alarm.timerRepeat(Settings.UpdateRainInterval[1], getRainPerDay); //cumulative rainfall
 	Alarm.timerRepeat(21600, syncRTCwithNTP); //sync RTC with NTP
 	dhcpAlarm = Alarm.timerRepeat(100, dhcp); //refresh dhcp lease (if needed) every 100 sec (THIS IS BLOCKING!!!)
+	ethShieldFreezeDetectAlarm = Alarm.timerRepeat(1, ethShieldFreezeDetect);
+	Alarm.disable(ethShieldFreezeDetectAlarm);
 	//these get enabled with first radio msg
 	Alarm.disable(rainPerHourAlarm);
 	Alarm.disable(rainPerDayAlarm);
@@ -306,6 +308,5 @@ void setupAlarms() {
 	Serial.println(F("Alarms initialized"));
 	Alarm.timerRepeat(2, printDebug);
 #endif	
-
 }
 
