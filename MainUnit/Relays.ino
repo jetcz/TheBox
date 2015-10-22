@@ -54,10 +54,10 @@ bool getRelayState(int relay) {
 /// </summary>
 /// <param name="t">Current date time</param>
 /// <param name="relay">relay</param>
-/// <returns>if any relay switch happened</returns>
+/// <returns>If any relay switch happened</returns>
 bool serviceSchedulers(DateTime t, int relay) {
-	static bool _bLastState[4] = { 0 };
-	bool _bSwitched = false;
+	static bool _bLastState[4] = { 0 }; //previous relay states
+	bool _bSwitched = false; //if this variable is true in the end of this method, it means that at least one relay switch happened and we should check ethernet shield if it is still running
 
 	if (Sched[relay].Variable != 0) //is not pir
 	{

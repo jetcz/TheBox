@@ -82,7 +82,7 @@ void getPWRData() {
 	float _fVal;
 	fVcc = readVcc();
 	_fVal = getPower(0);
-	MainDS.Data[5] = (_fVal < 1) ? 0 : _fVal;
+	MainDS.Data[5] = (_fVal < 1) ? 0 : _fVal; //pwr consuption is very inacurate under a 1 watt
 	_fVal = getPower(3);
 	MainDS.Data[6] = (_fVal < 1) ? 0 : _fVal;
 	MainDS.Data[7] = getVoltage();
@@ -162,6 +162,7 @@ void printSensorDataSerial() {
 
 /// <summary>
 /// Responsible for printing stuff to LCD every second
+/// This would be better if it was controlled by an interrupt, but in reality, it could cause a buttload of problems, so running it every seond with scheduler is good enough
 /// </summary>
 void printLcd() {
 	static byte _byLastScreen;
@@ -216,7 +217,7 @@ void printLcd() {
 
 
 /// <summary>
-/// Helper method to call Thingspeak upload, rotate datasets and restart arduino if there problems uploading
+/// Helper method to call Thingspeak upload, rotate datasets and restart arduino if there are problems with uploading
 /// </summary>
 void thingSpeak() {
 	if (millis() < 40000 ||
@@ -238,7 +239,7 @@ void thingSpeak() {
 		return; //cancel thingspeak update
 	}
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
-	SystemDS.Size = (RemoteDS.isValid) ? 8 : 6;
+	SystemDS.Size = (RemoteDS.isValid) ? 8 : 6; //this is ugly, but it is a limitation of thingspeak
 	DataSetPtr[_byCurrentDS]->GetTSString();
 
 #if DEBUG
@@ -282,7 +283,8 @@ void syncRTCwithNTP() {
 
 
 /// <summary>
-/// Maintain DHCP lease if used
+/// Maintain DHCP lease
+/// Using DHCP is not recommended
 /// </summary>
 void dhcp() {
 	wdt_disable();

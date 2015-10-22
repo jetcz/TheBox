@@ -1,8 +1,8 @@
 /// <summary>
 /// Write current scheduler settings to SD card.
 /// </summary>
-/// <returns>true if writing succeeded, otherwise false</returns>
-boolean writeSDSched() {
+/// <returns>True if writing succeeded, otherwise false</returns>
+bool writeSDSched() {
 	for (int i = 0; i < 4; i++)
 	{
 		String _sPath;
@@ -46,12 +46,11 @@ boolean writeSDSched() {
 /// <summary>
 /// Read scheduler settings from SD card.
 /// </summary>
-/// <returns>true if reading succeeded, otherwise false</returns>
-boolean readSDSched() {
+/// <returns>True if reading succeeded, otherwise false</returns>
+bool readSDSched() {
 
 	for (int i = 0; i < 4; i++)
 	{
-
 		String _sPath;
 		_sPath.reserve(21);
 		_sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
@@ -102,13 +101,10 @@ boolean readSDSched() {
 /// <summary>
 /// Deletes scheduler settings from SD card.
 /// </summary>
-void deleteSDSched() {
-	String _sPath;
-	_sPath.reserve(21);
-	for (int i = 0; i < 4; i++)
-	{
-		_sPath = "/settings/sch_r" + intToString(i + 1) + ".ini";
-		_sPath.toCharArray(cBuff1, nBuffLen1);
-		SD.remove(cBuff1);
-	}
+/// <param name="relay">Specified relay</param>
+
+void deleteSDSched(int relay) {
+	String _sPath = "/settings/sch_r" + intToString(relay + 1) + ".ini";
+	_sPath.toCharArray(cBuff1, nBuffLen1);
+	SD.remove(cBuff1);
 }

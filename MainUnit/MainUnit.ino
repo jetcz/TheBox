@@ -1,5 +1,5 @@
 #define PRINT_SUMMARY false	//print sensor summary every reading
-#define DEBUG true			//other debug messages
+#define DEBUG false			//other debug messages
 
 //this is where are stored aditional css and js files
 //if you change the host, dont forget to update also html files on SD card
@@ -36,7 +36,7 @@
 #include "Payload.h"
 #include "SystemSettings.h"
 #include "RelayScheduler.h"
-#include "PrivateData.h" //this is not in source control - it contains my API keys
+#include "PrivateData.h"
 
 
 //my arduino specific calibration constant for reading vcc
@@ -158,7 +158,7 @@ void(*resetFunc) (void) = 0;
 
 #pragma region webduino
 
-P(messageSDFail) =
+P(messageFail) =
 "<!DOCTYPE html><html><head>"
 "<meta http-equiv=\"refresh\" content=\"2\">"
 "<script language=\"javascript\">"
@@ -172,6 +172,9 @@ P(messageSDFail) =
 "</div>"
 "</body>"
 "</html>";
+
+
+
 
 /* commands for webserver */
 void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -188,7 +191,7 @@ void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 			}
 			file.close();
 		}
-		else server.printP(messageSDFail);
+		else server.printP(messageFail);
 	}
 	ledLight(1, 'g');
 }
@@ -334,7 +337,7 @@ void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			}
 			file.close();
 		}
-		else server.printP(messageSDFail);
+		else server.printP(messageFail);
 	}
 	ledLight(1, 'g');
 }
@@ -352,7 +355,7 @@ void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			}
 			file.close();
 		}
-		else server.printP(messageSDFail);
+		else server.printP(messageFail);
 	}
 	ledLight(1, 'g');
 }
@@ -370,7 +373,7 @@ void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 			}
 			file.close();
 		}
-		else server.printP(messageSDFail);
+		else server.printP(messageFail);
 	}
 	ledLight(1, 'g');
 }
@@ -427,6 +430,36 @@ void schedXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool
 }
 void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+	P(messageSuccess) =
+		"<!DOCTYPE html><html><head>"
+		"<meta http-equiv=\"refresh\" content=\"2; url=sched.htm\">"
+		"<script language=\"javascript\">"
+		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
+		"</script>"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+		"</head>"
+		"<body>"
+		"<div class=\"content\" style=\"color:green;font-weight:bold\">"
+		"Scheduler settings successfully saved"
+		"</div>"
+		"</body>"
+		"</html>";
+
+	P(messageFail) =
+		"<!DOCTYPE html><html><head>"
+		"<meta http-equiv=\"refresh\" content=\"2; url=sched.htm\">"
+		"<script language=\"javascript\">"
+		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
+		"</script>"
+		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+		"</head>"
+		"<body>"
+		"<div class=\"content\" style=\"color:red;font-weight:bold\">"
+		"Failed to save scheduler settings!"
+		"</div>"
+		"</body>"
+		"</html>";
+
 	ledLight(1, 'y');
 
 	server.httpSuccess();
@@ -489,47 +522,26 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 	}
 #endif // debug
 
-	P(messageSuccess) =
-		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"2; url=sched.htm\">"
-		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
-		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
-		"</head>"
-		"<body>"
-		"<div class=\"content\" style=\"color:green;font-weight:bold\">"
-		"Scheduler settings successfully saved"
-		"</div>"
-		"</body>"
-		"</html>";
 
-	P(messageFail) =
-		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"2; url=sched.htm\">"
-		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
-		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
-		"</head>"
-		"<body>"
-		"<div class=\"content\" style=\"color:red;font-weight:bold\">"
-		"Failed to save scheduler settings!"
-		"</div>"
-		"</body>"
-		"</html>";
-
-	if (writeSDSched()) server.printP(messageSuccess);
-	else server.printP(messageFail);
+	if (writeSDSched())
+	{
+		server.printP(messageSuccess);
+		ledLight(1, 'g');
+	}
+	else
+	{
+		server.printP(messageFail);
+		ledLight(1, 'r');
+	}
 	server.flushBuf();
 
-	ledLight(1, 'g');
 }
+
 void schedDeleteCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'b');
 	server.httpSuccess();
-	P(message) =
+	P(messageSuccess) =
 		"<!DOCTYPE html><html><head>"
 		"<meta http-equiv=\"refresh\" content=\"1; url=sched.htm\">"
 		"<script language=\"javascript\">"
@@ -543,13 +555,15 @@ void schedDeleteCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		"</div>"
 		"</body>"
 		"</html>";
-	server.printP(message);
-	server.flushBuf();
-	deleteSDSched();
+
+
 	for (int i = 0; i < 4; i++)
 	{
+		deleteSDSched(i);
 		Sched[i].setDefault();
 	}
+	server.printP(messageSuccess);
+	server.flushBuf();
 	ledLight(1, 'g');
 }
 void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -566,7 +580,7 @@ void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 			}
 			file.close();
 		}
-		else server.printP(messageSDFail);
+		else server.printP(messageFail);
 	}
 	ledLight(1, 'g');
 };
@@ -1132,7 +1146,7 @@ void setup()
 	setupEthernet();
 	setupRTC();
 	setupAlarms();
-	if (bRTCInitSuccess)
+	if (bRTCInitSuccess) //this relies on correctly set clock from RTC module
 	{
 		//read cumulative rain data from sd card - this solves forgetting rain ater reboot
 		readSDRain(0);
@@ -1166,7 +1180,7 @@ void setup()
 
 	//datasets setup
 	//for some reason, we have to pass the whole string with API key, pointer doesn't work properly, arduino sometimes freezes
-	//this is not very memory friendly
+	//this is probably not very memory friendly
 	MainDS.APIkey = pd.MainAPIKey;
 	RemoteDS.APIkey = pd.RemoteAPIKey;
 	SystemDS.APIkey = pd.SystemAPIKey;
@@ -1189,7 +1203,7 @@ void setup()
 
 void loop() //one cycle takes about 1ms (900us - 1050us)
 {
-	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down
+	Alarm.delay(0);					//run alarms without any delay so the loop isn't slowed down, the whole program is controled by this "scheduler", see SetupAlarms() for complete list of tasks which are performed
 	receiveData();					//receive radio messages from remote unit if available
 	webserver.processConnection();	//process webserver request as soon as possible
 	emon.calcVI(100, fVcc);			//measure power consumption in outlets (non-blocking)	

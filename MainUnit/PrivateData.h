@@ -3,7 +3,7 @@
 /// </summary>
 struct PrivateData
 {
-	String MainAPIKey = "xxx";
-	String RemoteAPIKey = "xxx";
-	String SystemAPIKey = "xxx";
+	const String MainAPIKey = "K7P7WFDNULBLM4BB";
+	const String RemoteAPIKey = "2OC07GNQXJ25MIUE";
+	const String SystemAPIKey = "GUYKVZCZ7RMAWKK7";
 }; typedef struct PrivateData PrivateData;

@@ -71,6 +71,6 @@ unsigned long ntpUnixTime(UDP &udp)
 
 	// Discard the rest of the packet
 	udp.flush();
-
-	return _lTime - 2208988800ul;		// convert NTP time to Unix time
+	ledLight(1, 'g');
+	return _lTime - 2208988800ul;		// convert NTP time to Unix time	
 }
