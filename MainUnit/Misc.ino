@@ -235,7 +235,9 @@ time_t syncProvider()
 bool resolveHost(IPAddress &addr, char &host)
 {
 	ledLight(3, 'c');
+	wdt_disable();
 	DNSClient dns;
+	bool _bSuccess;
 	dns.begin(Ethernet.dnsServerIP());
 	if (dns.getHostByName(&host, addr) == 1) {
 #if DEBUG
@@ -246,7 +248,7 @@ bool resolveHost(IPAddress &addr, char &host)
 #endif // DEBUG		
 		ledLight(3, 'g');
 		nFailedNetworkOps = 0;
-		return true;
+		_bSuccess = true;
 	}
 	else {
 #if DEBUG
@@ -260,6 +262,10 @@ bool resolveHost(IPAddress &addr, char &host)
 		lcd.print(F("Failed to resolve"));
 		lcd.setCursor(0, 1);
 		lcd.print(&host);
+		nFailedNetworkOps++;
+		_bSuccess = false;
 
 	}
+	wdt_enable(WDTO_8S);
+	return _bSuccess;
 }
