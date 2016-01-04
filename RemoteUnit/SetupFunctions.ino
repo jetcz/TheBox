@@ -49,8 +49,11 @@ void setupRadio() {
 /// This sends payload on available channels until ACK is received on one of them. Do not use channels 126 and 127, for some reason they don't work correctly on my units.
 /// </summary>
 /// <returns>channel</returns>
-int selectChannel()
-{
+int selectChannel() {
+#if !RADIO
+	return 0;
+#endif // !RADIO
+
 	unsigned long _lStartTime = millis();
 	byte _byChannel = 0;
 	radio.setRetries(5, 2);
@@ -61,7 +64,7 @@ int selectChannel()
 		_byChannel++;
 		if (_byChannel > 125) _byChannel = 0;
 		radio.setChannel(_byChannel);
-		if (millis() - _lStartTime > 5000) return InvalidValue;
+		if (millis() - _lStartTime > 4000) return InvalidValue;
 	}
 	radio.powerDown();
 	radio.setRetries(3, 3);

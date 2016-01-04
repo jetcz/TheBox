@@ -13,10 +13,11 @@
 #define __AVR_ATmega328p__
 #define __AVR_ATmega328P__
 #define F_CPU 16000000L
-#define ARDUINO 164
+#define ARDUINO 10607
 #define ARDUINO_AVR_PRO
 #define ARDUINO_ARCH_AVR
 #define __cplusplus
+#define __AVR__
 #define __inline__
 #define __asm__(x)
 #define __extension__
@@ -83,11 +84,11 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portOutputRegister(P)
 #define portInputRegister(P)
 #define portModeRegister(P)
-#include <RemoteUnit.ino>
-#include <Led.ino>
-#include <Misc.ino>
-#include <Payload.h>
-#include <Radio.ino>
-#include <Sensors.ino>
-#include <SetupFunctions.ino>
+#include <..\RemoteUnit\RemoteUnit.ino>
+#include <..\RemoteUnit\Led.ino>
+#include <..\RemoteUnit\Misc.ino>
+#include <..\RemoteUnit\Payload.h>
+#include <..\RemoteUnit\Radio.ino>
+#include <..\RemoteUnit\Sensors.ino>
+#include <..\RemoteUnit\SetupFunctions.ino>
 #endif

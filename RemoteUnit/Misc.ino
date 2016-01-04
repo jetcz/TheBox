@@ -77,3 +77,28 @@ unsigned long getUptime() {
 	_lUptime = 4294967 * millisRollover() + round(millis() / 1000);
 	return _lUptime;
 }
+
+/// <summary>
+/// Sleeps until power is enough
+/// </summary>
+void savePower() {
+	if (*Vcc < 4100)
+	{
+		powerSensors(false, true);
+		powerSensors(false, false);
+		radio.powerDown();
+
+		while (*Vcc < 4100)
+		{
+#if DEBUG
+			Serial.print(F("Battery voltage is "));
+			Serial.print(*Vcc);
+			Serial.println(F("mV. Saving power..."));
+			delay(5000);
+#else
+			Sleepy::loseSomeTime(60000);
+#endif // DEBUG
+			*Vcc = readVcc();
+		}
+	}
+}

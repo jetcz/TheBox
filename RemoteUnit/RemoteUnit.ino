@@ -1,4 +1,5 @@
 #define DEBUG false
+#define RADIO true
 
 #include <RunningAverage.h>
 #include <SPI.h>
@@ -57,7 +58,7 @@ void setup() {
 
 	noInterrupts();
 #if DEBUG
-	Serial.begin(115200);
+	Serial.begin(9600);
 #endif
 	attachInterrupt(0, ISRTipCnt, FALLING);
 	setupPins();
@@ -65,11 +66,11 @@ void setup() {
 	ds.begin();
 	nRainTips = 0;
 	interrupts();
-
 	getPayload();
 
 	do
 	{
+		savePower();
 		nChannel = selectChannel();
 
 		if (nChannel == InvalidValue)
@@ -86,19 +87,27 @@ void setup() {
 }
 
 void loop() {
-	lDelay = millis();
-
+	lDelay = millis();	
 	getPayload();	//read sensor data
+
+#if RADIO
 	if (!sendPayload()) byFailedConsMsgs++;	else byFailedConsMsgs = 0;	//try to send data over the air; we use hardware auto ACK and retransmit
 	adjustRadio();
+#endif // RADIO
+
 	//go to sleep again for 20 seconds minus the time it took to read and send data
 	lDelay = millis() - lDelay;
-#if !DEBUG
-	Sleepy::loseSomeTime(lDelay < nMsgTimeout ? nMsgTimeout - lDelay : nMsgTimeout);
-#endif // !DEBUG
+	lDelay = lDelay < nMsgTimeout ? nMsgTimeout - lDelay : nMsgTimeout;
 #if DEBUG
-	delay(nMsgTimeout - lDelay);
-#endif // DEBUG
+	Serial.print(F("Going to sleep for "));
+	Serial.print(lDelay);
+	Serial.println("ms");
+	delay(lDelay);
+	Sleepy::loseSomeTime(lDelay);
+#else
+	Sleepy::loseSomeTime(lDelay);
+#endif // DEBUG	
 
+	savePower();
 }
 
