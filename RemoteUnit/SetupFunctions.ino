@@ -55,16 +55,22 @@ int selectChannel() {
 #endif // !RADIO
 
 	unsigned long _lStartTime = millis();
+	unsigned long _lStep = _lStartTime;
 	byte _byChannel = 0;
 	radio.setRetries(5, 2);
 	radio.powerUp();
 	while (!radio.write(&payload, sizeof(Payload)))
 	{
-		ledLight('m', true);
+		if (millis() - _lStep > 250)
+		{
+			ledLight('m', true);
+			_lStep = millis();
+		}
+
 		_byChannel++;
 		if (_byChannel > 125) _byChannel = 0;
 		radio.setChannel(_byChannel);
-		if (millis() - _lStartTime > 4000) return InvalidValue;
+		if (millis() - _lStartTime > 3000) return InvalidValue;
 	}
 	radio.powerDown();
 	radio.setRetries(3, 3);

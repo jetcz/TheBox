@@ -75,8 +75,7 @@ void setup() {
 
 		if (nChannel == InvalidValue)
 		{
-			ledLight('r', 100);
-			Sleepy::loseSomeTime(2000);
+			Sleepy::loseSomeTime(3000);
 		}
 	} while (nChannel == InvalidValue);
 #if DEBUG
