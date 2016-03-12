@@ -145,10 +145,10 @@ bool writeSDRain(int nArrPtr) {
 	else {
 		file.println(now());
 		int j = Rain[nArrPtr].count();
-		for (int i = 0; i < j; i++)
+		for (int i = j - 1; i >= 0; i--) //must go from end to start, because restoring is doing push - first line in file will appear last in fifo, see readSDRain
 		{
 			file.print(Rain[nArrPtr].contents[i]);
-			if (i < j - 1)
+			if (i > 0)
 			{
 				file.println();
 			}
@@ -191,7 +191,7 @@ bool readSDRain(int nArrPtr) {
 		//main purpose of this feature is to keep data over reboot, not over longer period of inactivity - we cant possibly know how much rain has fallen over the period of inactivity
 		int _nFifoLen = (nArrPtr == 0) ? 60 : 86400 / Settings.UpdateRainInterval[1];
 		while (Rain[nArrPtr].count() < _nFifoLen)
-		{			
+		{
 			Rain[nArrPtr].push((byte)0);
 		}
 

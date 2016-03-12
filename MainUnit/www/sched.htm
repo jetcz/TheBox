@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<link rel="apple-touch-icon-precomposed" sizes="152x152" href="http://jet.php5.cz/thebox/favicon/apple-touch-icon-152x152.png" />
-<link rel="icon" type="image/png" href="http://jet.php5.cz/thebox/favicon/favicon-196x196.png" sizes="196x196" />
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="favicon/apple-touch-icon-152x152.png" />
+<link rel="icon" type="image/png" href="favicon/favicon-196x196.png" sizes="196x196" />
 <meta name="application-name" content="&nbsp;" />
 <meta name="msapplication-TileColor" content="#FFFFFF" />
-<meta name="msapplication-TileImage" content="http://jet.php5.cz/thebox/favicon/mstile-144x144.png" />
-<meta name="msapplication-wide310x150logo" content="http://jet.php5.cz/thebox/favicon/mstile-310x150.png" />
-<meta name="msapplication-square310x310logo" content="http://jet.php5.cz/thebox/favicon/mstile-310x310.png" />
+<meta name="msapplication-TileImage" content="favicon/mstile-144x144.png" />
+<meta name="msapplication-wide310x150logo" content="favicon/mstile-310x150.png" />
+<meta name="msapplication-square310x310logo" content="favicon/mstile-310x310.png" />
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/menu.css">
-    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/general.css">
-    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/table.css">
-    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/loader.css">
+    <link rel="stylesheet" type="text/css" href="css/menu.css">
+    <link rel="stylesheet" type="text/css" href="css/general.css">
+    <link rel="stylesheet" type="text/css" href="css/table.css">
+    <link rel="stylesheet" type="text/css" href="css/loader.css">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <script src="http://jet.php5.cz/thebox/js/sched.js"></script>
-    <script type="text/javascript" src="http://jet.php5.cz/thebox/js/jstepper/jquery.jstepper.min.js"></script>
-    <script type="text/javascript" src="http://jet.php5.cz/thebox/js/mousewheel/jquery.mousewheel.js"></script>
+     <script src="js/utils.js"></script>
+    <script src="js/sched.js"></script>
+    <script type="text/javascript" src="js/jstepper/jquery.jstepper.min.js"></script>
+    <script type="text/javascript" src="js/mousewheel/jquery.mousewheel.js"></script>
     <title>
         The Box - Scheduler
     </title>
@@ -46,19 +47,19 @@
         <div class="nav">
             <ul>
                 <li>
-                    <a href="index.htm">Home</a>
+                    <a id="a_index">Home</a>
                 </li>
                 <li>
-                    <a href="graphs1.htm">Graphs 1</a>
+                    <a id="a_graphs1">Graphs 1</a>
                 </li>
                 <li>
-                    <a href="graphs2.htm">Graphs 2</a>
+                    <a id="a_graphs2">Graphs 2</a>
                 </li>
                 <li>
-                    <a class="active" href="sched.htm">Scheduler</a>
+                    <a class="active" id="a_sched">Scheduler</a>
                 </li>
                 <li>
-                    <a href="system.htm">System</a>
+                    <a id="a_system">System</a>
                 </li>
             </ul>
         </div>
@@ -68,7 +69,7 @@
         </div>
     </div>
     <div class="wrapContent data" style="visibility:hidden">
-        <form id="schedForm" method="post" action="sched.data" onsubmit="return validateForm()">
+        <form id="schedForm" method="post" onsubmit="return validateForm()">
             <div class="content">
                 <table>
                     <thead>
@@ -667,7 +668,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <form action="sched.delete" method="post">
+                            <form id="sched_delete" action="sched.delete" method="post">
                                 <input type="hidden" value="" />
                                 <button type="submit" value="1" onclick="return confirm('Are you sure?')" style="color:#c90000;font-weight:bold">
                                     Delete schedulers

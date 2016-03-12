@@ -17,7 +17,7 @@ void updateThingSpeak(DataSet ds) {
 	client.flush();
 	//connect to thingspeak
 	unsigned static long _lLastCnn;
-	if (!client.connected() || now() - _lLastCnn > 420) //for some reason the connection doesn't last past 500 sec, so we need to close and reopen it manualy for maximum reliability
+	if (!client.connected() || now() - _lLastCnn > Settings.TSCnnTimeout) //for some reason the connection doesn't last past 500 sec, so we need to close and reopen it manualy for maximum reliability
 	{
 		ledLight(3, 'c');
 		client.stop();
@@ -35,16 +35,8 @@ void updateThingSpeak(DataSet ds) {
 		Serial.println(F("Connected to ThingSpeak, sending data..."));
 		Serial.println(ds.ThingSpeakStr);
 #endif
-		client.print(F("POST /update HTTP/1.1\n"));
-		client.print(F("Host: api.thingspeak.com\n"));
-		client.print(F("Connection: Keep-Alive\n"));
-		client.print(F("X-THINGSPEAKAPIKEY: "));
-		client.print(ds.APIkey + "\n");
-		client.print(F("headers: false\n"));
-		client.print(F("Content-Type: application/x-www-form-urlencoded\n"));
-		client.print(F("Content-Length: "));
-		client.print(intToString(ds.ThingSpeakStr.length()) + "\n\n");
-		client.println(ds.ThingSpeakStr);
+		sendData(ds);
+
 		ledLight(3, 'g');
 	}
 	else
@@ -68,5 +60,49 @@ void updateThingSpeak(DataSet ds) {
 		Serial.println(F(" times!"));
 		Serial.println();
 #endif
+	}
+}
+
+
+/// <summary>
+/// Upload ThingSpeak data.
+/// </summary>
+/// <param name="ds">dataset</param>
+void sendData(DataSet ds) {
+
+	if (Settings.Method == POST)
+	{
+#if DEBUG
+		Serial.println("POST");
+#endif // DEBUG
+
+		client.print(F("POST /update HTTP/1.1\n"));
+		client.print(F("Host: "));
+		client.print(Settings.ThingSpeakAddress);
+		client.print(F("\nConnection: Keep-Alive\n"));
+		client.print(F("X-THINGSPEAKAPIKEY: "));
+		client.print(ds.APIkey);
+		client.print(F("\nheaders: false\n"));
+		client.print(F("Content-Type: application/x-www-form-urlencoded\n"));
+		client.print(F("Content-Length: "));
+		client.print(intToString(ds.ThingSpeakStr.length()) + "\n\n");
+		client.println(ds.ThingSpeakStr);
+	}
+	else if (Settings.Method == GET)
+	{
+#if DEBUG
+		Serial.println("GET");
+#endif // DEBUG
+
+		client.print(F("GET /update?key="));
+		client.print(ds.APIkey);
+		client.print(F("&"));
+		client.print(ds.ThingSpeakStr);
+		client.print(F(" HTTP/1.1\r\n"));
+		client.print(F("Host: "));
+		client.print(Settings.ThingSpeakAddress);
+		client.print(F("\r\nAccept: */*\r\n"));
+		client.print(F("headers: false\r\n"));
+		client.print(F("\r\n"));
 	}
 }

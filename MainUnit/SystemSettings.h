@@ -1,3 +1,9 @@
+enum RequestMethod {
+	GET,
+	POST,
+	PUT
+};
+
 /// <summary>
 /// Structure for holding all the settings
 /// </summary>
@@ -35,6 +41,8 @@ struct SystemSettings
 		RadioMsgInterval = 20;
 		InvalidValue = -255;
 		NRFChannel = 0;
+		TSCnnTimeout = 420;
+		Method = RequestMethod(POST);
 	}
 
 	/// <summary>
@@ -73,6 +81,9 @@ struct SystemSettings
 	byte RadioMsgInterval;
 	int InvalidValue;
 	byte NRFChannel;
+	int TSCnnTimeout;
+	RequestMethod Method;
+	
 
 	/* sensor offsets */
 	float SysTempOffset;

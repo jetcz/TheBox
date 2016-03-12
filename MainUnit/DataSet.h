@@ -34,7 +34,7 @@ public:
 	float Data[8];
 	byte Size; //size is used to determine length to the array. It is changed manulay in the code. Refer to alarms.ino
 	bool isValid;
-	String APIkey;
+	char APIkey[30];
 	DateTime TimeStamp;
 	String ThingSpeakStr;
 

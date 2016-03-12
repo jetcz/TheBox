@@ -108,6 +108,7 @@
     <None Include="www\js\mousewheel\mousewheel.jquery.json" />
     <None Include="www\js\mousewheel\package.json" />
     <None Include="www\js\mousewheel\README.md" />
+    <None Include="www\js\utils.js" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SystemSettings.h">
@@ -120,9 +121,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Payload.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PrivateData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="__vm\.MainUnit.vsarduino.h">

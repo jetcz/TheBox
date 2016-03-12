@@ -15,10 +15,22 @@ $(document).ready(function () {
         }
     });
 });
+
+$(document).ready(function () {
+    $("#rebootarduino").attr("action", "http://" + getUrlParameter('host') + "/reboot");
+    $("#rebootwifi").attr("action", "http://" + getUrlParameter('host') + "/rebootwifi");
+    $("#settingsForm").attr("action", "http://" + getUrlParameter('host') + "/settings.data");
+    $("#settingsDefaultForm").attr("action", "http://" + getUrlParameter('host') + "/settings.default");
+    $("#offsetsDefaultForm").attr("action", "http://" + getUrlParameter('host') + "/offsets.default");
+    $("#networkForm").attr("action", "http://" + getUrlParameter('host') + "/network.data");
+}
+)
+
+
 function getStats() {
     $.ajax({
         type: "GET",
-        url: "stats.xml",
+        url: "http://" + getUrlParameter('host') + "/stats.xml",
         cache: false,
         dataType: "xml",
         success: xmlParseStats,
@@ -31,7 +43,7 @@ function getStats() {
 function getSettings() {
     $.ajax({
         type: "GET",
-        url: "settings.xml",
+        url: "http://" + getUrlParameter('host') + "/settings.xml",
         cache: false,
         dataType: "xml",
         success: xmlParseSettings,
@@ -113,6 +125,7 @@ function xmlParseSettings(xml) {
     $("#timeout").val(timeout);
     var InvalidDSAction = parseInt($(xml).find("InvalidDSAction").text().trim());
     var TSEnabled = parseInt($(xml).find("TSEnabled").text().trim());
+    var TSMethod = parseInt($(xml).find("TSMethod").text().trim());
 
     var radios = $("input[name=action]:radio");
     if (InvalidDSAction == 0) radios[0].checked = true;
@@ -122,9 +135,18 @@ function xmlParseSettings(xml) {
     if (TSEnabled == 0) radios[0].checked = true;
     if (TSEnabled == 1) radios[1].checked = true;
 
+    radios = $("input[name=tsmethod]:radio");
+    if (TSMethod == 0) radios[0].checked = true;
+    if (TSMethod == 1) radios[1].checked = true;
+
     $("#tsaddr").val($(xml).find("TSAddr").text().trim());
     $("#ntpaddr").val($(xml).find("NTPAddr").text().trim());
     $("#nrfch").val($(xml).find("NRFCh").text().trim());
+
+    $("#mainapikey").val($(xml).find("MainAPIKey").text().trim());
+    $("#remoteapikey").val($(xml).find("RemoteAPIKey").text().trim());
+    $("#systemapikey").val($(xml).find("SystemAPIKey").text().trim());
+    $("#tscnntimeout").val($(xml).find("TSCnnTimeout").text().trim());
 
     //offsets
     $("#SysTempOffset").val(parseFloat($(xml).find("SysTempOffset").text().trim()));

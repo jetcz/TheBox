@@ -131,14 +131,12 @@ bool isRemoteDataSetValid(DateTime t) {
 		_bValid = true;
 		ledLight(2, 'g');
 	}
-
-	if (_lDiff > Settings.RadioMsgInterval + 2 && _lDiff <= Settings.RemoteDataSetTimeout)
+	else if (_lDiff > Settings.RadioMsgInterval + 2 && _lDiff <= Settings.RemoteDataSetTimeout)
 	{
 		_bValid = true;
 		ledLight(2, 'y');
 	}
-
-	if (_lDiff > Settings.RemoteDataSetTimeout)
+	else if (_lDiff > Settings.RemoteDataSetTimeout)
 	{
 		_bValid = false;
 		ledLight(2, 'r');

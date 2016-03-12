@@ -7,7 +7,7 @@ $(document).ready(function () {
             console.log(this.value);
             $.ajax({
                 type: "POST",
-                url: "relays.data",
+                url: "http://" + getUrlParameter('host') + "/relays.data",
                 data: "1=" + this.value,
             }).done(getInputs());
         };
@@ -19,7 +19,7 @@ $(document).ready(function () {
             console.log(this.value);
             $.ajax({
                 type: "POST",
-                url: "relays.data",
+                url: "http://" + getUrlParameter('host') + "/relays.data",
                 data: "2=" + this.value,
             }).done(getInputs());
         };
@@ -31,7 +31,7 @@ $(document).ready(function () {
             console.log(this.value);
             $.ajax({
                 type: "POST",
-                url: "relays.data",
+                url: "http://" + getUrlParameter('host') + "/relays.data",
                 data: "3=" + this.value,
             }).done(getInputs());
         };
@@ -43,7 +43,7 @@ $(document).ready(function () {
             console.log(this.value);
             $.ajax({
                 type: "POST",
-                url: "relays.data",
+                url: "http://" + getUrlParameter('host') + "/relays.data",
                 data: "4=" + this.value,
             }).done(getInputs());
         };
@@ -56,7 +56,7 @@ function getInputs() {
     if (req2) req2.abort();
     req2 = $.ajax({
         type: "GET",
-        url: "sensors.xml",
+        url: "http://"+getUrlParameter('host')+"/sensors.xml",
         cache: false,
         dataType: "xml",
         success: xmlParseInputs,
@@ -67,7 +67,7 @@ var req;
 function getInputsRepeat() {
     req = $.ajax({
         type: "GET",
-        url: "sensors.xml",
+        url: "http://" + getUrlParameter('host') + "/sensors.xml",
         cache: false,
         dataType: "xml",
         success: xmlParseInputs,

@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $.ajax({
         type: "GET",
-        url: "sched.xml",
+        url: "http://" + getUrlParameter('host') + "/sched.xml",
         cache: false,
         dataType: "xml",
         success: xmlParser,
@@ -13,6 +13,12 @@ $(document).ready(function () {
         }
     });
 });
+
+$(document).ready(function () {
+    $("#sched_delete").attr("action", "http://" + getUrlParameter('host') + "/sched.delete");
+    $("#schedForm").attr("action", "http://" + getUrlParameter('host') + "/sched.data");
+}
+)
 
 var runned = false;
 function xmlParser(xml) {

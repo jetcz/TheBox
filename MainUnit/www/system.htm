@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<link rel="apple-touch-icon-precomposed" sizes="152x152" href="http://jet.php5.cz/thebox/favicon/apple-touch-icon-152x152.png" />
-<link rel="icon" type="image/png" href="http://jet.php5.cz/thebox/favicon/favicon-196x196.png" sizes="196x196" />
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="favicon/apple-touch-icon-152x152.png" />
+<link rel="icon" type="image/png" href="favicon/favicon-196x196.png" sizes="196x196" />
 <meta name="application-name" content="&nbsp;" />
 <meta name="msapplication-TileColor" content="#FFFFFF" />
-<meta name="msapplication-TileImage" content="http://jet.php5.cz/thebox/favicon/mstile-144x144.png" />
-<meta name="msapplication-wide310x150logo" content="http://jet.php5.cz/thebox/favicon/mstile-310x150.png" />
-<meta name="msapplication-square310x310logo" content="http://jet.php5.cz/thebox/favicon/mstile-310x310.png" />
+<meta name="msapplication-TileImage" content="favicon/mstile-144x144.png" />
+<meta name="msapplication-wide310x150logo" content="favicon/mstile-310x150.png" />
+<meta name="msapplication-square310x310logo" content="favicon/mstile-310x310.png" />
 <html>
 <head>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <script src="http://jet.php5.cz/thebox/js/collapsiblepanel/jquery.collapsiblepanel.js"></script>
-    <script src="http://jet.php5.cz/thebox/js/system.js"></script>
-    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/menu.css">
-    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/general.css">
-    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/table.css">
-    <link rel="stylesheet" type="text/css" href="http://jet.php5.cz/thebox/css/loader.css">
-    <title>
-        The Box - System
+    <script src="js/collapsiblepanel/jquery.collapsiblepanel.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/system.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/menu.css">
+    <link rel="stylesheet" type="text/css" href="css/general.css">
+    <link rel="stylesheet" type="text/css" href="css/table.css">
+    <link rel="stylesheet" type="text/css" href="css/loader.css">
+    <title>The Box - System
     </title>
     <style media="screen" type="text/css">
         button {
@@ -30,19 +30,19 @@
         <div class="nav">
             <ul>
                 <li>
-                    <a href="index.htm">Home</a>
+                    <a id="a_index">Home</a>
                 </li>
                 <li>
-                    <a href="graphs1.htm">Graphs 1</a>
+                    <a id="a_graphs1">Graphs 1</a>
                 </li>
                 <li>
-                    <a href="graphs2.htm">Graphs 2</a>
+                    <a id="a_graphs2">Graphs 2</a>
                 </li>
                 <li>
-                    <a href="sched.htm">Scheduler</a>
+                    <a id="a_sched">Scheduler</a>
                 </li>
                 <li>
-                    <a class="active" href="system.htm">System</a>
+                    <a class="active" id="a_system">System</a>
                 </li>
             </ul>
         </div>
@@ -56,16 +56,14 @@
             <table>
                 <thead>
                     <tr>
-                        <th>
-                            Local Time
+                        <th>Local Time
                         </th>
                         <td class="remote">
                             <span id="LocalTime"></span>
                         </td>
                     </tr>
                     <tr>
-                        <th class="subtitle">
-                            Last NTP sync
+                        <th class="subtitle">Last NTP sync
                         </th>
                         <th class="subtitle">
                             <span id="LastSync"></span>
@@ -78,14 +76,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th>
-                            Stats
+                        <th>Stats
                         </th>
-                        <th>
-                            Main Unit
+                        <th>Main Unit
                         </th>
-                        <th>
-                            Remote Unit
+                        <th>Remote Unit
                         </th>
                     </tr>
                 </thead>
@@ -113,8 +108,7 @@
                         <td>
                             <span class="Value"></span>&deg;C
                         </td>
-                        <td>
-                            -
+                        <td>-
                         </td>
                     </tr>
                     <tr>
@@ -148,14 +142,14 @@
                     <tr>
                         <td class="leftHeader"></td>
                         <td colspan="2">
-                            <form action="reboot" method="post">
+                            <form id="rebootarduino" method="post">
                                 <input type="hidden" value="" />
                                 <button type="submit" name="reboot" value="1" onclick="return confirm('Are you sure?')" style="color: #c90000; font-weight: bold">
                                     Reboot Arduino
                                 </button>
                             </form>
                             <br />
-                            <form action="rebootwifi" method="post">
+                            <form id="rebootwifi" method="post">
                                 <input type="hidden" value="" />
                                 <button type="submit" name="rebootwifi" value="1" onclick="return confirm('Are you sure?')" style="color: #c90000; font-weight: bold">
                                     Reboot Wifi
@@ -171,8 +165,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="text-align: left">
-                                + Settings
+                            <th style="text-align: left">+ Settings
                             </th>
                         </tr>
                     </thead>
@@ -180,12 +173,11 @@
             </div>
             <div class="settings ui-widget-content" style="display: none">
                 <br />
-                <form id="settingsForm" method="post" action="settings.data">
+                <form id="settingsForm" method="post">
                     <table>
                         <thead>
                             <tr>
-                                <th>
-                                    General settings
+                                <th>General settings
                                 </th>
                                 <th></th>
                                 <th></th>
@@ -193,16 +185,15 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="leftHeader">
-                                    Remote DS timeout
+                                <td class="leftHeader">Remote DS timeout
                                 </td>
                                 <td colspan="2">
-                                    <input type="number" id="timeout" min="0" max="5184000" step="1" name="remoteDStimeout" style="width: 7em" required> seconds
+                                    <input type="number" id="timeout" min="0" max="5184000" step="1" name="remoteDStimeout" style="width: 7em" required>
+                                    seconds
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    Invalid DS relay action
+                                <td class="leftHeader">Invalid DS relay action
                                 </td>
                                 <td style="text-align: left">
                                     <input type="radio" name="action" value="0">
@@ -225,24 +216,60 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    Thingspeak address
+                                <td class="leftHeader">Thingspeak address
                                 </td>
                                 <td colspan="2">
                                     <input type="text" id="tsaddr" name="tsaddr" required>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    NTP address
+                                <td class="leftHeader">Main unit API key
+                                </td>
+                                <td colspan="2">
+                                    <input type="text" id="mainapikey" name="mainapikey" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">Remote unit API key
+                                </td>
+                                <td colspan="2">
+                                    <input type="text" id="remoteapikey" name="remoteapikey" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">System API key
+                                </td>
+                                <td colspan="2">
+                                    <input type="text" id="systemapikey" name="systemapikey" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">Thingspeak cnn timeout
+                                </td>
+                                <td colspan="2">
+                                    <input type="number" id="tscnntimeout" name="tscnntimeout" min="0" max="32767" step="1" style="width: 7em" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">Request method</td>
+                                <td style="text-align: left">
+                                    <input type="radio" name="tsmethod" value="0">
+                                    GET
+                                </td>
+                                <td style="text-align: left">
+                                    <input type="radio" name="tsmethod" value="1">
+                                    POST
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="leftHeader">NTP address
                                 </td>
                                 <td colspan="2">
                                     <input type="text" id="ntpaddr" name="ntpaddr" required>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    NRF24 Channel
+                                <td class="leftHeader">NRF24 Channel
                                 </td>
                                 <td colspan="2">
                                     <input type="number" id="nrfch" name="nrfch" min="0" max="125" step="1" style="width: 7em" required>
@@ -263,56 +290,50 @@
                         </tbody>
                     </table>
                 </form>
-                <form action="settings.default" id="settingsDefaultForm" method="post">
+                <form id="settingsDefaultForm" method="post">
                     <input type="hidden" value="" />
                 </form>
                 <br />
-                <form id="offsetsForm" method="post" action="offsets.data">
+                <form id="offsetsForm" method="post">
                     <table>
                         <thead>
                             <tr>
-                                <th>
-                                    Sensor offsets
+                                <th>Sensor offsets
                                 </th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="leftHeader">
-                                    System Temperature
+                                <td class="leftHeader">System Temperature
                                 </td>
                                 <td>
                                     <input type="number" id="SysTempOffset" min="-100" max="100" step="0.1" name="SysTempOffset" style="width: 7em" required>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    Pressure
+                                <td class="leftHeader">Pressure
                                 </td>
                                 <td>
                                     <input type="number" id="PressureOffset" min="-1000" max="1000" step="0.1" name="PressureOffset" style="width: 7em" required>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    Main Air Temperature
+                                <td class="leftHeader">Main Air Temperature
                                 </td>
                                 <td>
                                     <input type="number" id="MainTempOffset" min="-100" max="100" step="0.1" name="MainTempOffset" style="width: 7em" required>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    Remote Air Temperature
+                                <td class="leftHeader">Remote Air Temperature
                                 </td>
                                 <td>
                                     <input type="number" id="RemoteTempOffset" min="-100" max="100" step="0.1" name="RemoteTempOffset" style="width: 7em" required>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="leftHeader">
-                                    Remote Soil Temperature
+                                <td class="leftHeader">Remote Soil Temperature
                                 </td>
                                 <td>
                                     <input type="number" id="SoilTempOffset" min="-100" max="100" step="0.1" name="SoilTempOffset" style="width: 7em" required>
@@ -333,24 +354,22 @@
                         </tbody>
                     </table>
                 </form>
-                <form action="offsets.default" id="offsetsDefaultForm" method="post">
+                <form id="offsetsDefaultForm" method="post">
                     <input type="hidden" value="" />
                 </form>
                 <br />
-                <form id="networkForm" method="post" action="network.data">
+                <form id="networkForm" method="post">
                     <table>
                         <thead>
                             <tr>
-                                <th>
-                                    Network
+                                <th>Network
                                 </th>
                                 <th colspan="2"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="leftHeader">
-                                    DHCP
+                                <td class="leftHeader">DHCP
                                 </td>
                                 <td>
                                     <input type="radio" name="DHCP" value="1">

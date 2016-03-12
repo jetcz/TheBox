@@ -12,54 +12,33 @@
 #define _VSARDUINO_H_
 #define __AVR_ATmega2560__
 #define F_CPU 16000000L
-#define ARDUINO 10607
+#define ARDUINO 10605
 #define ARDUINO_AVR_MEGA2560
 #define ARDUINO_ARCH_AVR
-#define __cplusplus
+#define __cplusplus 201103L
 #define __AVR__
 #define __inline__
 #define __asm__(x)
 #define __extension__
-//#define __ATTR_PURE__
-//#define __ATTR_CONST__
 #define __inline__
-//#define __asm__ 
 #define __volatile__
 #define GCC_VERSION 40801
 #define volatile(va_arg) 
 #define _CONST
-typedef void *__builtin_va_list;
 #define __builtin_va_start
 #define __builtin_va_end
-//#define __DOXYGEN__
 #define __attribute__(x)
 #define NOINLINE __attribute__((noinline))
 #define prog_void
 #define PGM_VOID_P int
 #ifndef __builtin_constant_p
-#define __builtin_constant_p __attribute__((__const__))
+	#define __builtin_constant_p __attribute__((__const__))
 #endif
 #ifndef __builtin_strlen
-#define __builtin_strlen  __attribute__((__const__))
+	#define __builtin_strlen  __attribute__((__const__))
 #endif
 #define NEW_H
-/*
-#ifndef __ATTR_CONST__
-#define __ATTR_CONST__ __attribute__((__const__))
-#endif
-
-#ifndef __ATTR_MALLOC__
-#define __ATTR_MALLOC__ __attribute__((__malloc__))
-#endif
-
-#ifndef __ATTR_NORETURN__
-#define __ATTR_NORETURN__ __attribute__((__noreturn__))
-#endif
-
-#ifndef __ATTR_PURE__
-#define __ATTR_PURE__ __attribute__((__pure__))
-#endif            
-*/
+typedef void *__builtin_va_list;
 typedef unsigned char byte;
 extern "C" void __cxa_pure_virtual() {;}
 
@@ -92,7 +71,6 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <..\MainUnit\Misc.ino>
 #include <..\MainUnit\Ntp.ino>
 #include <..\MainUnit\Payload.h>
-#include <..\MainUnit\PrivateData.h>
 #include <..\MainUnit\Radio.ino>
 #include <..\MainUnit\RelayScheduler.h>
 #include <..\MainUnit\Relays.ino>

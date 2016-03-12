@@ -237,6 +237,65 @@ bool readSDSettings(char *path) {
 #endif
 				return false;
 			}
+
+			//---
+			if (ini.getValue(NULL, "MainAPIKey", cBuff1, nBuffLen1)) {
+				memcpy(&MainDS.APIkey, cBuff1, nBuffLen1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'MainAPIKey', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+			if (ini.getValue(NULL, "RemAPIKey", cBuff1, nBuffLen1)) {
+				memcpy(&RemoteDS.APIkey, cBuff1, nBuffLen1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'RemAPIKey', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+			if (ini.getValue(NULL, "SysAPIKey", cBuff1, nBuffLen1)) {
+				memcpy(&SystemDS.APIkey, cBuff1, nBuffLen1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'SysAPIKey', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+
+			if (ini.getValue(NULL, "TSCnnTimeout", cBuff1, nBuffLen1)) {
+				Settings.TSCnnTimeout = atoi(cBuff1);
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'TSCnnTimeout', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+
+			if (ini.getValue(NULL, "TSMethod", cBuff1, nBuffLen1)) {
+				Settings.Method = RequestMethod(atoi(cBuff1));
+			}
+			else {
+#if DEBUG
+				Serial.print(F("Could not read 'TSMethod', error was "));
+				printErrorMessage(ini.getError());
+#endif
+				return false;
+			}
+
+			//---
+
+
+
 			if (ini.getValue(NULL, "ntp", cBuff1, nBuffLen1)) {
 				memcpy(&Settings.NTPServer, cBuff1, nBuffLen1);
 			}
@@ -360,7 +419,7 @@ bool writeSDSettings() {
 	{
 		return false;
 	}
-	else {		
+	else {
 		file.print(F("RDSTimeout="));
 		file.println(Settings.RemoteDataSetTimeout);
 		file.print(F("invalidDSAction="));
@@ -369,6 +428,18 @@ bool writeSDSettings() {
 		file.println(Settings.TSenabled);
 		file.print(F("TSAddress="));
 		file.println(Settings.ThingSpeakAddress);
+
+		file.print(F("MainAPIKey="));
+		file.println(MainDS.APIkey);
+		file.print(F("RemAPIKey="));
+		file.println(RemoteDS.APIkey);
+		file.print(F("SysAPIKey="));
+		file.println(SystemDS.APIkey);
+		file.print(F("TSCnnTimeout="));
+		file.println(Settings.TSCnnTimeout);
+		file.print(F("TSMethod="));
+		file.println(Settings.Method);
+
 		file.print(F("ntp="));
 		file.println(Settings.NTPServer);
 		file.print(F("NRFChannel="));

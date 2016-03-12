@@ -1,10 +1,6 @@
 #define PRINT_SUMMARY false	//print sensor summary every reading
 #define DEBUG false			//other debug messages
 
-//this is where are stored aditional css and js files
-//if you change the host, dont forget to update also html files on SD card
-#define HOST "http://jet.php5.cz/thebox/"
-
 #include <Wire.h>
 #include <SPI.h>
 #include <RTClib.h>
@@ -36,8 +32,6 @@
 #include "Payload.h"
 #include "SystemSettings.h"
 #include "RelayScheduler.h"
-#include "PrivateData.h"
-
 
 //my arduino specific calibration constant for reading vcc
 const float lVccCalibration = 1100000;
@@ -158,13 +152,46 @@ void(*resetFunc) (void) = 0;
 
 #pragma region webduino
 
+#define GENERALCSS "\n\
+body {\
+    margin: 0;\
+    padding: 0;\
+    background: #ccc;\
+}\n\
+\
+.content {\
+    clear: both;\
+    font-family: 'Oswald', sans-serif;\
+    background: white;\
+    padding: 15px 15px 15px 15px;\
+    margin: 15px 15px 15px 15px;\
+    -moz-box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);\
+    -webkit-box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);\
+    box-shadow: 0 2px 15px 0 rgba(0,0,0,.2);\
+}\n\
+\
+.wrapContent {\
+            width: 700px;\
+        }\n\
+\
+input[type=number]::-webkit-inner-spin-button,\
+input[type=number]::-webkit-outer-spin-button {\
+    opacity: 1;\
+}\n\
+\
+input[type=\"number\"] {\
+    width: 4em;\
+    text-align: right;\
+    padding: 0.1em;\
+}\n"
+
 P(messageFail) =
 "<!DOCTYPE html><html><head>"
 "<meta http-equiv=\"refresh\" content=\"2\">"
 "<script language=\"javascript\">"
 "setTimeout(function(){ location.reload(); }, 2000);"
 "</script>"
-"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+"<style>" GENERALCSS "</style>"
 "</head>"
 "<body>"
 "<div class=\"content\" style=\"color:red;font-weight:bold\">"
@@ -173,28 +200,8 @@ P(messageFail) =
 "</body>"
 "</html>";
 
-
-
-
 /* commands for webserver */
-void homePageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-	ledLight(1, 'b');
-	server.httpSuccess();
-	if (type == WebServer::GET)
-	{
-		file = SD.open("/www/index.htm");        // open web page file
-		if (file) {
-			int16_t c;
-			while ((c = file.read()) >= 0) {
-				server.print((char)c);
-			}
-			file.close();
-		}
-		else server.printP(messageFail);
-	}
-	ledLight(1, 'g');
-}
+
 void sensorsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'c');
@@ -323,60 +330,7 @@ void relayDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 	}
 	ledLight(1, 'g');
 }
-void graphs1PageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-	ledLight(1, 'b');
-	server.httpSuccess();
-	if (type == WebServer::GET)
-	{
-		file = SD.open("/www/graphs1.htm");        // open web page file
-		if (file) {
-			int16_t c;
-			while ((c = file.read()) >= 0) {
-				server.print((char)c);
-			}
-			file.close();
-		}
-		else server.printP(messageFail);
-	}
-	ledLight(1, 'g');
-}
-void graphs2PageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-	ledLight(1, 'b');
-	server.httpSuccess();
-	if (type == WebServer::GET)
-	{
-		file = SD.open("/www/graphs2.htm");        // open web page file
-		if (file) {
-			int16_t c;
-			while ((c = file.read()) >= 0) {
-				server.print((char)c);
-			}
-			file.close();
-		}
-		else server.printP(messageFail);
-	}
-	ledLight(1, 'g');
-}
-void schedPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-	ledLight(1, 'b');
-	server.httpSuccess();
-	if (type == WebServer::GET)
-	{
-		file = SD.open("/www/sched.htm");        // open web page file
-		if (file) {
-			int16_t c;
-			while ((c = file.read()) >= 0) {
-				server.print((char)c);
-			}
-			file.close();
-		}
-		else server.printP(messageFail);
-	}
-	ledLight(1, 'g');
-}
+
 void schedXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
 	ledLight(1, 'c');
@@ -432,11 +386,10 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 {
 	P(messageSuccess) =
 		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"2; url=sched.htm\">"
 		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
+		"setTimeout(function(){ window.history.go(-1); return false; }, 2000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+		"<style>" GENERALCSS "</style>"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"color:green;font-weight:bold\">"
@@ -447,11 +400,10 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 
 	P(messageFail) =
 		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"2; url=sched.htm\">"
 		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"sched.htm\" }, 2000);"
+		"setTimeout(function(){ window.history.go(-1); return false; }, 2000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+		"<style>" GENERALCSS "</style>"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"color:red;font-weight:bold\">"
@@ -543,11 +495,10 @@ void schedDeleteCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	server.httpSuccess();
 	P(messageSuccess) =
 		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"1; url=sched.htm\">"
 		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"sched.htm\" }, 1000);"
+		"setTimeout(function(){ window.history.go(-1); return false; }, 1000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+		"<style>" GENERALCSS "</style>"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -566,24 +517,7 @@ void schedDeleteCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	server.flushBuf();
 	ledLight(1, 'g');
 }
-void systemPageCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-	ledLight(1, 'b');
-	server.httpSuccess();
-	if (type == WebServer::GET)
-	{
-		file = SD.open("/www/system.htm");        // open web page file
-		if (file) {
-			int16_t c;
-			while ((c = file.read()) >= 0) {
-				server.print((char)c);
-			}
-			file.close();
-		}
-		else server.printP(messageFail);
-	}
-	ledLight(1, 'g');
-};
+
 void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool) {
 	ledLight(1, 'c');
 
@@ -703,6 +637,23 @@ void settingsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 		server.print(F("<TSAddr>"));
 		server.print(Settings.ThingSpeakAddress);
 		server.print(F("</TSAddr>"));
+
+		server.print(F("<MainAPIKey>"));
+		server.print(MainDS.APIkey);
+		server.print(F("</MainAPIKey>"));
+		server.print(F("<RemoteAPIKey>"));
+		server.print(RemoteDS.APIkey);
+		server.print(F("</RemoteAPIKey>"));
+		server.print(F("<SystemAPIKey>"));
+		server.print(SystemDS.APIkey);
+		server.print(F("</SystemAPIKey>"));
+		server.print(F("<TSCnnTimeout>"));
+		server.print(Settings.TSCnnTimeout);
+		server.print(F("</TSCnnTimeout>"));
+		server.print(F("<TSMethod>"));
+		server.print(Settings.Method);
+		server.print(F("</TSMethod>"));
+
 		server.print(F("<NTPAddr>"));
 		server.print(Settings.NTPServer);
 		server.print(F("</NTPAddr>"));
@@ -771,6 +722,12 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 	const static char ntpaddr[] PROGMEM = "ntpaddr";
 	const static char nrfch[] PROGMEM = "nrfch";
 
+	const static char mainapikey[] PROGMEM = "mainapikey";
+	const static char remoteapikey[] PROGMEM = "remoteapikey";
+	const static char systemapikey[] PROGMEM = "systemapikey";
+	const static char tscnntimeout[] PROGMEM = "tscnntimeout";
+	const static char tsmethod[] PROGMEM = "tsmethod";
+
 	ledLight(1, 'y');
 	server.httpSuccess();
 	if (type == WebServer::POST)
@@ -801,15 +758,35 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 			{
 				Settings.NRFChannel = atoi(cBuff2);
 			}
+
+			if (strcmp_P(cBuff1, mainapikey) == 0)
+			{
+				memcpy(&MainDS.APIkey, cBuff2, nBuffLen2);
+			}
+			if (strcmp_P(cBuff1, remoteapikey) == 0)
+			{
+				memcpy(&RemoteDS.APIkey, cBuff2, nBuffLen2);
+			}
+			if (strcmp_P(cBuff1, systemapikey) == 0)
+			{
+				memcpy(&SystemDS.APIkey, cBuff2, nBuffLen2);
+			}
+			if (strcmp_P(cBuff1, tscnntimeout) == 0)
+			{
+				Settings.TSCnnTimeout = atoi(cBuff2);
+			}
+			if (strcmp_P(cBuff1, tsmethod) == 0)
+			{
+				Settings.Method = RequestMethod(atoi(cBuff2));
+			}
 		}
 
 		P(messageSuccess) =
 			"<!DOCTYPE html><html><head>"
-			"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
 			"<script language=\"javascript\">"
-			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+			"setTimeout(function(){ window.history.go(-1); return false; }, 2000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+			"<style>" GENERALCSS "</style>"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
@@ -820,11 +797,10 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 
 		P(messageFail) =
 			"<!DOCTYPE html><html><head>"
-			"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
 			"<script language=\"javascript\">"
-			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+			"setTimeout(function(){ window.history.go(-1); return false; }, 2000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+			"<style>" GENERALCSS "</style>"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:red;font-weight:bold\">"
@@ -833,8 +809,11 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 			"</body>"
 			"</html>";
 
-		if (writeSDSettings()) server.printP(messageSuccess);
-		else server.printP(messageFail);
+		if (writeSDSettings()) 
+			server.printP(messageSuccess);
+		else 
+			server.printP(messageFail);
+
 		server.flushBuf();
 
 		//enable/disable thingspeak
@@ -890,11 +869,10 @@ void offsetsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 
 		P(messageSuccess) =
 			"<!DOCTYPE html><html><head>"
-			"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
 			"<script language=\"javascript\">"
-			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+			"setTimeout(function(){ window.history.go(-1); return false; }, 2000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+			"<style>" GENERALCSS "</style>"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
@@ -905,11 +883,10 @@ void offsetsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 
 		P(messageFail) =
 			"<!DOCTYPE html><html><head>"
-			"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
 			"<script language=\"javascript\">"
-			"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+			"setTimeout(function(){ window.history.go(-1); return false; }, 2000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+			"<style>" GENERALCSS "</style>"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:red;font-weight:bold\">"
@@ -930,11 +907,10 @@ void offsetsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char *
 	server.httpSuccess();
 	P(message) =
 		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
 		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+		"setTimeout(function(){ window.history.go(-1); return false; }, 2000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+		"<style>" GENERALCSS "</style>"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -953,11 +929,10 @@ void settingsDefaultCmd(WebServer &server, WebServer::ConnectionType type, char 
 	server.httpSuccess();
 	P(message) =
 		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"2; url=system.htm\">"
 		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"system.htm\" }, 2000);"
+		"setTimeout(function(){ window.history.go(-1); return false; }, 2000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+		"<style>" GENERALCSS "</style>"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -976,11 +951,10 @@ void rebootCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 	server.httpSuccess();
 	P(message) =
 		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"3; url=system.htm\">"
 		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"system.htm\" }, 3000);"
+		"setTimeout(function(){ window.history.go(-1); return false; }, 3000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+		"<style>" GENERALCSS "</style>"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -1002,11 +976,10 @@ void rebootWifiCmd(WebServer &server, WebServer::ConnectionType type, char *, bo
 	server.httpSuccess();
 	P(message) =
 		"<!DOCTYPE html><html><head>"
-		"<meta http-equiv=\"refresh\" content=\"36; url=system.htm\">"
 		"<script language=\"javascript\">"
-		"setTimeout(function(){ location.href = \"system.htm\" }, 36000);"
+		"setTimeout(function(){ window.history.go(-1); return false; }, 36000);"
 		"</script>"
-		"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+		"<style>" GENERALCSS "</style>"
 		"</head>"
 		"<body>"
 		"<div class=\"content\" style=\"font-weight:bold\">"
@@ -1071,25 +1044,12 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			Alarm.enable(dhcpAlarm);
 		}
 
-		//build new ip to string for future redirect
-		String sNewIP = "";
-		for (int i = 0; i < 4; i++)
-		{
-			sNewIP += String(Settings.IP[i]);
-			if (i < 3)
-			{
-				sNewIP += ".";
-			}
-			else sNewIP += "/";
-		}
-
-		P(saveNetSucces1) =
+		P(saveNetSucces) =
 			"<!DOCTYPE html><html><head>"
 			"<script language=\"javascript\">"
-			"setTimeout(function(){ location.href = \"http://";
-		P(saveNetSucces2) = "system.htm\" }, 3000);"
+			"setTimeout(function(){ window.history.go(-1); return false;}, 3000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+			"<style>" GENERALCSS "</style>"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:green;font-weight:bold\">"
@@ -1099,11 +1059,10 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			"</html>";
 		P(saveNetFail) =
 			"<!DOCTYPE html><html><head>"
-			"<meta http-equiv=\"refresh\" content=\"4; url=system.htm\">"
 			"<script language=\"javascript\">"
-			"setTimeout(function(){ location.href = \"system.htm\" }, 4000);"
+			"setTimeout(function(){ window.history.go(-1); return false; }, 4000);"
 			"</script>"
-			"<link rel=\"stylesheet\" type=\"text / css\" href=\"" HOST "css/general.css\">"
+			"<style>" GENERALCSS "</style>"
 			"</head>"
 			"<body>"
 			"<div class=\"content\" style=\"color:red;font-weight:bold\">"
@@ -1112,9 +1071,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			"</body>"
 			"</html>";
 		if (writeSDEthernetSettings()) {
-			server.printP(saveNetSucces1);
-			server.print(sNewIP);
-			server.printP(saveNetSucces2);
+			server.printP(saveNetSucces);
 			server.flushBuf();
 			setupEthernet();
 		}
@@ -1154,17 +1111,11 @@ void setup()
 	}
 
 	//add webduino commands
-	webserver.setDefaultCommand(&homePageCmd);						//get page
-	webserver.addCommand("index.htm", &homePageCmd);				//get page
 	webserver.addCommand("sensors.xml", &sensorsXMLCmd);			//get xml
 	webserver.addCommand("relays.data", &relayDataCmd);				//post data
-	webserver.addCommand("graphs1.htm", &graphs1PageCmd);			//get page
-	webserver.addCommand("graphs2.htm", &graphs2PageCmd);			//get page
-	webserver.addCommand("sched.htm", &schedPageCmd);				//get page
 	webserver.addCommand("sched.xml", &schedXMLCmd);				//get xml
 	webserver.addCommand("sched.data", &schedDataCmd);				//post data
 	webserver.addCommand("sched.delete", &schedDeleteCmd);			//delete sched data from sd
-	webserver.addCommand("system.htm", &systemPageCmd);				//get page
 	webserver.addCommand("stats.xml", &statsXMLCmd);				//get xml
 	webserver.addCommand("settings.xml", &settingsXMLCmd);			//get xml
 	webserver.addCommand("settings.data", &settingsDataCmd);		//post data
@@ -1176,16 +1127,7 @@ void setup()
 	webserver.addCommand("rebootwifi", &rebootWifiCmd);				//reboot wifi
 	webserver.begin();
 
-	PrivateData pd;
-
-	//datasets setup
-	//for some reason, we have to pass the whole string with API key, pointer doesn't work properly, arduino sometimes freezes
-	//this is probably not very memory friendly
-	MainDS.APIkey = pd.MainAPIKey;
-	RemoteDS.APIkey = pd.RemoteAPIKey;
-	SystemDS.APIkey = pd.SystemAPIKey;
 	RemoteDS.isValid = false;
-
 
 	//Calibration process: attach a classic light bulb or heater and set the phase_shift constant so that the reported power factor is 1,
 	//then connect a multimeter and set the calibration constant so that the reported voltage is same as on the multimeter
@@ -1208,5 +1150,3 @@ void loop() //one cycle takes about 1ms (900us - 1050us)
 	webserver.processConnection();	//process webserver request as soon as possible
 	emon.calcVI(100, fVcc);			//measure power consumption in outlets (non-blocking)	
 }
-
-
