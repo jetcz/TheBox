@@ -294,7 +294,7 @@ $(document).ready(function () {
                     });
                 }
                 else
-                    if (channelIndex == 1 && (fieldIndex == 1 || fieldIndex == 2 || fieldIndex == 3) || fieldIndex == 5 || fieldIndex == 6 || fieldIndex == 7) {
+                    if (channelIndex == 1 && (fieldIndex == 1 || fieldIndex == 2 || fieldIndex == 3) || fieldIndex == 4 || fieldIndex == 5 || fieldIndex == 6 || fieldIndex == 7) {
                         chartOptions.series.push({
                             data: channelKeys[channelIndex].fieldList[fieldIndex].data,
                             index: channelKeys[channelIndex].fieldList[fieldIndex].series,

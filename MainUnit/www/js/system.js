@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    getUrls();
     getStats();
     getSettings();
 
@@ -16,7 +17,7 @@ $(document).ready(function () {
     });
 });
 
-$(document).ready(function () {
+function getUrls() {
     $("#rebootarduino").attr("action", "http://" + getUrlParameter('host') + "/reboot");
     $("#rebootwifi").attr("action", "http://" + getUrlParameter('host') + "/rebootwifi");
     $("#settingsForm").attr("action", "http://" + getUrlParameter('host') + "/settings.data");
@@ -24,7 +25,6 @@ $(document).ready(function () {
     $("#offsetsDefaultForm").attr("action", "http://" + getUrlParameter('host') + "/offsets.default");
     $("#networkForm").attr("action", "http://" + getUrlParameter('host') + "/network.data");
 }
-)
 
 
 function getStats() {

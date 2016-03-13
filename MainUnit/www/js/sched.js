@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    getUrls();
     $.ajax({
         type: "GET",
         url: "http://" + getUrlParameter('host') + "/sched.xml",
@@ -14,11 +15,10 @@ $(document).ready(function () {
     });
 });
 
-$(document).ready(function () {
+function getUrls() {
     $("#sched_delete").attr("action", "http://" + getUrlParameter('host') + "/sched.delete");
     $("#schedForm").attr("action", "http://" + getUrlParameter('host') + "/sched.data");
 }
-)
 
 var runned = false;
 function xmlParser(xml) {
