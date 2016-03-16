@@ -199,7 +199,6 @@ bool readSDRain(int nArrPtr) {
 		file.close();
 
 		RemoteDS.Data[6 + nArrPtr] = float(nRainTicksSum[nArrPtr]) * 0.3;
-
 		return true;
 	}
 }
