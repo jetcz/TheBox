@@ -174,17 +174,18 @@ bool readSDRain(int nArrPtr) {
 			if (_nCnt == 0) //first line cotains timestamp
 			{
 				time_t _lFileAge = now() - (time_t)file.parseInt();
-				_nToBeSkipped = _lFileAge / Settings.UpdateRainInterval[nArrPtr];
+				_nToBeSkipped = round((long)_lFileAge / (long)Settings.UpdateRainInterval[nArrPtr]);
 			}
 
 			if (_nCnt > _nToBeSkipped) //rain data following
 			{
 				byte _byVal = file.parseInt();
 				Rain[nArrPtr].push(_byVal);
-				nRainTicksSum[nArrPtr] += _byVal;
+				nRainTicksSum[nArrPtr] += _byVal;				
 			}
 			else file.parseInt();
 			_nCnt++;
+			
 		}
 
 		//fill the rest of the fifo with zeroes (presuming that there was no rain during the time we were turned off, this is very naive but hey...)
