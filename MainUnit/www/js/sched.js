@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function () { 
     getUrls();
     $.ajax({
         type: "GET",
