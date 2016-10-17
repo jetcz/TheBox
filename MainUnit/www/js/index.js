@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function () { 
     getInputsRepeat();
     var rb = document.getElementsByName('r1');
     for (i = 0; i < rb.length; i++) {
