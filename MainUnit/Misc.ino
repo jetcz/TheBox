@@ -1,7 +1,8 @@
 /// <summary>
 /// Performs hardware reset of the ethernet shield
 /// </summary>
-void resetEthShield() {
+void resetEthShield()
+{
 #if DEBUG
 	Serial.println(F("Reseting Ethernet Shield"));
 #endif
@@ -14,7 +15,8 @@ void resetEthShield() {
 /// <summary>
 /// Performs hardware reset of the wifi router
 /// </summary>
-void resetWifi() {
+void resetWifi()
+{
 	ledLight(3, 'k');
 #if DEBUG
 	Serial.println(F("Reseting Wifi"));
@@ -32,7 +34,8 @@ void resetWifi() {
 /// <summary>
 /// if we lost IP address, ethernet shield most likely died and needs to be reinitialized
 /// </summary>
-void ethShieldFreezeDetect() {
+void ethShieldFreezeDetect()
+{
 	Alarm.disable(ethShieldFreezeDetectAlarm);
 #if DEBUG
 	Serial.print(F("Checking Ethernet Shield..."));
@@ -44,7 +47,8 @@ void ethShieldFreezeDetect() {
 #endif
 		setupEthernet();
 	}
-	else {
+	else
+	{
 #if DEBUG
 		Serial.println(F("OK"));
 #endif // DEBUG
@@ -54,9 +58,11 @@ void ethShieldFreezeDetect() {
 /// <summary>
 /// Check whether ethernet shield and arduino needs to be restared
 /// </summary>
-void needRestart() {
+void needRestart()
+{
 	// Check if Ethernet needs to be restarted
-	if (nFailedNetworkOps % Settings.RestartEthernetThreshold == 0 && nFailedNetworkOps != 0) {
+	if (nFailedNetworkOps % Settings.RestartEthernetThreshold == 0 && nFailedNetworkOps != 0)
+	{
 		ledLight(1, 'k');
 		ledLight(3, 'r');
 #if DEBUG
@@ -76,7 +82,8 @@ void needRestart() {
 	}
 
 	// Check if Wifi needs to be restarted
-	if ((nFailedNetworkOps % Settings.RestartWifiThreshold) == 0 && nFailedNetworkOps != 0) {
+	if ((nFailedNetworkOps % Settings.RestartWifiThreshold) == 0 && nFailedNetworkOps != 0)
+	{
 		ledLight(1, 'k');
 		ledLight(3, 'r');
 #if DEBUG
@@ -94,7 +101,8 @@ void needRestart() {
 	}
 
 	// Check if Arduino needs to be restarted
-	if ((nFailedNetworkOps % Settings.RestartArduinoThreshold) == 0 && nFailedNetworkOps != 0) {
+	if ((nFailedNetworkOps % Settings.RestartArduinoThreshold) == 0 && nFailedNetworkOps != 0)
+	{
 		ledLight(1, 'r');
 		ledLight(2, 'r');
 		ledLight(3, 'r');
@@ -123,33 +131,35 @@ void needRestart() {
 /// </summary>
 /// <param name="t">Current time</param>
 /// <returns></returns>
-bool isRemoteDataSetValid(DateTime t) {
-	bool _bValid;
-	unsigned long _lDiff = t.unixtime() - RemoteDS.TimeStamp.unixtime();
-	if (_lDiff <= Settings.RadioMsgInterval + 2)
+bool isRemoteDataSetValid(DateTime t)
+{
+	bool bValid;
+	unsigned long lDiff = t.unixtime() - RemoteDS.TimeStamp.unixtime();
+	if (lDiff <= Settings.RadioMsgInterval + 2)
 	{
-		_bValid = true;
+		bValid = true;
 		ledLight(2, 'g');
 	}
-	else if (_lDiff > Settings.RadioMsgInterval + 2 && _lDiff <= Settings.RemoteDataSetTimeout)
+	else if (lDiff > Settings.RadioMsgInterval + 2 && lDiff <= Settings.RemoteDataSetTimeout)
 	{
-		_bValid = true;
+		bValid = true;
 		ledLight(2, 'y');
 	}
-	else if (_lDiff > Settings.RemoteDataSetTimeout)
+	else if (lDiff > Settings.RemoteDataSetTimeout)
 	{
-		_bValid = false;
+		bValid = false;
 		ledLight(2, 'r');
 	}
 
-	return _bValid;
+	return bValid;
 }
 
 /// <summary>
 /// Amount of free RAM in Bytes
 /// </summary>
 /// <returns></returns>
-int freeRam() {
+int freeRam()
+{
 	extern int __heap_start, *__brkval;
 	int _nVal;
 	return (int)&_nVal - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
@@ -159,8 +169,9 @@ int freeRam() {
 /// Exact measurement of reference voltage (5V)
 /// </summary>
 /// <returns></returns>
-inline float readVcc() {
-	static RunningAverage _raVcc(6);
+inline float readVcc()
+{
+	static RunningAverage raVcc(6);
 	// Read 1.1V reference against AVcc
 	// set the reference to Vcc and the measurement to the internal 1.1V reference
 #if defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
@@ -180,8 +191,8 @@ inline float readVcc() {
 	float result = (high << 8) | low;
 	//result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
 	result = lVccCalibration / result;
-	_raVcc.addValue(int(result));
-	return _raVcc.getAverage();
+	raVcc.addValue(int(result));
+	return raVcc.getAverage();
 }
 
 /// <summary>
@@ -200,7 +211,8 @@ String getDateTimeString(DateTime t)
 /// </summary>
 /// <param name="t"></param>
 /// <returns>Datetime</returns>
-TimeSpan getUptime(DateTime t) {
+TimeSpan getUptime(DateTime t)
+{
 	return t - dtSysStart;
 }
 
@@ -209,7 +221,8 @@ TimeSpan getUptime(DateTime t) {
 /// </summary>
 /// <param name="ts"></param>
 /// <returns>String</returns>
-String getUptimeString(TimeSpan ts) {
+String getUptimeString(TimeSpan ts)
+{
 	sprintf(cBuff1, "%dd %02d:%02d:%02d", ts.days(), ts.hours(), ts.minutes(), ts.seconds());
 	return cBuff1;
 }
@@ -235,9 +248,10 @@ bool resolveHost(IPAddress &addr, char &host)
 	ledLight(3, 'c');
 	wdt_disable();
 	DNSClient dns;
-	bool _bSuccess;
+	bool bSuccess;
 	dns.begin(Ethernet.dnsServerIP());
-	if (dns.getHostByName(&host, addr) == 1) {
+	if (dns.getHostByName(&host, addr) == 1)
+	{
 #if DEBUG
 		Serial.print(F("Resolved hostname: "));
 		Serial.print(&host);
@@ -246,9 +260,10 @@ bool resolveHost(IPAddress &addr, char &host)
 #endif // DEBUG		
 		ledLight(3, 'g');
 		nFailedNetworkOps = 0;
-		_bSuccess = true;
+		bSuccess = true;
 	}
-	else {
+	else
+	{
 #if DEBUG
 		Serial.println(F("Failed to resolve hostname: "));
 		Serial.print(&host);
@@ -261,9 +276,9 @@ bool resolveHost(IPAddress &addr, char &host)
 		lcd.setCursor(0, 1);
 		lcd.print(&host);
 		nFailedNetworkOps++;
-		_bSuccess = false;
+		bSuccess = false;
 
 	}
 	wdt_enable(WDTO_8S);
-	return _bSuccess;
+	return bSuccess;
 }

@@ -2,11 +2,13 @@
 /// Upload ThingSpeak data. Handles also fail counters, leds, and debug msgs.
 /// </summary>
 /// <param name="ds">dataset</param>
-void updateThingSpeak(DataSet ds) {
+void updateThingSpeak(DataSet ds)
+{
 	static IPAddress TSIP;
 	if (TSIP == INADDR_NONE)
 	{
-		if (!resolveHost(TSIP, *Settings.ThingSpeakAddress)) {
+		if (!resolveHost(TSIP, *Settings.ThingSpeakAddress))
+		{
 			nFailedNetworkOps++;
 			nFailedNetowkOpsTotal++;
 			return;
@@ -16,8 +18,8 @@ void updateThingSpeak(DataSet ds) {
 	ledLight(3, 'b');
 	client.flush();
 	//connect to thingspeak
-	unsigned static long _lLastCnn;
-	if (!client.connected() || now() - _lLastCnn > Settings.TSCnnTimeout) //for some reason the connection doesn't last past 500 sec, so we need to close and reopen it manualy for maximum reliability
+	unsigned static long lLastCnn;
+	if (!client.connected() || now() - lLastCnn > Settings.TSCnnTimeout) //for some reason the connection doesn't last past 500 sec, so we need to close and reopen it manualy for maximum reliability
 	{
 		ledLight(3, 'c');
 		client.stop();
@@ -25,11 +27,12 @@ void updateThingSpeak(DataSet ds) {
 		Serial.print(F("Connecting to ThingSpeak..."));
 #endif		
 		wdt_disable();
-		if (client.connect(TSIP, 80)) _lLastCnn = now();
+		if (client.connect(TSIP, 80)) lLastCnn = now();
 		wdt_enable(WDTO_8S);
 	}
 	//update thingspeak
-	if (client.connected()) {
+	if (client.connected())
+	{
 		nFailedNetworkOps = 0;
 #if DEBUG
 		Serial.println(F("Connected to ThingSpeak, sending data..."));
@@ -68,7 +71,8 @@ void updateThingSpeak(DataSet ds) {
 /// Upload ThingSpeak data.
 /// </summary>
 /// <param name="ds">dataset</param>
-void sendData(DataSet ds) {
+void sendData(DataSet ds)
+{
 
 	if (Settings.Method == POST)
 	{

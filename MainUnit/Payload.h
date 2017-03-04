@@ -19,7 +19,8 @@ struct Payload
 	/// <summary>
 	/// Print the payload values
 	/// </summary>
-	void print() {
+	void print()
+	{
 		Serial.println();
 		Serial.print(F("Air Temperature: "));
 		Serial.print(AirTemp / 10.0, 1);

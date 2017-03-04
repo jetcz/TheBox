@@ -1,7 +1,8 @@
 /// <summary>
 /// Switch relays according to current values in Settings
 /// </summary>
-void switchRelays() {
+void switchRelays()
+{
 #if DEBUG
 	Serial.print(F("Setting relays:"));
 #endif
@@ -45,7 +46,8 @@ void switchRelays() {
 /// </summary>
 /// <param name="relay">relay</param>
 /// <returns>on/off</returns>
-bool getRelayState(int relay) {
+bool getRelayState(int relay)
+{
 	return !digitalRead(RELAY_PIN[relay]);
 }
 
@@ -55,9 +57,10 @@ bool getRelayState(int relay) {
 /// <param name="t">Current date time</param>
 /// <param name="relay">relay</param>
 /// <returns>If any relay switch happened</returns>
-bool serviceSchedulers(DateTime t, int relay) {
-	static bool _bLastState[4] = { 0 }; //previous relay states
-	bool _bSwitched = false; //if this variable is true in the end of this method, it means that at least one relay switch happened and we should check ethernet shield if it is still running
+bool serviceSchedulers(DateTime t, int relay)
+{
+	static bool bLastState[4] = { 0 }; //previous relay states
+	bool bSwitched = false; //if this variable is true in the end of this method, it means that at least one relay switch happened and we should check ethernet shield if it is still running
 
 	if (Sched[relay].Variable != 0) //is not pir
 	{
@@ -86,61 +89,67 @@ bool serviceSchedulers(DateTime t, int relay) {
 				if (*TargetVarPtr[Sched[relay].Variable] != Settings.InvalidValue) //do something only if current value is valid
 				{
 					//switch relays according to target var
-					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {
-						_bSwitched = _bLastState[relay] != true;
+					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][0])
+					{
+						bSwitched = bLastState[relay] != true;
 						digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
-						_bLastState[relay] = true;
+						bLastState[relay] = true;
 					}
 
-					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][1]) {
-						_bSwitched = _bLastState[relay] != false;
+					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][1])
+					{
+						bSwitched = bLastState[relay] != false;
 						digitalWrite(RELAY_PIN[relay], HIGH);
-						_bLastState[relay] = false;
+						bLastState[relay] = false;
 					}
 				}
 			}
-			else { //reversed mode (cooling...)			
+			else
+			{ //reversed mode (cooling...)			
 				if (*TargetVarPtr[Sched[relay].Variable] != Settings.InvalidValue)
 				{
 					//switch relays according to target var
-					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][0]) {
-						_bSwitched = _bLastState[relay] != true;
+					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][0])
+					{
+						bSwitched = bLastState[relay] != true;
 						digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
-						_bLastState[relay] = true;
+						bLastState[relay] = true;
 					}
 
-					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][1]) {
-						_bSwitched = _bLastState[relay] != false;
+					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][1])
+					{
+						bSwitched = bLastState[relay] != false;
 						digitalWrite(RELAY_PIN[relay], HIGH);
-						_bLastState[relay] = false;
+						bLastState[relay] = false;
 					}
 				}
 			}
 		}
 		else if (Settings.InvalidDSAction)//remote ds is not valid and we have in settings that we need to turn opff relay when ds invalid
 		{
-			_bSwitched = _bLastState[relay] != false;
+			bSwitched = bLastState[relay] != false;
 			digitalWrite(RELAY_PIN[relay], HIGH); //turn off relay
-			_bLastState[relay] = false;
+			bLastState[relay] = false;
 		}
 		else //when we do nothing when ds invalid
 		{
 			// do nothing
 		}
 	}
-	else { //target variable is pir
+	else
+	{ //target variable is pir
 		if (getMainPir())
 		{
-			_bSwitched = _bLastState[relay] != true;
+			bSwitched = bLastState[relay] != true;
 			digitalWrite(RELAY_PIN[relay], LOW);
-			_bLastState[relay] = true;
+			bLastState[relay] = true;
 		}
 		else
 		{
-			_bSwitched = _bLastState[relay] != false;
+			bSwitched = bLastState[relay] != false;
 			digitalWrite(RELAY_PIN[relay], HIGH);
-			_bLastState[relay] = false;
+			bLastState[relay] = false;
 		}
 	}
-	return _bSwitched;
+	return bSwitched;
 }

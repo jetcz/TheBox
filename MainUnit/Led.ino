@@ -3,7 +3,8 @@
 /// </summary>
 /// <param name="led">int led (1, 2, 3)</param>
 /// <param name="color">char color (r, g, b, c, m, y, k)</param>
-void ledLight(int led, char color) {
+void ledLight(int led, char color)
+{
 	if (led == 1)
 	{
 		switch (color)
@@ -61,7 +62,8 @@ void ledLight(int led, char color) {
 		}
 	}
 
-	if (led == 2) {
+	if (led == 2)
+	{
 		switch (color)
 		{
 		case 'r':
@@ -119,7 +121,8 @@ void ledLight(int led, char color) {
 		}
 	}
 
-	if (led == 3){
+	if (led == 3)
+	{
 		switch (color)
 		{
 		case 'r':

@@ -1,7 +1,8 @@
 /// <summary>
 /// Setup serial
 /// </summary>
-void setupSerial() {
+void setupSerial()
+{
 #if DEBUG
 	Serial.begin(115200);
 	Serial.println(F("Serial initialized"));
@@ -11,10 +12,12 @@ void setupSerial() {
 /// <summary>
 /// Setup SD card
 /// </summary>
-void setupSD() {
+void setupSD()
+{
 	ledLight(1, 'y');
 	file.setTimeout(0);
-	if (!SD.begin(SD_SELECT_PIN)) {
+	if (!SD.begin(SD_SELECT_PIN))
+	{
 #if DEBUG
 		Serial.println(F("SD failed, or not present!"));
 #endif
@@ -35,7 +38,8 @@ void setupSD() {
 /// <summary>
 /// Setup pins
 /// </summary>
-void setupPins() {
+void setupPins()
+{
 
 	pinMode(RESET_ETH_SHIELD_PIN, OUTPUT);
 	digitalWrite(RESET_ETH_SHIELD_PIN, HIGH);
@@ -80,7 +84,8 @@ void setupPins() {
 /// <summary>
 /// Setup wire
 /// </summary>
-void setupWire() {
+void setupWire()
+{
 	Wire.begin();
 
 	TWSR &= 0xFC;
@@ -112,7 +117,8 @@ void setupWire() {
 /// <summary>
 /// Setup BMP180
 /// </summary>
-void setupBMP() {
+void setupBMP()
+{
 	ledLight(1, 'y');
 	if (!bmp.begin())
 	{
@@ -127,7 +133,8 @@ void setupBMP() {
 		ledLight(1, 'r');
 		Alarm.delay(3000);
 	}
-	else {
+	else
+	{
 #if DEBUG
 		Serial.println(F("BMP180 initialized"));
 #endif
@@ -138,7 +145,8 @@ void setupBMP() {
 /// <summary>
 /// Setup RTC DS1307
 /// </summary>
-void setupRTC() {
+void setupRTC()
+{
 	ledLight(1, 'y');
 	if (!rtc.begin())
 	{
@@ -154,7 +162,8 @@ void setupRTC() {
 		Alarm.delay(3000);
 		bRTCInitSuccess = false;
 	}
-	if (!rtc.isrunning()) {
+	if (!rtc.isrunning())
+	{
 #if DEBUG
 		Serial.println(F("RTC is not running!"));
 #endif
@@ -165,7 +174,8 @@ void setupRTC() {
 		Alarm.delay(3000);
 		bRTCInitSuccess = false;
 	}
-	else {
+	else
+	{
 		//rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //set RTC clock to compile date MUST COMMENT OUT
 #if DEBUG
 		Serial.println(F("RTC initialized and clock adjusted"));
@@ -175,13 +185,14 @@ void setupRTC() {
 		setSyncInterval(60); //sync interval for system clock from RTC module
 		dtSysStart = now();
 		ledLight(1, 'g');
-	} 
+	}
 }
 
 /// <summary>
 /// Setup radio NRF24
 /// </summary>
-void setupRadio() {
+void setupRadio()
+{
 
 	radio.begin(); //for some reasong it returns false even tough radio initialized successfuly
 	radio.setAutoAck(1);  // Ensure autoACK is enabled
@@ -199,7 +210,8 @@ void setupRadio() {
 /// <summary>
 /// Setup ethernet shield W5100
 /// </summary>
-void setupEthernet() {
+void setupEthernet()
+{
 	resetEthShield();	//we have to manuly reset eth shield since we disabled autoreset by bending reset ping and icsp reset pin
 	if (Settings.DHCP)
 	{
@@ -207,8 +219,9 @@ void setupEthernet() {
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.print(F("Obtaining DHCP lease"));
-		
-		if (Ethernet.begin(Settings.MAC) == 0) {
+
+		if (Ethernet.begin(Settings.MAC) == 0)
+		{
 #if DEBUG
 			Serial.println(F("Failed to initialize ethernet using DHCP"));
 #endif
@@ -220,7 +233,8 @@ void setupEthernet() {
 			ledLight(1, 'm');
 			Alarm.delay(2000);
 		}
-		else {
+		else
+		{
 			ledLight(1, 'g');
 			lcd.clear();
 #if DEBUG
@@ -244,7 +258,8 @@ void setupEthernet() {
 			}
 		}
 	}
-	else {
+	else
+	{
 		Ethernet.begin(Settings.MAC, Settings.IP, Settings.DNS, Settings.GW, Settings.Mask);
 		ledLight(1, 'g');
 		lcd.clear();
@@ -268,7 +283,8 @@ void setupEthernet() {
 /// <summary>
 /// Setup LCD 20x4 on SPI bus
 /// </summary>
-void setupLCD() {
+void setupLCD()
+{
 	lcd.begin(20, 4);
 	lcd.clear();
 #if DEBUG
@@ -279,7 +295,8 @@ void setupLCD() {
 /// <summary>
 /// Setup scheduler which controls the whole program
 /// </summary>
-void setupAlarms() {
+void setupAlarms()
+{
 	Alarm.timerOnce(1, prepareDataSetArrays);
 	Alarm.timerOnce(40, syncRTCwithNTP);
 	updateTSAlarm = Alarm.timerRepeat(Settings.UpdateThingSpeakInterval, thingSpeak);

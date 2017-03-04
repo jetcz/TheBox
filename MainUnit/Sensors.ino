@@ -3,14 +3,15 @@
 /// </summary>
 /// <param name="event"></param>
 /// <returns></returns>
-float getSysTemperature(sensors_event_t event) {
-	static RunningAverage _raSysTemp(6);
-	float _fSysTemp;
+float getSysTemperature(sensors_event_t event)
+{
+	static RunningAverage raSysTemp(6);
+	float fSysTemp;
 	bmp.getEvent(&event);
-	bmp.getTemperature(&_fSysTemp);
-	if (_fSysTemp == 85) return Settings.InvalidValue;
-	_raSysTemp.addValue(_fSysTemp);
-	return _raSysTemp.getAverage();
+	bmp.getTemperature(&fSysTemp);
+	if (fSysTemp == 85) return Settings.InvalidValue;
+	raSysTemp.addValue(fSysTemp);
+	return raSysTemp.getAverage();
 }
 
 /// <summary>
@@ -18,39 +19,43 @@ float getSysTemperature(sensors_event_t event) {
 /// </summary>
 /// <param name="event"></param>
 /// <returns></returns>
-float getPressure(sensors_event_t event) {
+float getPressure(sensors_event_t event)
+{
 	if (*SystemDS.Temperature == Settings.InvalidValue) return Settings.InvalidValue;
-	static RunningAverage _raPressure(6);
+	static RunningAverage raPressure(6);
 	bmp.getEvent(&event);
-	_raPressure.addValue(event.pressure);
-	return _raPressure.getAverage();
+	raPressure.addValue(event.pressure);
+	return raPressure.getAverage();
 }
 
 /// <summary>
 /// Get running average of main temperature
 /// </summary>
 /// <returns></returns>
-float getMainTemperature() {
-	static RunningAverage _raMainTemp(6);
-	_raMainTemp.addValue(DHT.temperature);
-	return _raMainTemp.getAverage();
+float getMainTemperature()
+{
+	static RunningAverage raMainTemp(6);
+	raMainTemp.addValue(DHT.temperature);
+	return raMainTemp.getAverage();
 }
 
 /// <summary>
 /// Get running average of main humidity
 /// </summary>
 /// <returns></returns>
-float getMainHumidity() {
-	static RunningAverage _raMainHumidity(6);
-	_raMainHumidity.addValue(DHT.humidity);
-	return _raMainHumidity.getAverage();
+float getMainHumidity()
+{
+	static RunningAverage raMainHumidity(6);
+	raMainHumidity.addValue(DHT.humidity);
+	return raMainHumidity.getAverage();
 }
 
 /// <summary>
 /// Get running average of main humidex
 /// </summary>
 /// <returns></returns>
-float getMainHumidex() {
+float getMainHumidex()
+{
 	float e;
 	e = (6.112 * pow(10, (7.5 * *MainDS.Temperature / (237.7 + *MainDS.Temperature))) *  *MainDS.Humidity / 100.0); //vapor pressure
 	float humidex = *MainDS.Temperature + 0.55555555 * (e - 10.0); //humidex
@@ -61,7 +66,8 @@ float getMainHumidex() {
 /// Get main PIR
 /// </summary>
 /// <returns></returns>
-bool getMainPir() {
+bool getMainPir()
+{
 	return digitalRead(PIR_PIN);
 }
 
@@ -70,9 +76,10 @@ bool getMainPir() {
 /// </summary>
 /// <param name="relay">relay</param>
 /// <returns></returns>
-float getPower(int relay) {
-	static RunningAverage _raCurr0(5);
-	static RunningAverage _raCurr3(5);
+float getPower(int relay)
+{
+	static RunningAverage raCurr0(5);
+	static RunningAverage raCurr3(5);
 
 	if (relay == 0)
 	{
@@ -81,11 +88,11 @@ float getPower(int relay) {
 			emon.powerFactor1 < 0
 			)
 		{
-			_raCurr0.clear();
+			raCurr0.clear();
 		}
-		else _raCurr0.addValue(emon.realPower1);
+		else raCurr0.addValue(emon.realPower1);
 
-		return _raCurr0.getAverage();
+		return raCurr0.getAverage();
 	}
 
 	if (relay == 3)
@@ -95,11 +102,11 @@ float getPower(int relay) {
 			emon.powerFactor2 < 0
 			)
 		{
-			_raCurr3.clear();
+			raCurr3.clear();
 		}
-		else _raCurr3.addValue(emon.realPower2);
+		else raCurr3.addValue(emon.realPower2);
 
-		return _raCurr3.getAverage();
+		return raCurr3.getAverage();
 	}
 	return 0;
 }
@@ -108,9 +115,9 @@ float getPower(int relay) {
 /// Get running average of mains voltage
 /// </summary>
 /// <returns></returns>
-float getVoltage() {
-	static RunningAverage _raVoltage(10);
-	_raVoltage.addValue((emon.Vrms));
-	return _raVoltage.getAverage();
+float getVoltage()
+{
+	static RunningAverage raVoltage(10);
+	raVoltage.addValue((emon.Vrms));
+	return raVoltage.getAverage();
 }
-

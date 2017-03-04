@@ -7,7 +7,8 @@
 /// <param name="eol"></param>
 void printErrorMessage(uint8_t e, bool eol = true)
 {
-	switch (e) {
+	switch (e)
+	{
 	case IniFile::errorNoError:
 		Serial.print(F("no error"));
 		break;
@@ -49,23 +50,28 @@ void printErrorMessage(uint8_t e, bool eol = true)
 /// </summary>
 /// <param name="path">Path to the ini</param>
 /// <returns>true if reading succeeded, otherwise false</returns>
-bool readSDSettings(char *path) {
+bool readSDSettings(char *path)
+{
 
 	IniFile ini(path);
-	if (!ini.open()) {
+	if (!ini.open())
+	{
 		return false;
 	}
-	else {
+	else
+	{
 
 #pragma region ethernet
 
 		if (path == Settings.EthernetPath)
 		{
-			if (ini.getValue(NULL, "dhcp", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "dhcp", cBuff1, nBuffLen1))
+			{
 				Settings.DHCP = cBuff1[0] != '0';
 
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'dhcp', error was "));
 				printErrorMessage(ini.getError());
@@ -73,11 +79,13 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 
-			if (ini.getValue(NULL, "ip", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "ip", cBuff1, nBuffLen1))
+			{
 				chArrToByteArr(cBuff1, Settings.IP);
 
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'ip', error was "));
 				printErrorMessage(ini.getError());
@@ -85,30 +93,36 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 
-			if (ini.getValue(NULL, "subnet", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "subnet", cBuff1, nBuffLen1))
+			{
 				chArrToByteArr(cBuff1, Settings.Mask);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'subnet', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "gw", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "gw", cBuff1, nBuffLen1))
+			{
 				chArrToByteArr(cBuff1, Settings.GW);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'gw', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "dns", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "dns", cBuff1, nBuffLen1))
+			{
 				chArrToByteArr(cBuff1, Settings.DNS);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'dns', error was "));
 				printErrorMessage(ini.getError());
@@ -123,11 +137,14 @@ bool readSDSettings(char *path) {
 
 #pragma region relays
 
-		if (path == Settings.RelaysPath) {
-			if (ini.getValue(NULL, "modes", cBuff1, nBuffLen1)) { //modes=0,1,1,0
+		if (path == Settings.RelaysPath)
+		{
+			if (ini.getValue(NULL, "modes", cBuff1, nBuffLen1))
+			{ //modes=0,1,1,0
 				chArrToByteArr(cBuff1, Settings.RelayMode);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'modes', error was "));
 				printErrorMessage(ini.getError());
@@ -140,51 +157,62 @@ bool readSDSettings(char *path) {
 
 #pragma region offsets
 
-		if (path == Settings.OffsetsPath) {
-			if (ini.getValue(NULL, "SysTempOffset", cBuff1, nBuffLen1)) {
+		if (path == Settings.OffsetsPath)
+		{
+			if (ini.getValue(NULL, "SysTempOffset", cBuff1, nBuffLen1))
+			{
 				Settings.SysTempOffset = atof(cBuff1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'SysTempOffset', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "PressureOffset", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "PressureOffset", cBuff1, nBuffLen1))
+			{
 				Settings.PressureOffset = atof(cBuff1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'PressureOffset', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "MainTempOffset", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "MainTempOffset", cBuff1, nBuffLen1))
+			{
 				Settings.MainTempOffset = atof(cBuff1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'MainTempOffset', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "RemoteTempOffset", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "RemoteTempOffset", cBuff1, nBuffLen1))
+			{
 				Settings.RemoteTempOffset = atof(cBuff1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'RemoteTempOffset', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "SoilTempOffset", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "SoilTempOffset", cBuff1, nBuffLen1))
+			{
 				Settings.SoilTempOffset = atof(cBuff1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'SoilTempOffset', error was "));
 				printErrorMessage(ini.getError());
@@ -196,41 +224,50 @@ bool readSDSettings(char *path) {
 
 #pragma region general
 
-		if (path == Settings.SettingsPath) {
-			if (ini.getValue(NULL, "RDSTimeout", cBuff1, nBuffLen1)) {
+		if (path == Settings.SettingsPath)
+		{
+			if (ini.getValue(NULL, "RDSTimeout", cBuff1, nBuffLen1))
+			{
 				Settings.RemoteDataSetTimeout = atoi(cBuff1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'RDSTimeout', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "invalidDSAction", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "invalidDSAction", cBuff1, nBuffLen1))
+			{
 				Settings.InvalidDSAction = cBuff1[0] != '0';
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'invalidDSaction', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "TSEnabled", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "TSEnabled", cBuff1, nBuffLen1))
+			{
 				Settings.TSenabled = cBuff1[0] != '0';
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'TSEnabled', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "TSAddress", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "TSAddress", cBuff1, nBuffLen1))
+			{
 				memcpy(&Settings.ThingSpeakAddress, cBuff1, nBuffLen1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'TSAddress', error was "));
 				printErrorMessage(ini.getError());
@@ -239,30 +276,36 @@ bool readSDSettings(char *path) {
 			}
 
 			//---
-			if (ini.getValue(NULL, "MainAPIKey", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "MainAPIKey", cBuff1, nBuffLen1))
+			{
 				memcpy(&MainDS.APIkey, cBuff1, nBuffLen1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'MainAPIKey', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "RemAPIKey", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "RemAPIKey", cBuff1, nBuffLen1))
+			{
 				memcpy(&RemoteDS.APIkey, cBuff1, nBuffLen1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'RemAPIKey', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "SysAPIKey", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "SysAPIKey", cBuff1, nBuffLen1))
+			{
 				memcpy(&SystemDS.APIkey, cBuff1, nBuffLen1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'SysAPIKey', error was "));
 				printErrorMessage(ini.getError());
@@ -270,10 +313,12 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 
-			if (ini.getValue(NULL, "TSCnnTimeout", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "TSCnnTimeout", cBuff1, nBuffLen1))
+			{
 				Settings.TSCnnTimeout = atoi(cBuff1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'TSCnnTimeout', error was "));
 				printErrorMessage(ini.getError());
@@ -281,10 +326,12 @@ bool readSDSettings(char *path) {
 				return false;
 			}
 
-			if (ini.getValue(NULL, "TSMethod", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "TSMethod", cBuff1, nBuffLen1))
+			{
 				Settings.Method = RequestMethod(atoi(cBuff1));
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'TSMethod', error was "));
 				printErrorMessage(ini.getError());
@@ -296,20 +343,24 @@ bool readSDSettings(char *path) {
 
 
 
-			if (ini.getValue(NULL, "ntp", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "ntp", cBuff1, nBuffLen1))
+			{
 				memcpy(&Settings.NTPServer, cBuff1, nBuffLen1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'ntp', error was "));
 				printErrorMessage(ini.getError());
 #endif
 				return false;
 			}
-			if (ini.getValue(NULL, "NRFChannel", cBuff1, nBuffLen1)) {
+			if (ini.getValue(NULL, "NRFChannel", cBuff1, nBuffLen1))
+			{
 				Settings.NRFChannel = atoi(cBuff1);
 			}
-			else {
+			else
+			{
 #if DEBUG
 				Serial.print(F("Could not read 'NRFChannel', error was "));
 				printErrorMessage(ini.getError());
@@ -326,14 +377,16 @@ bool readSDSettings(char *path) {
 /// Writes current relay settings to SD card
 /// </summary>
 /// <returns>true if writing succeeded, otherwise false</returns>
-bool writeSDRelaySettings() {
+bool writeSDRelaySettings()
+{
 	SD.remove(Settings.RelaysPath);
 	file = SD.open(Settings.RelaysPath, FILE_WRITE);
 	if (!file)
 	{
 		return false;
 	}
-	else {
+	else
+	{
 		file.print(F("modes="));
 		file.print(Settings.RelayMode[0]);
 		file.print(",");
@@ -351,14 +404,16 @@ bool writeSDRelaySettings() {
 /// Writes current ethernet settings to SD card
 /// </summary>
 /// <returns>true if writing succeeded, otherwise false</returns>
-bool writeSDEthernetSettings() {
+bool writeSDEthernetSettings()
+{
 	SD.remove(Settings.EthernetPath);
 	file = SD.open(Settings.EthernetPath, FILE_WRITE);
 	if (!file)
 	{
 		return false;
 	}
-	else {
+	else
+	{
 		file.print(F("dhcp="));
 		file.println(Settings.DHCP);
 		file.print(F("ip="));
@@ -412,14 +467,16 @@ bool writeSDEthernetSettings() {
 /// Writes general settings to SD card
 /// </summary>
 /// <returns>true if writing succeeded, otherwise false</returns>
-bool writeSDSettings() {
+bool writeSDSettings()
+{
 	SD.remove(Settings.SettingsPath);
 	file = SD.open(Settings.SettingsPath, FILE_WRITE);
 	if (!file)
 	{
 		return false;
 	}
-	else {
+	else
+	{
 		file.print(F("RDSTimeout="));
 		file.println(Settings.RemoteDataSetTimeout);
 		file.print(F("invalidDSAction="));
@@ -453,14 +510,16 @@ bool writeSDSettings() {
 /// Writes sensor offsets settings to SD card.
 /// </summary>
 /// <returns>true if writing succeeded, otherwise false</returns>
-bool writeSDOffsets() {
+bool writeSDOffsets()
+{
 	SD.remove(Settings.OffsetsPath);
 	file = SD.open(Settings.OffsetsPath, FILE_WRITE);
 	if (!file)
 	{
 		return false;
 	}
-	else {
+	else
+	{
 		file.print(F("SysTempOffset="));
 		file.println(Settings.SysTempOffset);
 		file.print(F("PressureOffset="));

@@ -1,6 +1,6 @@
 /*
 				MainDS			RemoteDS				SystemDS
-				TS size			8				8						8
+TS size			8				8						8
 				mainTemperature	remoteTemperature		sysTemperature
 				mainHumidity	remoteHumidity			sysUptime
 				mainHumidex		remoteHumidex			relay1

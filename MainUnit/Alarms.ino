@@ -1,4 +1,5 @@
-void printDebug() {
+void printDebug()
+{
 
 }
 
@@ -6,18 +7,19 @@ void printDebug() {
 /// <summary>
 /// Helper method - service call which could be in main loop(), but executing every seconds is good enough
 /// </summary>
-void system() {
+void system()
+{
 	wdt_reset();
-	DateTime _dtNow = now();
-	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(_dtNow);
-	sNow = getDateTimeString(_dtNow);
-	sMainUptime = getUptimeString(getUptime(_dtNow));
-	bool _bSwitched = false;
+	DateTime dtNow = now();
+	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(dtNow);
+	sNow = getDateTimeString(dtNow);
+	sMainUptime = getUptimeString(getUptime(dtNow));
+	bool bSwitched = false;
 	for (int relay = 0; relay < 4; relay++)
 	{
-		if (Settings.RelayMode[relay] > 1) _bSwitched |= serviceSchedulers(_dtNow, relay);
+		if (Settings.RelayMode[relay] > 1) bSwitched |= serviceSchedulers(dtNow, relay);
 	}
-	if (_bSwitched)
+	if (bSwitched)
 	{
 		Alarm.enable(ethShieldFreezeDetectAlarm); //if relay switch happened, check if the eth shield is not frozen
 	}
@@ -26,16 +28,17 @@ void system() {
 /// <summary>
 /// Fill datasets and apply offsets
 /// </summary>
-void prepareDataSetArrays() {
+void prepareDataSetArrays()
+{
 	static unsigned int nDHTFailures;
-	DateTime _dtNow = now();
+	DateTime dtNow = now();
 	sensors_event_t event;	//event for bmp180
 
 	//system DS
-	float _fVal;
-	_fVal = getSysTemperature(event);
-	SystemDS.Data[0] = (_fVal == Settings.InvalidValue) ? _fVal : _fVal + Settings.SysTempOffset;
-	SystemDS.Data[1] = getUptime(_dtNow).totalseconds();
+	float fTemp;
+	fTemp = getSysTemperature(event);
+	SystemDS.Data[0] = (fTemp == Settings.InvalidValue) ? fTemp : fTemp + Settings.SysTempOffset;
+	SystemDS.Data[1] = getUptime(dtNow).totalseconds();
 	for (int i = 0; i < 4; i++)
 	{
 		SystemDS.Data[i + 2] = getRelayState(i);
@@ -67,31 +70,33 @@ void prepareDataSetArrays() {
 	}
 
 	MainDS.Data[3] = getMainPir();
-	_fVal = getPressure(event);
-	MainDS.Data[4] = (_fVal == Settings.InvalidValue) ? _fVal : _fVal + Settings.PressureOffset;
+	fTemp = getPressure(event);
+	MainDS.Data[4] = (fTemp == Settings.InvalidValue) ? fTemp : fTemp + Settings.PressureOffset;
 
-	MainDS.TimeStamp = _dtNow;
-	SystemDS.TimeStamp = _dtNow;
+	MainDS.TimeStamp = dtNow;
+	SystemDS.TimeStamp = dtNow;
 }
 
 
 /// <summary>
 /// Get power data (mains voltage, power consumption of appliances connected to sockets)
 /// </summary>
-void getPWRData() {
-	float _fVal;
+void getPWRData()
+{
+	float fPwr;
 	fVcc = readVcc();
-	_fVal = getPower(0);
-	MainDS.Data[5] = (_fVal < 1) ? 0 : _fVal; //pwr consuption is very inacurate under a 1 watt
-	_fVal = getPower(3);
-	MainDS.Data[6] = (_fVal < 1) ? 0 : _fVal;
+	fPwr = getPower(0);
+	MainDS.Data[5] = (fPwr < 1) ? 0 : fPwr; //pwr consuption is very inacurate under a 1 watt
+	fPwr = getPower(3);
+	MainDS.Data[6] = (fPwr < 1) ? 0 : fPwr;
 	MainDS.Data[7] = getVoltage();
 }
 
 /// <summary>
 /// Print some sensor data to serial port, disabled if DEBUG=false
 /// </summary>
-void printSensorDataSerial() {
+void printSensorDataSerial()
+{
 	if (MainDS.isValid)
 	{
 		Serial.println();
@@ -164,19 +169,22 @@ void printSensorDataSerial() {
 /// Responsible for printing stuff to LCD every second
 /// This would be better if it was controlled by an interrupt, but in reality, it could cause a buttload of problems, so running it every seond with scheduler is good enough
 /// </summary>
-void printLcd() {
-	static byte _byLastScreen;
-	static byte _bySecCnt = 0;
+void printLcd()
+{
+	static byte byLastScreen;
+	static byte bySecCnt = 0;
+
+
 
 	//do not refresh lcd for specified time if there is some message
-	if (!bLCDRefreshing && _bySecCnt < Settings.LcdMsgTimeout)
+	if (!bLCDRefreshing && bySecCnt < Settings.LcdMsgTimeout)
 	{
-		_bySecCnt++;
+		bySecCnt++;
 		return;
 	}
-	else if (!bLCDRefreshing && _bySecCnt >= Settings.LcdMsgTimeout)
+	else if (!bLCDRefreshing && bySecCnt >= Settings.LcdMsgTimeout)
 	{
-		_bySecCnt = 0;
+		bySecCnt = 0;
 		bLCDRefreshing = true;
 		lcd.clear();
 	}
@@ -189,27 +197,34 @@ void printLcd() {
 		//which screen to display
 		if (!digitalRead(LCD_SWITCH[0]))
 		{
-			if (_byLastScreen != 1) {
+			if (byLastScreen != 1)
+			{
 				lcd.clear();
 			}
 			printLcdScreen1();
-			_byLastScreen = 1;
+			byLastScreen = 1;
 		}
 		else if (!digitalRead(LCD_SWITCH[1]))
 		{
-			if (_byLastScreen != 2) {
+			if (byLastScreen != 2)
+			{
 				lcd.clear();
 			}
 			printLcdScreen2();
-			_byLastScreen = 2;
+			byLastScreen = 2;
 		}
 		else if (!digitalRead(LCD_SWITCH[2]))
 		{
-			if (_byLastScreen != 3) {
+			if (byLastScreen != 3)
+			{
 				lcd.clear();
 			}
 			printLcdScreen3();
-			_byLastScreen = 3;
+			byLastScreen = 3;
+		}
+		else
+		{
+			Serial.println(F("No screen selected"));
 		}
 	}
 	else  lcd.noBacklight();
@@ -219,43 +234,45 @@ void printLcd() {
 /// <summary>
 /// Helper method to call Thingspeak upload, rotate datasets and restart arduino if there are problems with uploading
 /// </summary>
-void thingSpeak() {
+void thingSpeak()
+{
 	if (millis() < 40000 ||
 		Settings.ThingSpeakAddress == "0" ||
 		Settings.ThingSpeakAddress == "") return;	//return if time is less than 0:40 (boot time of the wifi router), or the ts address is 0 or empty
-	static unsigned int _nCnt;
-	byte _byCurrentDS = _nCnt % 3;
+	static unsigned int nCnt;
+	byte byCurrentDS = nCnt % 3;
 
 	//before we update thingspeak, check if the dataset is valid 
-	if (!DataSetPtr[_byCurrentDS]->isValid)
+	if (!DataSetPtr[byCurrentDS]->isValid)
 	{
 #if DEBUG
 		Serial.println();
 		Serial.print(F("DS "));
-		Serial.print(_byCurrentDS);
+		Serial.print(byCurrentDS);
 		Serial.println(F(" not valid, aborting upload!"));
 #endif
-		_nCnt++;
+		nCnt++;
 		return; //cancel thingspeak update
 	}
 	//if remote dataset is invalid, cut the system dataset because we have remote voltage and remote uptime in last two floats
 	SystemDS.Size = (RemoteDS.isValid) ? 8 : 6; //this is ugly, but it is a limitation of thingspeak
-	DataSetPtr[_byCurrentDS]->GetTSString();
+	DataSetPtr[byCurrentDS]->GetTSString();
 
 #if DEBUG
 	Serial.println();
 	Serial.print(F("Update ThingSpeak with DS "));
-	Serial.println(_byCurrentDS);
+	Serial.println(byCurrentDS);
 #endif
-	updateThingSpeak(*DataSetPtr[_byCurrentDS]);
-	_nCnt++;
+	updateThingSpeak(*DataSetPtr[byCurrentDS]);
+	nCnt++;
 	needRestart();
 }
 
 /// <summary>
 /// Helper method to call NTP sync
 /// </summary>
-void syncRTCwithNTP() {
+void syncRTCwithNTP()
+{
 	if (Settings.NTPServer == "0" ||
 		Settings.NTPServer == "") return;
 	bLCDRefreshing = false;
@@ -286,9 +303,11 @@ void syncRTCwithNTP() {
 /// Maintain DHCP lease
 /// Using DHCP is not recommended
 /// </summary>
-void dhcp() {
+void dhcp()
+{
 	wdt_disable();
-	if (Ethernet.maintain() % 2 == 1) {  //renew dhcp lease
+	if (Ethernet.maintain() % 2 == 1)
+	{  //renew dhcp lease
 		bLCDRefreshing = false;
 #if DEBUG
 		Serial.println();
@@ -301,7 +320,8 @@ void dhcp() {
 		lcd.print(F("DHCP lease!"));
 		ledLight(1, 'm');
 	}
-	else {
+	else
+	{
 #if DEBUG
 		Serial.println();
 		Serial.println(F("Obtained DHCP lease"));
@@ -321,7 +341,8 @@ void dhcp() {
 /// <summary>
 /// Helper method to call with delay, writes relay settings to SD card
 /// </summary>
-void writeSD() {
+void writeSD()
+{
 	if (!writeSDRelaySettings())
 	{
 #if DEBUG

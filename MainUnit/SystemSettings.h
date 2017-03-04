@@ -1,4 +1,5 @@
-enum RequestMethod {
+enum RequestMethod
+{
 	GET,
 	POST,
 	PUT
@@ -12,7 +13,8 @@ struct SystemSettings
 	/// <summary>
 	/// Constructor
 	/// </summary>
-	SystemSettings() {
+	SystemSettings()
+	{
 		setDefaultSystemSettings();
 		setDefaultOffsetsSettings();
 	}
@@ -20,13 +22,14 @@ struct SystemSettings
 	/// <summary>
 	/// Set default values for the settings
 	/// </summary>
-	void setDefaultSystemSettings() {
+	void setDefaultSystemSettings()
+	{
 		strncpy(ThingSpeakAddress, "api.thingspeak.com", 30);
 		UpdateThingSpeakInterval = 20;
 		RemoteDataSetTimeout = 180;
 		RestartEthernetThreshold = 9;
 		RestartWifiThreshold = 61;
-		RestartArduinoThreshold = 401;
+		RestartArduinoThreshold = 9001;
 		strncpy(NTPServer, "tik.cesnet.cz", 30);
 		LcdMsgTimeout = 4;
 		LightIntensity[0] = 6; //R
@@ -48,7 +51,8 @@ struct SystemSettings
 	/// <summary>
 	/// Set default offsets values
 	/// </summary>
-	void setDefaultOffsetsSettings() {
+	void setDefaultOffsetsSettings()
+	{
 		SysTempOffset = -0.2;
 		PressureOffset = 29;
 		MainTempOffset = -1.2;
@@ -83,7 +87,7 @@ struct SystemSettings
 	byte NRFChannel;
 	int TSCnnTimeout;
 	RequestMethod Method;
-	
+
 
 	/* sensor offsets */
 	float SysTempOffset;

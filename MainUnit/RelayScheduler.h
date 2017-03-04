@@ -9,7 +9,8 @@ struct RelayScheduler
 	byte Time[5][2] = { { 0 },{ 0 } }; //5x time of day - consists of two values h:m
 	float Value[5][2] = { { 0 },{ 0 } }; //5x pair of valuemin and valuemax
 
-	void setDefault() {
+	void setDefault()
+	{
 		CurrentInterval = 0;
 		Variable = 0;
 		for (int i = 0; i < 5; i++)

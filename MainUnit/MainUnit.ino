@@ -1,5 +1,6 @@
-#define PRINT_SUMMARY false	//print sensor summary every reading
-#define DEBUG false			//other debug messages
+#define PRINT_SUMMARY false			//print sensor summary every reading
+#define DEBUG false					//other debug messages
+#define WRITE_RAIN_DATA_TO_SD false //enable disable keeping rain data over rebbot - can kill sd card?
 
 #include <Wire.h>
 #include <SPI.h>
@@ -7,7 +8,6 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP085_U.h>
 #include <SD.h>
-#include <utility/w5100.h>
 #include <EthernetUdp.h>
 #include <Timezone.h>
 #include <Time.h>
@@ -23,6 +23,7 @@
 #include <RunningAverage.h>
 #include <dht.h>
 #include <Ethernet.h>
+#include <utility/w5100.h>
 #include <WebServer.h>
 //modified, cannot use default (refer to readme)
 #include <EmonLib.h>
@@ -425,11 +426,13 @@ void schedDataCmd(WebServer &server, WebServer::ConnectionType type, char *, boo
 				int _relay = cBuff1[1] - '1';
 				int _interval = cBuff1[3] - '1';
 
-				if (cBuff1[2] == 'V') {
+				if (cBuff1[2] == 'V')
+				{
 					Sched[_relay].Variable = atoi(cBuff2);
 				}
 
-				if (cBuff1[2] == 'I') {
+				if (cBuff1[2] == 'I')
+				{
 					Sched[_relay].Enabled[_interval] = cBuff2[0] != '0';
 				}
 
@@ -518,7 +521,8 @@ void schedDeleteCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 	ledLight(1, 'g');
 }
 
-void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool) {
+void statsXMLCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
 	ledLight(1, 'c');
 
 	if (type == WebServer::POST)
@@ -809,9 +813,9 @@ void settingsDataCmd(WebServer &server, WebServer::ConnectionType type, char *, 
 			"</body>"
 			"</html>";
 
-		if (writeSDSettings()) 
+		if (writeSDSettings())
 			server.printP(messageSuccess);
-		else 
+		else
 			server.printP(messageFail);
 
 		server.flushBuf();
@@ -1070,12 +1074,14 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 			"</div>"
 			"</body>"
 			"</html>";
-		if (writeSDEthernetSettings()) {
+		if (writeSDEthernetSettings())
+		{
 			server.printP(saveNetSucces);
 			server.flushBuf();
 			setupEthernet();
 		}
-		else {
+		else
+		{
 			server.printP(saveNetFail);
 			server.flushBuf();
 		}
@@ -1103,12 +1109,17 @@ void setup()
 	setupEthernet();
 	setupRTC();
 	setupAlarms();
+
+#if WRITE_RAIN_DATA_TO_SD
 	if (bRTCInitSuccess) //this relies on correctly set clock from RTC module
 	{
 		//read cumulative rain data from sd card - this solves forgetting rain ater reboot
 		readSDRain(0);
 		readSDRain(1);
 	}
+#endif // WRITE_RAIN_DATA_TO_SD
+
+
 
 	//add webduino commands
 	webserver.addCommand("sensors.xml", &sensorsXMLCmd);			//get xml
