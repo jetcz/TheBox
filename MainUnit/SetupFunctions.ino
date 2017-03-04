@@ -318,10 +318,10 @@ void setupAlarms()
 	if (!Settings.TSenabled) Alarm.disable(updateTSAlarm);
 	if (!bRTCInitSuccess) Alarm.timerOnce(300, setupRTC); //if first initialization of RTC module failed, try to do it one more time later (in case the battery is dead and needs to be charged first)
 
-#if PRINT_SUMMARY && DEBUG
+#if DEBUG
+#if PRINT_SUMMARY
 	printSummaryAlarm = Alarm.timerRepeat(Settings.UpdateSensorsInterval, printSensorDataSerial); //print sensor data to serial every x ms
 #endif
-#if DEBUG
 	Serial.println(F("Alarms initialized"));
 	Alarm.timerRepeat(2, printDebug);
 #endif	

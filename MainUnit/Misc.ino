@@ -171,7 +171,6 @@ int freeRam()
 /// <returns></returns>
 inline float readVcc()
 {
-	static RunningAverage raVcc(6);
 	// Read 1.1V reference against AVcc
 	// set the reference to Vcc and the measurement to the internal 1.1V reference
 #if defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
@@ -190,9 +189,8 @@ inline float readVcc()
 	uint8_t high = ADCH; // unlocks both
 	float result = (high << 8) | low;
 	//result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
-	result = lVccCalibration / result;
-	raVcc.addValue(int(result));
-	return raVcc.getAverage();
+
+	return lVccCalibration / result;
 }
 
 /// <summary>

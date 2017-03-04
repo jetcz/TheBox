@@ -121,6 +121,9 @@ void printSensorDataSerial()
 		Serial.println(sNow);
 		Serial.print(F("Uptime "));
 		Serial.println(sMainUptime);
+		Serial.print(F("Vcc "));
+		Serial.print(readVcc());
+		Serial.println(F("mV"));
 		Serial.print(F("Free ram "));
 		Serial.println(intToString(nMainFreeRam) + "B (" + floatToString(float(nMainFreeRam) / 8192 * 100) + "%)");
 		Serial.println();
