@@ -47,16 +47,18 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 Payload payload;
 int nChannel = InvalidValue;
 byte byFailedConsMsgs = 0;
-
+volatile unsigned long prevTimeISR;
 volatile unsigned int nRainTips;
 unsigned int *Vcc = &payload.Vcc;
 unsigned long lDelay;
+
 
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
 void setup() {
 
 	noInterrupts();
+
 #if DEBUG
 	Serial.begin(9600);
 #endif
@@ -65,6 +67,7 @@ void setup() {
 	setupRadio();
 	ds.begin();
 	nRainTips = 0;
+	prevTimeISR = millis();
 	interrupts();
 	getPayload();
 
