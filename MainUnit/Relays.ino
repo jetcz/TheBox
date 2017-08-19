@@ -66,18 +66,37 @@ bool serviceSchedulers(DateTime t, int relay)
 	{
 		//set current interval where we are at this time of day
 		unsigned long _lCurrSec = long(t.hour()) * 60 * 60 + long(t.minute()) * 60 + long(t.second());
-		bool _bSet = false; //in case we use all 5 intervals we need to have this aux variable
-		for (int i = 0; i < 5; i++)
-		{
-			if (Sched[relay].Enabled[i])
-			{
-				unsigned long lSchedSec = long(Sched[relay].Time[i][0]) * 60 * 60 + long(Sched[relay].Time[i][1]) * 60;
+		bool breakloop = false;
+		int prevInterval;
 
-				if ((_lCurrSec >= lSchedSec) || (i == 4 && !_bSet))
+		for (int j = 0; j < 2; j++)
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				if (Sched[relay].Enabled[i])
 				{
-					Sched[relay].CurrentInterval = i;
-					_bSet = true;
+					unsigned long lSchedSec = long(Sched[relay].Time[i][0]) * 60 * 60 + long(Sched[relay].Time[i][1]) * 60;
+
+					if (_lCurrSec >= lSchedSec)
+					{
+						Sched[relay].CurrentInterval = i;
+						breakloop = true;
+					}
+
+					if (i < prevInterval)
+					{
+						Sched[relay].CurrentInterval = prevInterval;
+						breakloop = true;
+						break;
+					}
+
+					prevInterval = i;
 				}
+			}
+
+			if (breakloop)
+			{
+				break;
 			}
 		}
 

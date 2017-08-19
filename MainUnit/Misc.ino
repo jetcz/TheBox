@@ -17,6 +17,7 @@ void resetEthShield()
 /// </summary>
 void resetWifi()
 {
+	wdt_disable();
 	ledLight(3, 'k');
 #if DEBUG
 	Serial.println(F("Reseting Wifi"));
@@ -28,6 +29,7 @@ void resetWifi()
 	Alarm.delay(36000);
 	setupEthernet();
 	if (Settings.TSenabled) Alarm.enable(updateTSAlarm);
+	wdt_enable(WDTO_8S);
 }
 
 
@@ -244,7 +246,6 @@ time_t syncProvider()
 bool resolveHost(IPAddress &addr, char &host)
 {
 	ledLight(3, 'c');
-	wdt_disable();
 	DNSClient dns;
 	bool bSuccess;
 	dns.begin(Ethernet.dnsServerIP());
@@ -277,6 +278,5 @@ bool resolveHost(IPAddress &addr, char &host)
 		bSuccess = false;
 
 	}
-	wdt_enable(WDTO_8S);
 	return bSuccess;
 }
