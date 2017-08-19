@@ -34,6 +34,12 @@
 #include "SystemSettings.h"
 #include "RelayScheduler.h"
 
+//watchdog stuff
+#define TIMEOUTPERIOD_ETH 10000
+#define TIMEOUTPERIOD_MCU 30000
+unsigned long resetTime = 0;
+#define doggieTickle() resetTime = millis();  // This macro will reset the timer
+
 //my arduino specific calibration constant for reading vcc
 const float lVccCalibration = 1100000;
 
@@ -1092,7 +1098,7 @@ void networkDataCmd(WebServer &server, WebServer::ConnectionType type, char *, b
 
 void setup()
 {
-	wdt_disable(); //disable watchdog
+	//wdt_disable(); //disable watchdog
 	setupSerial();
 	setupPins();
 	setupSD();
@@ -1109,6 +1115,7 @@ void setup()
 	setupEthernet();
 	setupRTC();
 	setupAlarms();
+	setupWatchdog();
 
 #if WRITE_RAIN_DATA_TO_SD
 	if (bRTCInitSuccess) //this relies on correctly set clock from RTC module
@@ -1146,12 +1153,36 @@ void setup()
 	//Calibration process: connect a known load and adjust the calibration constants so the reported wattage is the same as the load
 	emon.current(CURRENT_LEFT_PIN, CURRENT_RIGHT_PIN, 15.2, 14.44); //Current: input pin, input pin, calibration, calibration
 
-	wdt_enable(WDTO_8S); //enable watchdog
+	//wdt_enable(WDTO_8S); //enable watchdog
 	bSetupDone = true;
 #if DEBUG
 	Serial.println(F("Setup Done"));
 #endif
 
+}
+
+//watchdog isr
+ISR(WDT_vect)
+{
+	if (millis() - resetTime > TIMEOUTPERIOD_ETH) {
+
+#if DEBUG
+		Serial.println("Watchdog RESET would be here - ethernet shield!!!");
+		doggieTickle();
+#else
+		setupEthernet();     // This will reset the eth shield
+#endif
+	}
+
+	if (millis() - resetTime > TIMEOUTPERIOD_MCU) {
+
+#if DEBUG
+		Serial.println("Watchdog RESET would be here - arduino!!!");
+		doggieTickle();
+#else
+		resetFunc();     // This will call location zero and cause a reboot.
+#endif
+	}
 }
 
 void loop() //one cycle takes about 1ms (900us - 1050us)

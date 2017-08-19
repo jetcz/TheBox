@@ -17,7 +17,7 @@ void resetEthShield()
 /// </summary>
 void resetWifi()
 {
-	wdt_disable();
+	//wdt_disable();
 	ledLight(3, 'k');
 #if DEBUG
 	Serial.println(F("Reseting Wifi"));
@@ -29,7 +29,7 @@ void resetWifi()
 	Alarm.delay(36000);
 	setupEthernet();
 	if (Settings.TSenabled) Alarm.enable(updateTSAlarm);
-	wdt_enable(WDTO_8S);
+	//wdt_enable(WDTO_8S);
 }
 
 
@@ -280,3 +280,32 @@ bool resolveHost(IPAddress &addr, char &host)
 	}
 	return bSuccess;
 }
+
+#if DEBUG
+
+void ShowSockStatus()
+{
+	byte socketStat[MAX_SOCK_NUM];
+	for (int i = 0; i < MAX_SOCK_NUM; i++) {
+		Serial.print(F("Socket#"));
+		Serial.print(i);
+		uint8_t s = W5100.readSnSR(i);
+		socketStat[i] = s;
+		Serial.print(F(":0x"));
+		Serial.print(s, 16);
+		Serial.print(F(" "));
+		Serial.print(W5100.readSnPORT(i));
+		Serial.print(F(" D:"));
+		uint8_t dip[4];
+		W5100.readSnDIPR(i, dip);
+		for (int j = 0; j < 4; j++) {
+			Serial.print(dip[j], 10);
+			if (j < 3) Serial.print(".");
+		}
+		Serial.print(F("("));
+		Serial.print(W5100.readSnDPORT(i));
+		Serial.println(F(")"));
+	}
+}
+
+#endif

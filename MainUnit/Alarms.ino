@@ -9,7 +9,8 @@ void printDebug()
 /// </summary>
 void system()
 {
-	wdt_reset();
+	//wdt_reset();
+	doggieTickle()
 	DateTime dtNow = now();
 	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(dtNow);
 	sNow = getDateTimeString(dtNow);
@@ -308,7 +309,7 @@ void syncRTCwithNTP()
 /// </summary>
 void dhcp()
 {
-	wdt_disable();
+	//wdt_disable();
 	if (Ethernet.maintain() % 2 == 1)
 	{  //renew dhcp lease
 		bLCDRefreshing = false;
@@ -337,7 +338,7 @@ void dhcp()
 #endif
 		ledLight(1, 'g');
 	}
-	wdt_enable(WDTO_8S);
+	//wdt_enable(WDTO_8S);
 }
 
 

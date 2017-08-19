@@ -4,7 +4,7 @@
 /// <param name="ds">dataset</param>
 void updateThingSpeak(DataSet ds)
 {
-	wdt_disable();
+	//wdt_disable();
 	static IPAddress TSIP;
 	if (TSIP == INADDR_NONE)
 	{
@@ -26,6 +26,7 @@ void updateThingSpeak(DataSet ds)
 		client.stop();
 #if DEBUG
 		Serial.print(F("Connecting to ThingSpeak..."));
+		ShowSockStatus();
 #endif		
 
 		if (client.connect(TSIP, 80)) lLastCnn = now();
@@ -67,7 +68,7 @@ void updateThingSpeak(DataSet ds)
 #endif
 	}
 
-		wdt_enable(WDTO_8S);
+		//wdt_enable(WDTO_8S);
 }
 
 

@@ -29,7 +29,7 @@ struct SystemSettings
 		RemoteDataSetTimeout = 180;
 		RestartEthernetThreshold = 9;
 		RestartWifiThreshold = 61;
-		RestartArduinoThreshold = 9001;
+		RestartArduinoThreshold = 5001;
 		strncpy(NTPServer, "tik.cesnet.cz", 30);
 		LcdMsgTimeout = 4;
 		LightIntensity[0] = 6; //R
@@ -44,7 +44,7 @@ struct SystemSettings
 		RadioMsgInterval = 20;
 		InvalidValue = -255;
 		NRFChannel = 0;
-		TSCnnTimeout = 420;
+		TSCnnTimeout = 400;
 		Method = RequestMethod(POST);
 	}
 

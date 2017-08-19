@@ -10,7 +10,7 @@
 /// <returns>Unix time, that is, seconds from 1970 - 01 - 01T00:00.</returns>
 unsigned long ntpUnixTime(UDP &udp)
 {
-	wdt_disable();
+	//wdt_disable();
 	static IPAddress NTPIP;
 	if (NTPIP == INADDR_NONE)
 	{
@@ -75,6 +75,6 @@ unsigned long ntpUnixTime(UDP &udp)
 	// Discard the rest of the packet
 	udp.flush();
 	ledLight(1, 'g');
-	wdt_enable(WDTO_8S);
+	//wdt_enable(WDTO_8S);
 	return lTime - 2208988800ul;		// convert NTP time to Unix time	
 }
