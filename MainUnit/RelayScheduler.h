@@ -3,7 +3,7 @@
 /// </summary>
 struct RelayScheduler
 {
-	byte CurrentInterval = 0;  //this is pointer to arrays enabled, time, value
+	int CurrentInterval = 0;  //this is pointer to arrays enabled, time, value
 	byte Variable = 0;	//target variable
 	bool Enabled[5] = { false }; //interval enabled?
 	byte Time[5][2] = { { 0 },{ 0 } }; //5x time of day - consists of two values h:m

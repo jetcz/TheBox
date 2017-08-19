@@ -24,7 +24,7 @@ void switchRelays()
 #endif
 			digitalWrite(RELAY_PIN[i], LOW); //LOW is active
 			break;
-		default:
+		case 2:
 #if DEBUG
 			Serial.print(F(" AUTO"));
 #endif
@@ -61,6 +61,14 @@ bool serviceSchedulers(DateTime t, int relay)
 {
 	static bool bLastState[4] = { 0 }; //previous relay states
 	bool bSwitched = false; //if this variable is true in the end of this method, it means that at least one relay switch happened and we should check ethernet shield if it is still running
+
+	if (*TargetVarPtr[Sched[relay].Variable] == Settings.InvalidValue)
+	{
+#if DEBUG
+		Serial.println(F("Invalid value, relay scheduler abort."));
+#endif
+		return false;
+	}
 
 	if (Sched[relay].Variable != 0) //is not pir
 	{
@@ -103,45 +111,50 @@ bool serviceSchedulers(DateTime t, int relay)
 		//control relays (all the magic goes here)
 		if ((Sched[relay].Variable > 3 && RemoteDS.isValid) || (Sched[relay].Variable <= 3)) //if targer var is from remote unit, remote ds must be valid to be processed
 		{
-			if (Sched[relay].Value[Sched[relay].CurrentInterval][0] < Sched[relay].Value[Sched[relay].CurrentInterval][1]) //normal mode (heating...)
+			int curr_interval = Sched[relay].CurrentInterval;
+			float val0 = Sched[relay].Value[curr_interval][0];
+			float val1 = Sched[relay].Value[curr_interval][1];
+			float curr_val = *TargetVarPtr[Sched[relay].Variable];
+
+			if (val0 < val1) //normal mode (heating...)
 			{
-				if (*TargetVarPtr[Sched[relay].Variable] != Settings.InvalidValue) //do something only if current value is valid
+				//switch relays according to target var
+				if (curr_val <= val0)
 				{
-					//switch relays according to target var
-					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][0])
-					{
-						bSwitched = bLastState[relay] != true;
-						digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
-						bLastState[relay] = true;
-					}
-
-					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][1])
-					{
-						bSwitched = bLastState[relay] != false;
-						digitalWrite(RELAY_PIN[relay], HIGH);
-						bLastState[relay] = false;
-					}
+					bSwitched = bLastState[relay] != true;
+					digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
+					bLastState[relay] = true;
 				}
+
+				if (curr_val >= val1)
+				{
+					bSwitched = bLastState[relay] != false;
+					digitalWrite(RELAY_PIN[relay], HIGH);
+					bLastState[relay] = false;
+				}
+
 			}
-			else
-			{ //reversed mode (cooling...)			
-				if (*TargetVarPtr[Sched[relay].Variable] != Settings.InvalidValue)
+			else if (val0 > val1)//reversed mode (cooling...)	
+			{
+				//switch relays according to target var
+				if (curr_val >= val0)
 				{
-					//switch relays according to target var
-					if (*TargetVarPtr[Sched[relay].Variable] >= Sched[relay].Value[Sched[relay].CurrentInterval][0])
-					{
-						bSwitched = bLastState[relay] != true;
-						digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
-						bLastState[relay] = true;
-					}
-
-					if (*TargetVarPtr[Sched[relay].Variable] <= Sched[relay].Value[Sched[relay].CurrentInterval][1])
-					{
-						bSwitched = bLastState[relay] != false;
-						digitalWrite(RELAY_PIN[relay], HIGH);
-						bLastState[relay] = false;
-					}
+					bSwitched = bLastState[relay] != true;
+					digitalWrite(RELAY_PIN[relay], LOW); //LOW is active
+					bLastState[relay] = true;
 				}
+
+				if (curr_val <= val1)
+				{
+					bSwitched = bLastState[relay] != false;
+					digitalWrite(RELAY_PIN[relay], HIGH);
+					bLastState[relay] = false;
+				}
+
+			}
+			else //invalid
+			{
+				//do nothing
 			}
 		}
 		else if (Settings.InvalidDSAction)//remote ds is not valid and we have in settings that we need to turn opff relay when ds invalid

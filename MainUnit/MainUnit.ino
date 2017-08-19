@@ -1167,7 +1167,7 @@ ISR(WDT_vect)
 	if (millis() - resetTime > TIMEOUTPERIOD_ETH) {
 
 #if DEBUG
-		Serial.println("Watchdog RESET would be here - ethernet shield!!!");
+		Serial.println(F("Watchdog RESET would be here - ethernet shield!!!"));
 		doggieTickle();
 #else
 		setupEthernet();     // This will reset the eth shield
@@ -1177,7 +1177,7 @@ ISR(WDT_vect)
 	if (millis() - resetTime > TIMEOUTPERIOD_MCU) {
 
 #if DEBUG
-		Serial.println("Watchdog RESET would be here - arduino!!!");
+		Serial.println(F("Watchdog RESET would be here - arduino!!!"));
 		doggieTickle();
 #else
 		resetFunc();     // This will call location zero and cause a reboot.

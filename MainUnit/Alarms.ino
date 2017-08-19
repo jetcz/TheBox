@@ -10,7 +10,7 @@ void printDebug()
 void system()
 {
 	//wdt_reset();
-	doggieTickle()
+	doggieTickle();
 	DateTime dtNow = now();
 	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(dtNow);
 	sNow = getDateTimeString(dtNow);
@@ -18,7 +18,10 @@ void system()
 	bool bSwitched = false;
 	for (int relay = 0; relay < 4; relay++)
 	{
-		if (Settings.RelayMode[relay] > 1) bSwitched |= serviceSchedulers(dtNow, relay);
+		if (Settings.RelayMode[relay] > 1)
+		{
+			bSwitched |= serviceSchedulers(dtNow, relay);
+		}
 	}
 	if (bSwitched)
 	{

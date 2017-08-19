@@ -285,6 +285,7 @@ bool resolveHost(IPAddress &addr, char &host)
 
 void ShowSockStatus()
 {
+	Serial.println();
 	byte socketStat[MAX_SOCK_NUM];
 	for (int i = 0; i < MAX_SOCK_NUM; i++) {
 		Serial.print(F("Socket#"));
