@@ -1,7 +1,7 @@
 /// <summary>
 /// Receive data from radio module and fill our datasets and related variables
 /// </summary>
-inline void receiveData()
+void receiveData()
 {
 	static unsigned int nInitialFailedMsgCnt = 0;
 	while (radio.available())
@@ -23,6 +23,7 @@ inline void receiveData()
 #if DEBUG
 		Serial.println();
 		Serial.println(F("Received radio message"));
+		p.print();
 #endif
 		//apply offsets only for valid values (not -255)
 		*RemoteDS.Temperature = (p.AirTemp == Settings.InvalidValue) || (p.AirTemp > 1000)

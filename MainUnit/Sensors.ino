@@ -72,6 +72,18 @@ bool getMainPir()
 }
 
 /// <summary>
+/// Get main PIR
+/// </summary>
+/// <returns></returns>
+float getVcc()
+{
+	static RunningAverage raVcc(10);
+	float vcc = readVcc();
+	raVcc.addValue(int(vcc));
+	return raVcc.getAverage();
+}
+
+/// <summary>
 /// Get running average of power consumptions in the socekts
 /// </summary>
 /// <param name="relay">relay</param>
@@ -83,12 +95,16 @@ float getPower(int relay)
 
 	if (relay == 0)
 	{
-		if (!getRelayState(0) ||
-			emon.realPower1 < 0 ||
-			emon.powerFactor1 < 0
-			)
+		if (!getRelayState(0))
 		{
 			raCurr0.clear();
+			return 0;
+		}
+		else if (emon.realPower1 < 0
+			|| emon.powerFactor1 < 0)
+
+		{
+			return 0;
 		}
 		else raCurr0.addValue(emon.realPower1);
 
@@ -97,12 +113,16 @@ float getPower(int relay)
 
 	if (relay == 3)
 	{
-		if (!getRelayState(3) ||
-			emon.realPower2 < 0 ||
-			emon.powerFactor2 < 0
-			)
+		if (!getRelayState(3))
 		{
 			raCurr3.clear();
+			return 0;
+		}
+		else if (emon.realPower2 < 0
+			|| emon.powerFactor2 < 0)
+
+		{
+			return 0;
 		}
 		else raCurr3.addValue(emon.realPower2);
 

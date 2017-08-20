@@ -110,7 +110,7 @@ unsigned int nRemoteFreeRam;
 unsigned int nMainFreeRam;
 unsigned int nRainTicks;				//last raint tip count
 unsigned int nRainTicksSum[2] = { 0 };	//this holds sum of rain tips for hour and day
-QueueArray <byte> Rain[2];
+QueueArray <unsigned int> Rain[2];
 
 
 //weather variables

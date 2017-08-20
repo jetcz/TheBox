@@ -111,7 +111,7 @@ void getRainPerHour()
 
 	unsigned int _nTicks = nRainTicks - nLastTickCnt;
 	nRainTicksSum[0] += _nTicks;
-	Rain[0].push(byte(_nTicks));
+	Rain[0].push(_nTicks);
 	if (Rain[0].count() > Settings.UpdateRainInterval[0]) nRainTicksSum[0] -= Rain[0].pop();
 	nLastTickCnt = nRainTicks;
 	RemoteDS.Data[6] = float(nRainTicksSum[0]) * 0.3;
@@ -134,7 +134,7 @@ void getRainPerDay()
 
 	unsigned int _nTicks = nRainTicks - nLastTickCnt;
 	nRainTicksSum[1] += _nTicks;
-	Rain[1].push(byte(_nTicks));
+	Rain[1].push(_nTicks);
 	if (Rain[1].count() > 86400 / Settings.UpdateRainInterval[1]) nRainTicksSum[1] -= Rain[1].pop(); //if the interval is set to 10 min, fifo is 144 bytes long
 	nLastTickCnt = nRainTicks;
 	RemoteDS.Data[7] = float(nRainTicksSum[1]) * 0.3;
