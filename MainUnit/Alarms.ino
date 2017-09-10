@@ -10,7 +10,6 @@ void printDebug()
 void system()
 {
 	//wdt_reset();
-	doggieTickle();
 	DateTime dtNow = now();
 	RemoteDS.isValid = ((millis() / 1000 < Settings.RadioMsgInterval) && !bReceivedRadioMsg) ? false : isRemoteDataSetValid(dtNow);
 	sNow = getDateTimeString(dtNow);
@@ -23,11 +22,14 @@ void system()
 			bSwitched |= serviceSchedulers(dtNow, relay);
 		}
 	}
-	if (bSwitched)
+	if (bSwitched || wdLevel == SHIELD)
 	{
 		Alarm.enable(ethShieldFreezeDetectAlarm); //if relay switch happened, check if the eth shield is not frozen
 	}
+
 	printLcd(); //this takes about 64ms when lcd is lit up
+
+	doggieTickle();
 }
 /// <summary>
 /// Fill datasets and apply offsets

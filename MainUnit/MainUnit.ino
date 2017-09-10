@@ -10,7 +10,7 @@
 #include <SD.h>
 #include <EthernetUdp.h>
 #include <Timezone.h>
-#include <Time.h>
+#include <TimeLib.h>
 #include <LiquidCrystal_I2C.h>
 #include <IniFile.h>
 #include <QueueArray.h>
@@ -35,10 +35,15 @@
 #include "RelayScheduler.h"
 
 //watchdog stuff
+enum WDLEVEL {
+	NONE,
+	SHIELD
+};
+WDLEVEL wdLevel = NONE;
 #define TIMEOUTPERIOD_ETH 10000
 #define TIMEOUTPERIOD_MCU 30000
 unsigned long resetTime = 0;
-#define doggieTickle() resetTime = millis();  // This macro will reset the timer
+#define doggieTickle() {resetTime = millis(); wdLevel = NONE; } //reset wd
 
 //my arduino specific calibration constant for reading vcc
 const float lVccCalibration = 1100000;
@@ -1161,27 +1166,17 @@ void setup()
 
 }
 
+
 //watchdog isr
 ISR(WDT_vect)
 {
-	if (millis() - resetTime > TIMEOUTPERIOD_ETH) {
-
-#if DEBUG
-		Serial.println(F("Watchdog RESET would be here - ethernet shield!!!"));
-		doggieTickle();
-#else
-		setupEthernet();     // This will reset the eth shield
-#endif
+	if (millis() - resetTime > TIMEOUTPERIOD_ETH && wdLevel == NONE) {
+		wdLevel = SHIELD;
+		resetEthShield();     // This will reset the eth shield
 	}
 
 	if (millis() - resetTime > TIMEOUTPERIOD_MCU) {
-
-#if DEBUG
-		Serial.println(F("Watchdog RESET would be here - arduino!!!"));
-		doggieTickle();
-#else
 		resetFunc();     // This will call location zero and cause a reboot.
-#endif
 	}
 }
 

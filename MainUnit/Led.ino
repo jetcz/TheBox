@@ -2,7 +2,7 @@
 /// Lights up specified led with specified color
 /// </summary>
 /// <param name="led">int led (1, 2, 3)</param>
-/// <param name="color">char color (r, g, b, c, m, y, k)</param>
+/// <param name="color">char color (r, g, b, c, m, y, k, w)</param>
 void ledLight(int led, char color)
 {
 	if (led == 1)

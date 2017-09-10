@@ -29,7 +29,7 @@ struct SystemSettings
 		RemoteDataSetTimeout = 180;
 		RestartEthernetThreshold = 9;
 		RestartWifiThreshold = 61;
-		RestartArduinoThreshold = 5001;
+		RestartArduinoThreshold = 301;
 		strncpy(NTPServer, "tik.cesnet.cz", 30);
 		LcdMsgTimeout = 4;
 		LightIntensity[0] = 6; //R
